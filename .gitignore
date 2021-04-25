@@ -1,0 +1,15 @@
+.DS_Store
+
+# Android Studio
+*.iml
+/.idea
+
+# Bazel
+/.aswb
+/.ijwb
+/bazel-*
+
+# VSCode
+*/.classpath
+*/.project
+*/.settings

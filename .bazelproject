@@ -1,0 +1,18 @@
+directories:
+  .
+
+# Automatically includes all relevant targets under the 'directories' above
+derive_targets_from_directories: true
+
+test_sources:
+  # Test sources go here
+
+targets:
+  # If source code isn't resolving, add additional targets that compile it here
+
+additional_languages:
+  android
+
+java_language_level: 8
+
+android_sdk_platform: android-30

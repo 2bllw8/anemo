@@ -1,0 +1,9 @@
+<!--
+  ~ Copyright (c) 2021 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<resources>
+    <string name="app_name">Anemo</string>
+    <string name="anemo_title">Local private storage</string>
+    <string name="anemo_info">Files stored in the local private storage will not be accessible from other apps unless you are willingly selecting them.</string>
+</resources>
