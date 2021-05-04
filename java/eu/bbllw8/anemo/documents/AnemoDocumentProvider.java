@@ -91,7 +91,8 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                 | Root.FLAG_SUPPORTS_SEARCH);
         row.add(Root.COLUMN_ICON, R.drawable.ic_storage);
         row.add(Root.COLUMN_MIME_TYPES, AnemoUtils.getChildMimeTypes(baseDir));
-        row.add(Root.COLUMN_TITLE, context.getString(R.string.anemo_title));
+        row.add(Root.COLUMN_TITLE, context.getString(R.string.app_name));
+        row.add(Root.COLUMN_SUMMARY, context.getString(R.string.anemo_description));
         return result;
     }
 
