@@ -3,17 +3,13 @@
   ~ SPDX-License-Identifier: GPL-3.0-only
   -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="eu.bbllw8.anemo">
+    package="eu.bbllw8.anemo.documents">
 
     <uses-sdk
         android:minSdkVersion="26"
         android:targetSdkVersion="30" />
 
-    <application
-        android:allowBackup="false"
-        android:allowClearUserData="false"
-        android:appCategory="productivity"
-        android:label="@string/app_name">
+    <application>
 
         <provider
             android:name=".AnemoDocumentProvider"

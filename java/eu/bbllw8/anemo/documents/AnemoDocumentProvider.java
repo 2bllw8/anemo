@@ -2,7 +2,7 @@
  * Copyright (c) 2021 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package eu.bbllw8.anemo;
+package eu.bbllw8.anemo.documents;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -113,8 +113,11 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
             throws FileNotFoundException {
         final MatrixCursor result = new MatrixCursor(documentProjection(projection));
         final File parent = getFileForId(parentDocumentId);
-        for (final File file : parent.listFiles()) {
-            includeFile(result, file);
+        final File[] children = parent.listFiles();
+        if (children != null) {
+            for (final File file : children) {
+                includeFile(result, file);
+            }
         }
 
         if (baseDir.equals(parent)) {
@@ -211,7 +214,6 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
         }
         notifyChange(documentId);
     }
-
 
     @NonNull
     @Override

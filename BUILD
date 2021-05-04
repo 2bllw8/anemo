@@ -15,7 +15,7 @@ android_binary(
         "//visibility:public",
     ],
     deps = [
-        "//java/eu/bbllw8/anemo",
+        "//java/eu/bbllw8/anemo/documents",
     ],
 )
 
@@ -27,6 +27,6 @@ android_binary(
         "//visibility:public",
     ],
     deps = [
-        "//java/eu/bbllw8/anemo",
+        "//java/eu/bbllw8/anemo/documents",
     ],
 )

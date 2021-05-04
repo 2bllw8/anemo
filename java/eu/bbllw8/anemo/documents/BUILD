@@ -3,7 +3,7 @@
 load("@rules_android//android:rules.bzl", "android_library")
 
 android_library(
-    name = "anemo",
+    name = "documents",
     manifest = "AndroidManifest.xml",
     srcs = glob([
         "**/*.java",
@@ -12,9 +12,10 @@ android_library(
         "res/**",
     ]),
     visibility = [
-        "//:__pkg__",
+        "//:__pkg__"
     ],
     deps = [
+        "//java/eu/bbllw8/anemo/shell",
         "@maven//:androidx_annotation_annotation",
     ],
 )

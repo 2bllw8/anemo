@@ -2,7 +2,7 @@
  * Copyright (c) 2021 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package eu.bbllw8.anemo;
+package eu.bbllw8.anemo.documents;
 
 import android.provider.DocumentsContract;
 import android.webkit.MimeTypeMap;
