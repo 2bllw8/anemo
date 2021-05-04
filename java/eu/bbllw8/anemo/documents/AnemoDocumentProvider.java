@@ -58,12 +58,14 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     private static final String PICTURES = "Pictures";
     private static final String MOVIES = "Movies";
     private static final String MUSIC = "Music";
+    private static final String SNIPPETS = "Snippets";
 
     private File baseDir;
     private File documentsDir;
     private File picturesDir;
     private File moviesDir;
     private File musicDir;
+    private File snippetsDir;
 
     private ContentResolver cr;
 
@@ -317,6 +319,11 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
             Log.e(TAG, "Failed to prepare Music directory");
             return false;
         }
+        snippetsDir = new File(baseDir, SNIPPETS);
+        if (!snippetsDir.exists() && !snippetsDir.mkdir()) {
+            Log.e(TAG, "Failed to prepare Notes directory");
+            return false;
+        }
         return true;
     }
 
@@ -362,7 +369,8 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                         && !file.equals(documentsDir)
                         && !file.equals(picturesDir)
                         && !file.equals(moviesDir)
-                        && !file.equals(musicDir)) {
+                        && !file.equals(musicDir)
+                        && !file.equals(snippetsDir)) {
                     flags |= Document.FLAG_SUPPORTS_RENAME
                             | Document.FLAG_SUPPORTS_DELETE
                             | Document.FLAG_SUPPORTS_MOVE;
