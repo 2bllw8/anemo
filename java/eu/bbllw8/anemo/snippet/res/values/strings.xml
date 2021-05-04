@@ -1,0 +1,17 @@
+<!--
+  ~ Copyright (c) 2021 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<resources>
+
+    <string name="snippet_taking_label">Save snippet</string>
+    <string name="snippet_taking_hint">Snippet content</string>
+
+    <string name="snippet_cancel">Cancel</string>
+    <string name="snippet_save">Save</string>
+
+    <string name="snippet_save_succeed">Snippet saved</string>
+    <string name="snippet_save_failed">Failed to save snippet</string>
+
+    <string name="snippet_file_name">Snippet %s.txt</string>
+</resources>

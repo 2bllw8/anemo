@@ -1,0 +1,10 @@
+<!--
+  ~ Copyright (c) 2021 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<resources>
+    <style name="SnippetTakingTheme" parent="android:Theme.Material.Dialog">
+        <item name="android:colorAccent">@color/anemoColor</item>
+        <item name="android:background">@null</item>
+    </style>
+</resources>

@@ -1,0 +1,19 @@
+<!--
+  ~ Copyright (c) 2021 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="?android:attr/dialogPreferredPadding"
+    android:paddingEnd="?android:attr/dialogPreferredPadding">
+
+    <EditText
+        android:id="@+id/snippetTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/snippet_taking_hint"
+        android:importantForAutofill="no"
+        android:inputType="textMultiLine"
+        android:singleLine="false" />
+</FrameLayout>
