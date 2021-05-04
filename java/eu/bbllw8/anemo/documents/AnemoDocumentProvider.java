@@ -28,9 +28,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
+import eu.bbllw8.anemo.home.HomeEnvironment;
+
 public final class AnemoDocumentProvider extends DocumentsProvider {
     private static final String TAG = "AnemoDocumentProvider";
-    private static final String AUTHORITY = "eu.bbllw8.anemo.documents";
 
     private static final String[] DEFAULT_ROOT_PROJECTION = {
             Root.COLUMN_ROOT_ID,
@@ -53,27 +54,21 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     private static final int MAX_SEARCH_RESULTS = 20;
     private static final int MAX_LAST_MODIFIED = 5;
 
-    private static final String ROOT = "anemo";
-    private static final String DOCUMENTS = "Documents";
-    private static final String PICTURES = "Pictures";
-    private static final String MOVIES = "Movies";
-    private static final String MUSIC = "Music";
-    private static final String SNIPPETS = "Snippets";
-
-    private File baseDir;
-    private File documentsDir;
-    private File picturesDir;
-    private File moviesDir;
-    private File musicDir;
-    private File snippetsDir;
-
+    private HomeEnvironment homeEnvironment;
     private ContentResolver cr;
 
     @Override
     public boolean onCreate() {
         final Context context = getContext();
         cr = context.getContentResolver();
-        return prepareDirectories(context);
+
+        try {
+            homeEnvironment = HomeEnvironment.getInstance(context);
+            return true;
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to setup", e);
+            return false;
+        }
     }
 
     /* Query */
@@ -84,8 +79,9 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
         final Context context = getContext();
         final MatrixCursor result = new MatrixCursor(rootProjection(projection));
         final MatrixCursor.RowBuilder row = result.newRow();
+        final File baseDir = homeEnvironment.getBaseDir();
 
-        row.add(Root.COLUMN_ROOT_ID, ROOT);
+        row.add(Root.COLUMN_ROOT_ID, HomeEnvironment.ROOT);
         row.add(Root.COLUMN_DOCUMENT_ID, getDocIdForFile(baseDir));
         row.add(Root.COLUMN_AVAILABLE_BYTES, baseDir.getFreeSpace());
         row.add(Root.COLUMN_FLAGS, Root.FLAG_SUPPORTS_CREATE
@@ -123,7 +119,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
             }
         }
 
-        if (baseDir.equals(parent)) {
+        if (parent.equals(homeEnvironment.getBaseDir())) {
             // Show info in root dir
             final Bundle extras = new Bundle();
             extras.putCharSequence(DocumentsContract.EXTRA_INFO,
@@ -293,40 +289,6 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
 
     /* Setup */
 
-    private boolean prepareDirectories(@NonNull Context context) {
-        baseDir = new File(context.getFilesDir(), ROOT);
-        if (!baseDir.exists() && !baseDir.mkdirs()) {
-            Log.e(TAG, "Failed to prepare root directory");
-            return false;
-        }
-        documentsDir = new File(baseDir, DOCUMENTS);
-        if (!documentsDir.exists() && !documentsDir.mkdir()) {
-            Log.e(TAG, "Failed to prepare Documents directory");
-            return false;
-        }
-        picturesDir = new File(baseDir, PICTURES);
-        if (!picturesDir.exists() && !picturesDir.mkdir()) {
-            Log.e(TAG, "Failed to prepare Pictures directory");
-            return false;
-        }
-        moviesDir = new File(baseDir, MOVIES);
-        if (!moviesDir.exists() && !moviesDir.mkdir()) {
-            Log.e(TAG, "Failed to prepare Movies directory");
-            return false;
-        }
-        musicDir = new File(baseDir, MUSIC);
-        if (!musicDir.exists() && !musicDir.mkdir()) {
-            Log.e(TAG, "Failed to prepare Music directory");
-            return false;
-        }
-        snippetsDir = new File(baseDir, SNIPPETS);
-        if (!snippetsDir.exists() && !snippetsDir.mkdir()) {
-            Log.e(TAG, "Failed to prepare Notes directory");
-            return false;
-        }
-        return true;
-    }
-
     /* Projection */
 
     @NonNull
@@ -365,12 +327,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                 flags |= Document.FLAG_DIR_SUPPORTS_CREATE;
 
                 // Additional features for user-created directories
-                if (!file.equals(baseDir)
-                        && !file.equals(documentsDir)
-                        && !file.equals(picturesDir)
-                        && !file.equals(moviesDir)
-                        && !file.equals(musicDir)
-                        && !file.equals(snippetsDir)) {
+                if (!homeEnvironment.isDefaultDirectory(file)) {
                     flags |= Document.FLAG_SUPPORTS_RENAME
                             | Document.FLAG_SUPPORTS_DELETE
                             | Document.FLAG_SUPPORTS_MOVE;
@@ -402,7 +359,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     @NonNull
     private String getDocIdForFile(@NonNull File file) {
         String path = file.getAbsolutePath();
-        final String rootPath = baseDir.getPath();
+        final String rootPath = homeEnvironment.getBaseDir().getPath();
         if (rootPath.equals(path)) {
             path = "";
         } else if (rootPath.endsWith("/")) {
@@ -411,12 +368,13 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
             path = path.substring(rootPath.length() + 1);
         }
 
-        return ROOT + ':' + path;
+        return HomeEnvironment.ROOT + ':' + path;
     }
 
     @NonNull
     private File getFileForId(@NonNull String documentId) throws FileNotFoundException {
-        if (documentId.equals(ROOT)) {
+        final File baseDir = homeEnvironment.getBaseDir();
+        if (documentId.equals(HomeEnvironment.ROOT)) {
             return baseDir;
         }
 
@@ -436,6 +394,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     /* Notify */
 
     private void notifyChange(@NonNull String documentId) {
-        cr.notifyChange(DocumentsContract.buildDocumentUri(AUTHORITY, documentId), null);
+        cr.notifyChange(DocumentsContract.buildDocumentUri(HomeEnvironment.AUTHORITY, documentId),
+                null);
     }
 }

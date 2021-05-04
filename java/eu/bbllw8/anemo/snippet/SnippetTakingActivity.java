@@ -28,30 +28,38 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 
+import eu.bbllw8.anemo.home.HomeEnvironment;
+
 public final class SnippetTakingActivity extends Activity {
     private static final String TAG = "SnippetTakingActivity";
 
     private static final String TIME_FORMAT = "yyyy-MM-dd HH:mm";
 
-    // Same as AnemoDocumentProvider.java
-    private static final String ROOT = "anemo";
-    private static final String SNIPPETS = "Snippets";
+    private HomeEnvironment homeEnvironment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final Intent intent = getIntent();
-        final String action = intent.getAction();
-        if (Intent.ACTION_PROCESS_TEXT.equals(action)) {
-            final String text = intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT);
-            if (text != null) {
-                showDialog(text);
-                return;
-            }
+        try {
+            homeEnvironment = HomeEnvironment.getInstance(this);
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to load home environment", e);
+            finish();
         }
 
-        finish();
+        final Intent intent = getIntent();
+        final String action = intent.getAction();
+
+        final String text = Intent.ACTION_PROCESS_TEXT.equals(action)
+                ? intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT)
+                : null;
+
+        if (text == null) {
+            finish();
+        } else {
+            showDialog(text);
+        }
     }
 
     private void showDialog(@NonNull String text) {
@@ -99,15 +107,13 @@ public final class SnippetTakingActivity extends Activity {
     @WorkerThread
     private boolean writeSnippet(@NonNull String fileName,
                                  @NonNull String text) {
-        final File anemoRootDir = new File(getFilesDir(), ROOT);
-        final File notesDir = new File(anemoRootDir, SNIPPETS);
-
-        if (!notesDir.exists() && !notesDir.mkdirs()) {
-            Log.e(TAG, "Can't access " + notesDir.getAbsolutePath());
+        final File snippetsDir = homeEnvironment.getDefaultDirectory(HomeEnvironment.SNIPPETS);
+        if (snippetsDir == null) {
+            Log.e(TAG, "Can't access the " + HomeEnvironment.SNIPPETS + " directory");
             return false;
         }
 
-        final File file = new File(notesDir, fileName);
+        final File file = new File(snippetsDir, fileName);
         try (OutputStream outputStream = new FileOutputStream(file)) {
             try (InputStream inputStream = new ByteArrayInputStream(text.getBytes())) {
                 final byte[] buffer = new byte[4096];
