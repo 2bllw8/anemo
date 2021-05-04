@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
 import eu.bbllw8.anemo.home.HomeEnvironment;
+import eu.bbllw8.anemo.lock.LockStore;
 
 public final class AnemoDocumentProvider extends DocumentsProvider {
     private static final String TAG = "AnemoDocumentProvider";
@@ -54,8 +55,11 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     private static final int MAX_SEARCH_RESULTS = 20;
     private static final int MAX_LAST_MODIFIED = 5;
 
-    private HomeEnvironment homeEnvironment;
     private ContentResolver cr;
+    private HomeEnvironment homeEnvironment;
+
+    private LockStore lockStore;
+    private int lockStoreListenerToken = -1;
 
     @Override
     public boolean onCreate() {
@@ -64,11 +68,24 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
 
         try {
             homeEnvironment = HomeEnvironment.getInstance(context);
+            lockStore = LockStore.getInstance(context);
+
+            lockStoreListenerToken = lockStore.addListener(this::onLockChanged);
             return true;
         } catch (IOException e) {
             Log.e(TAG, "Failed to setup", e);
             return false;
         }
+    }
+
+    @Override
+    public void shutdown() {
+        if (lockStoreListenerToken != -1) {
+            lockStore.removeListener(lockStoreListenerToken);
+            lockStoreListenerToken = -1;
+        }
+
+        super.shutdown();
     }
 
     /* Query */
@@ -78,6 +95,10 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     public Cursor queryRoots(@NonNull String[] projection) {
         final Context context = getContext();
         final MatrixCursor result = new MatrixCursor(rootProjection(projection));
+        if (lockStore.isLocked()) {
+            return result;
+        }
+
         final MatrixCursor.RowBuilder row = result.newRow();
         final File baseDir = homeEnvironment.getBaseDir();
 
@@ -174,7 +195,6 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                 ParcelFileDescriptor.MODE_READ_ONLY);
         return new AssetFileDescriptor(pfd, 0, pfd.getStatSize());
     }
-
 
     /* Manage */
 
@@ -287,8 +307,6 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
         return AnemoUtils.getTypeForFile(getFileForId(documentId));
     }
 
-    /* Setup */
-
     /* Projection */
 
     @NonNull
@@ -392,6 +410,10 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     }
 
     /* Notify */
+
+    private void onLockChanged(boolean isLocked) {
+        cr.notifyChange(DocumentsContract.buildRootsUri(HomeEnvironment.AUTHORITY), null);
+    }
 
     private void notifyChange(@NonNull String documentId) {
         cr.notifyChange(DocumentsContract.buildDocumentUri(HomeEnvironment.AUTHORITY, documentId),

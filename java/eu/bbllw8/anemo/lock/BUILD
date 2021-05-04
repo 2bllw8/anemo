@@ -3,21 +3,18 @@
 load("@rules_android//android:rules.bzl", "android_library")
 
 android_library(
-    name = "documents",
+    name = "lock",
     manifest = "AndroidManifest.xml",
     srcs = glob([
         "**/*.java",
     ]),
     resource_files = glob([
-        "res/**",
+        "res/**"
     ]),
     visibility = [
-        "//:__pkg__"
+        "//java/eu/bbllw8/anemo/documents:__pkg__",
     ],
     deps = [
-        "//java/eu/bbllw8/anemo/home",
-        "//java/eu/bbllw8/anemo/lock",
-        "//java/eu/bbllw8/anemo/shell",
         "@maven//:androidx_annotation_annotation",
     ],
 )
