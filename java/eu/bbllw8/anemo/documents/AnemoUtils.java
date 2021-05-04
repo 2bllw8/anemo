@@ -39,9 +39,12 @@ public final class AnemoUtils {
         final Queue<File> toVisit = new ArrayDeque<>();
         toVisit.add(parent);
         while (!toVisit.isEmpty()) {
-            final File visiting = toVisit.poll();
+            final File visiting = toVisit.remove();
             if (visiting.isDirectory()) {
-                Collections.addAll(toVisit, visiting.listFiles());
+                final File[] children = visiting.listFiles();
+                if (children != null) {
+                    Collections.addAll(toVisit, children);
+                }
             } else {
                 lastModifiedFiles.add(visiting);
             }
@@ -50,7 +53,7 @@ public final class AnemoUtils {
         final List<File> list = new ArrayList<>(atMost);
         int numAdded = 0;
         while (!lastModifiedFiles.isEmpty() && numAdded < atMost) {
-            final File file = lastModifiedFiles.poll();
+            final File file = lastModifiedFiles.remove();
             list.add(numAdded++, file);
         }
         return list;
@@ -70,9 +73,12 @@ public final class AnemoUtils {
         final List<File> list = new ArrayList<>(atMost);
         int numAdded = 0;
         while (!toVisit.isEmpty() && numAdded < atMost) {
-            final File visiting = toVisit.poll();
+            final File visiting = toVisit.remove();
             if (visiting.isDirectory()) {
-                Collections.addAll(toVisit, visiting.listFiles());
+                final File[] children = visiting.listFiles();
+                if (children != null) {
+                    Collections.addAll(toVisit, children);
+                }
             } else {
                 if (visiting.getName().toLowerCase().contains(query)) {
                     list.add(numAdded++, visiting);
@@ -106,8 +112,11 @@ public final class AnemoUtils {
     @NonNull
     public static String getChildMimeTypes(@NonNull File parent) {
         final Set<String> mimeTypes = new HashSet<>();
-        for (final File file : parent.listFiles()) {
-            mimeTypes.add(getTypeForFile(file));
+        final File[] children = parent.listFiles();
+        if (children != null) {
+            for (final File file : children) {
+                mimeTypes.add(getTypeForFile(file));
+            }
         }
 
         final StringBuilder mimeTypesString = new StringBuilder();
