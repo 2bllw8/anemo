@@ -1,0 +1,17 @@
+<!--
+  ~ Copyright (c) 2021 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<resources>
+
+    <string name="receiver_label">Save to Anemo</string>
+
+    <string name="receiver_notification_channel_title">Save files</string>
+    <string name="receiver_notification_channel_description">Progress report for saving files to Anemo</string>
+
+    <string name="receiver_notification_importing_text">Saving received text…</string>
+    <string name="receiver_notification_importing_image">Saving received image…</string>
+
+    <string name="receiver_text_file_name">Shared text %s</string>
+    <string name="receiver_text_image_name">Shared image %s</string>
+</resources>
