@@ -12,7 +12,6 @@
     <application>
         <activity
             android:name=".ReceiverActivity"
-            android:icon="@mipmap/ic_launcher"
             android:label="@string/receiver_label">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
