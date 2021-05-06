@@ -29,7 +29,9 @@ public final class ReceiverActivity extends Activity {
     private static final String TAG = "ReceiverActivity";
     private static final String TIME_FORMAT = "yyyy-MM-dd HH:mm";
     public static final String TYPE_TEXT = "text/plain";
+    public static final String TYPE_AUDIO = "audio/";
     public static final String TYPE_IMAGE = "image/";
+    public static final String TYPE_VIDEO = "video/";
 
     private HomeEnvironment homeEnvironment;
     private DateTimeFormatter dateTimeFormatter;
@@ -60,8 +62,12 @@ public final class ReceiverActivity extends Activity {
 
         if (type.equals(TYPE_TEXT)) {
             importText(intent);
+        } else if (type.startsWith(TYPE_AUDIO)) {
+            importAudio(intent);
         } else if (type.startsWith(TYPE_IMAGE)) {
             importImage(intent);
+        } else if (type.startsWith(TYPE_VIDEO)) {
+            importVideo(intent);
         }
     }
 
@@ -81,6 +87,27 @@ public final class ReceiverActivity extends Activity {
                     "txt");
         } catch (IOException e) {
             Log.e(TAG, "Failed to import text", e);
+        }
+    }
+
+    private void importAudio(@NonNull Intent intent) {
+        final Uri audioUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        if (audioUri == null) {
+            return;
+        }
+
+        try (final InputStream iStream = getContentResolver().openInputStream(audioUri)) {
+            final String name = intent.hasExtra(Intent.EXTRA_TITLE)
+                    ? intent.getStringExtra(Intent.EXTRA_TITLE)
+                    : getString(R.string.receiver_text_audio_name,
+                    dateTimeFormatter.format(LocalDateTime.now()));
+
+            writeStream(iStream,
+                    HomeEnvironment.MUSIC,
+                    name,
+                    intent.getType().replace(TYPE_AUDIO, ""));
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to import audio", e);
         }
     }
 
@@ -105,13 +132,34 @@ public final class ReceiverActivity extends Activity {
         }
     }
 
+    private void importVideo(@NonNull Intent intent) {
+        final Uri videoUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        if (videoUri == null) {
+            return;
+        }
+
+        try (final InputStream iStream = getContentResolver().openInputStream(videoUri)) {
+            final String name = intent.hasExtra(Intent.EXTRA_TITLE)
+                    ? intent.getStringExtra(Intent.EXTRA_TITLE)
+                    : getString(R.string.receiver_text_video_name,
+                    dateTimeFormatter.format(LocalDateTime.now()));
+
+            writeStream(iStream,
+                    HomeEnvironment.MOVIES,
+                    name,
+                    intent.getType().replace(TYPE_VIDEO, ""));
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to import video", e);
+        }
+    }
+
     /* Write */
     private void writeStream(@NonNull InputStream iStream,
                              @NonNull String destination,
                              @NonNull String name,
                              @NonNull String extension) throws IOException {
         final File directory = homeEnvironment.getDefaultDirectory(destination);
-        if (directory == null) {
+        if (directory != null) {
             final File destFile = new File(directory, name + "." + extension);
             try (final OutputStream oStream = new FileOutputStream(destFile)) {
                 final byte[] buffer = new byte[4096];

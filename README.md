@@ -11,12 +11,12 @@ Moreover it provides ways for the user to save content from other apps as files.
 - [x] File storage available in the default Files application (the DocumentsProviderUI)
 - [x] Lock access to the storage using a quick tile
 - [x] Saving text snippets from selected text as "Snippet" files
-- [x] Saving images to the local "Pictures" folder from the share Android functionality
+- [x] Saving audio, images and videos to the Anemo storage from the share Android functionality
 
 ### To do
 
 Some of the planned features
 
-- [ ] Support saving videos, audios and pdf files from the share Android functionality too
+- [ ] Support saving pdf files from the share Android functionality too
 - [ ] Make a nice UI for importing snippets and files
 - [ ] Password for unlocking access to the files

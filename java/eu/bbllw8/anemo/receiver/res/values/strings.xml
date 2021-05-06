@@ -13,5 +13,7 @@
     <string name="receiver_notification_importing_image">Saving received image…</string>
 
     <string name="receiver_text_file_name">Shared text %s</string>
+    <string name="receiver_text_audio_name">Shared audio %s</string>
     <string name="receiver_text_image_name">Shared image %s</string>
+    <string name="receiver_text_video_name">Shared video %s</string>
 </resources>
