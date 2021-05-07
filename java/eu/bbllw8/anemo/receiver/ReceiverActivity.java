@@ -5,9 +5,12 @@
 package eu.bbllw8.anemo.receiver;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -21,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 import eu.bbllw8.anemo.home.HomeEnvironment;
 
@@ -32,6 +36,8 @@ public final class ReceiverActivity extends Activity {
     public static final String TYPE_AUDIO = "audio/";
     public static final String TYPE_IMAGE = "image/";
     public static final String TYPE_VIDEO = "video/";
+
+    private static final String[] NAME_PROJECTION = {OpenableColumns.DISPLAY_NAME};
 
     private HomeEnvironment homeEnvironment;
     private DateTimeFormatter dateTimeFormatter;
@@ -79,12 +85,12 @@ public final class ReceiverActivity extends Activity {
 
         try (final InputStream iStream = new ByteArrayInputStream(text.getBytes())) {
             final String name = getString(R.string.receiver_text_file_name,
-                    dateTimeFormatter.format(LocalDateTime.now()));
+                    dateTimeFormatter.format(LocalDateTime.now()))
+                    + ".txt";
 
             writeStream(iStream,
                     HomeEnvironment.SNIPPETS,
-                    name,
-                    "txt");
+                    name);
         } catch (IOException e) {
             Log.e(TAG, "Failed to import text", e);
         }
@@ -97,15 +103,16 @@ public final class ReceiverActivity extends Activity {
         }
 
         try (final InputStream iStream = getContentResolver().openInputStream(audioUri)) {
-            final String name = intent.hasExtra(Intent.EXTRA_TITLE)
-                    ? intent.getStringExtra(Intent.EXTRA_TITLE)
-                    : getString(R.string.receiver_text_audio_name,
-                    dateTimeFormatter.format(LocalDateTime.now()));
+            final String name = getFileName(audioUri)
+                    .orElseGet(() -> {
+                        final String base = getString(R.string.receiver_text_audio_name,
+                                dateTimeFormatter.format(LocalDateTime.now()));
+                        return base + "." + intent.getType().replace(TYPE_AUDIO, "");
+                    });
 
             writeStream(iStream,
                     HomeEnvironment.MUSIC,
-                    name,
-                    intent.getType().replace(TYPE_AUDIO, ""));
+                    name);
         } catch (IOException e) {
             Log.e(TAG, "Failed to import audio", e);
         }
@@ -118,15 +125,16 @@ public final class ReceiverActivity extends Activity {
         }
 
         try (final InputStream iStream = getContentResolver().openInputStream(imageUri)) {
-            final String name = intent.hasExtra(Intent.EXTRA_TITLE)
-                    ? intent.getStringExtra(Intent.EXTRA_TITLE)
-                    : getString(R.string.receiver_text_image_name,
-                    dateTimeFormatter.format(LocalDateTime.now()));
+            final String name = getFileName(imageUri)
+                    .orElseGet(() -> {
+                        final String base = getString(R.string.receiver_text_image_name,
+                                dateTimeFormatter.format(LocalDateTime.now()));
+                        return base + "." + intent.getType().replace(TYPE_IMAGE, "");
+                    });
 
             writeStream(iStream,
                     HomeEnvironment.PICTURES,
-                    name,
-                    intent.getType().replace(TYPE_IMAGE, ""));
+                    name);
         } catch (IOException e) {
             Log.e(TAG, "Failed to import image", e);
         }
@@ -139,28 +147,42 @@ public final class ReceiverActivity extends Activity {
         }
 
         try (final InputStream iStream = getContentResolver().openInputStream(videoUri)) {
-            final String name = intent.hasExtra(Intent.EXTRA_TITLE)
-                    ? intent.getStringExtra(Intent.EXTRA_TITLE)
-                    : getString(R.string.receiver_text_video_name,
-                    dateTimeFormatter.format(LocalDateTime.now()));
+            final String name = getFileName(videoUri)
+                    .orElseGet(() -> {
+                        final String base = getString(R.string.receiver_text_video_name,
+                                dateTimeFormatter.format(LocalDateTime.now()));
+                        return base + intent.getType().replace(TYPE_VIDEO, "");
+                    });
 
             writeStream(iStream,
                     HomeEnvironment.MOVIES,
-                    name,
-                    intent.getType().replace(TYPE_VIDEO, ""));
+                    name);
         } catch (IOException e) {
             Log.e(TAG, "Failed to import video", e);
+        }
+    }
+
+    @NonNull
+    private Optional<String> getFileName(@NonNull Uri uri) {
+        final ContentResolver cr = getContentResolver();
+        try (final Cursor cursor = cr.query(uri, NAME_PROJECTION, null, null, null)) {
+            if (cursor == null || !cursor.moveToFirst()) {
+                return Optional.empty();
+            } else {
+                final String name = cursor.getString(
+                        cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                return Optional.ofNullable(name);
+            }
         }
     }
 
     /* Write */
     private void writeStream(@NonNull InputStream iStream,
                              @NonNull String destination,
-                             @NonNull String name,
-                             @NonNull String extension) throws IOException {
+                             @NonNull String name) throws IOException {
         final File directory = homeEnvironment.getDefaultDirectory(destination);
         if (directory != null) {
-            final File destFile = new File(directory, name + "." + extension);
+            final File destFile = new File(directory, name);
             try (final OutputStream oStream = new FileOutputStream(destFile)) {
                 final byte[] buffer = new byte[4096];
                 int read = iStream.read(buffer);
