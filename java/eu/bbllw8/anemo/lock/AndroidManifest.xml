@@ -14,11 +14,6 @@
     <application>
 
         <service
-            android:name=".LockService"
-            android:exported="false"
-            android:permission="eu.bbllw8.anemo.lock.ACCESS_SERVICE" />
-
-        <service
             android:name="eu.bbllw8.anemo.lock.LockTileService"
             android:exported="true"
             android:icon="@drawable/ic_key_tile"
