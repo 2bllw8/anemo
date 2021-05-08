@@ -29,6 +29,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 
 import eu.bbllw8.anemo.home.HomeEnvironment;
+import eu.bbllw8.anemo.task.TaskExecutor;
 
 public final class SnippetTakingActivity extends Activity {
     private static final String TAG = "SnippetTakingActivity";

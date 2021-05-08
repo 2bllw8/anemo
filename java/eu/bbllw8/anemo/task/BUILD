@@ -3,21 +3,15 @@
 load("@rules_android//android:rules.bzl", "android_library")
 
 android_library(
-    name = "snippet",
-    manifest = "AndroidManifest.xml",
+    name = "task",
     srcs = glob([
         "**/*.java",
     ]),
-    resource_files = glob([
-        "res/**",
-    ]),
     visibility = [
-        "//:__pkg__"
+        "//java/eu/bbllw8/anemo/receiver:__pkg__",
+        "//java/eu/bbllw8/anemo/snippet:__pkg__",
     ],
     deps = [
-        "//java/eu/bbllw8/anemo/home",
-        "//java/eu/bbllw8/anemo/shell",
-        "//java/eu/bbllw8/anemo/task",
         "@maven//:androidx_annotation_annotation",
     ],
 )
