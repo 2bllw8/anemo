@@ -10,9 +10,10 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,10 +28,11 @@ import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
-import java.util.function.Consumer;
+import java.util.concurrent.atomic.AtomicReference;
 
 import eu.bbllw8.anemo.home.HomeEnvironment;
 import eu.bbllw8.anemo.task.TaskExecutor;
+import eu.bbllw8.anemo.tip.TipDialog;
 
 public final class SnippetTakingActivity extends Activity {
     private static final String TAG = "SnippetTakingActivity";
@@ -38,6 +40,7 @@ public final class SnippetTakingActivity extends Activity {
     private static final String TIME_FORMAT = "yyyy-MM-dd HH:mm";
 
     private HomeEnvironment homeEnvironment;
+    private DateTimeFormatter dateTimeFormatter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,22 +48,22 @@ public final class SnippetTakingActivity extends Activity {
 
         try {
             homeEnvironment = HomeEnvironment.getInstance(this);
+            dateTimeFormatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
         } catch (IOException e) {
             Log.e(TAG, "Failed to load home environment", e);
             finish();
+            return;
         }
 
         final Intent intent = getIntent();
-        final String action = intent.getAction();
+        final Optional<String> textOpt = Intent.ACTION_PROCESS_TEXT.equals(intent.getAction())
+                ? Optional.ofNullable(intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT))
+                : Optional.empty();
 
-        final String text = Intent.ACTION_PROCESS_TEXT.equals(action)
-                ? intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT)
-                : null;
-
-        if (text == null) {
-            finish();
+        if (textOpt.isPresent()) {
+            showDialog(textOpt.get());
         } else {
-            showDialog(text);
+            finish();
         }
     }
 
@@ -71,7 +74,6 @@ public final class SnippetTakingActivity extends Activity {
 
         dialog.setTitle(R.string.snippet_taking_label);
         dialog.setCanceledOnTouchOutside(false);
-        dialog.setOnDismissListener(d -> finish());
         dialog.setButton(DialogInterface.BUTTON_POSITIVE,
                 getString(R.string.snippet_save),
                 (d, which) -> onSaveSnippet(dialog));
@@ -80,29 +82,42 @@ public final class SnippetTakingActivity extends Activity {
                 (d, which) -> d.dismiss());
         dialog.show();
 
+        final EditText snippetNameView = dialog.findViewById(R.id.snippetNameView);
+        snippetNameView.setText(getString(R.string.snippet_file_name,
+                dateTimeFormatter.format(LocalDateTime.now())));
         final EditText snippetTextView = dialog.findViewById(R.id.snippetTextView);
         snippetTextView.setText(text);
+        snippetTextView.requestFocus();
         snippetTextView.setSelection(text.length());
     }
 
     private void onSaveSnippet(@NonNull Dialog dialog) {
+        final EditText snippetNameView = dialog.findViewById(R.id.snippetNameView);
         final EditText snippetTextView = dialog.findViewById(R.id.snippetTextView);
-        final String snippet = snippetTextView.getText().toString();
-        saveSnippet(snippet, success -> {
-            int message = success
-                    ? R.string.snippet_save_succeed
-                    : R.string.snippet_save_failed;
-            Toast.makeText(this, message, Toast.LENGTH_SHORT)
-                    .show();
-            dialog.dismiss();
-        });
-    }
 
-    private void saveSnippet(@NonNull String text,
-                             @NonNull Consumer<Boolean> callback) {
-        final String fileName = getString(R.string.snippet_file_name,
-                DateTimeFormatter.ofPattern(TIME_FORMAT).format(LocalDateTime.now()));
-        TaskExecutor.runTask(() -> writeSnippet(fileName, text), callback);
+        final String name = snippetNameView.getText().toString();
+        final String snippet = snippetTextView.getText().toString();
+        dialog.dismiss();
+
+        final AtomicReference<TipDialog> tipDialogRef = new AtomicReference<>(
+                showImportInProgress());
+
+        final Runnable autoDismiss = () -> new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            final TipDialog tipDialog = tipDialogRef.get();
+            if (tipDialog != null && tipDialog.isShowing()) {
+                tipDialog.dismiss();
+            }
+            finish();
+        }, 2500);
+
+        TaskExecutor.runTask(() -> writeSnippet(name, snippet),
+                success -> {
+                    tipDialogRef.getAndSet(success
+                            ? showImportSuccess(name)
+                            : showImportFail())
+                            .dismiss();
+                    autoDismiss.run();
+                });
     }
 
     @WorkerThread
@@ -116,8 +131,8 @@ public final class SnippetTakingActivity extends Activity {
         }
 
         final File file = new File(snippetsDirOpt.get(), fileName);
-        try (OutputStream outputStream = new FileOutputStream(file)) {
-            try (InputStream inputStream = new ByteArrayInputStream(text.getBytes())) {
+        try (final OutputStream outputStream = new FileOutputStream(file)) {
+            try (final InputStream inputStream = new ByteArrayInputStream(text.getBytes())) {
                 final byte[] buffer = new byte[4096];
                 int read = inputStream.read(buffer);
                 while (read > 0) {
@@ -130,5 +145,38 @@ public final class SnippetTakingActivity extends Activity {
             Log.e(TAG, "Can't write " + file.getAbsolutePath(), e);
             return false;
         }
+    }
+
+    @NonNull
+    private TipDialog showImportInProgress() {
+        return new TipDialog.Builder(this)
+                .setMessage(getString(R.string.snippet_save_progress))
+                .setCancelable(false)
+                .setDismissOnTouchOutside(false)
+                .setProgress()
+                .show();
+    }
+
+    @NonNull
+    private TipDialog showImportSuccess(@NonNull String fileName) {
+        final String message = getString(R.string.snippet_save_success,
+                HomeEnvironment.SNIPPETS,
+                fileName);
+        return new TipDialog.Builder(this)
+                .setMessage(message)
+                .setIcon(R.drawable.tip_ic_success)
+                .setDismissOnTouchOutside(true)
+                .setCancelable(true)
+                .show();
+    }
+
+    @NonNull
+    private TipDialog showImportFail() {
+        return new TipDialog.Builder(this)
+                .setMessage(getString(R.string.snippet_save_failure))
+                .setIcon(R.drawable.tip_ic_error)
+                .setDismissOnTouchOutside(true)
+                .setCancelable(true)
+                .show();
     }
 }

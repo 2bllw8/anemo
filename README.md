@@ -19,7 +19,4 @@ Moreover it provides ways for the user to save content from other apps as files.
 
 ### To do
 
-Some of the planned features
-
-- [ ] Make a nice UI for importing snippets
 - [ ] Password for unlocking access to the files

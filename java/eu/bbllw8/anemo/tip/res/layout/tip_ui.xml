@@ -24,6 +24,7 @@
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:indeterminate="true"
+        android:indeterminateTint="?android:attr/textColorPrimary"
         android:padding="8dp"
         android:progress="50" />
 

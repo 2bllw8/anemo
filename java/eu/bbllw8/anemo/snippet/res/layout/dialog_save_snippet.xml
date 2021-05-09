@@ -2,18 +2,42 @@
   ~ Copyright (c) 2021 2bllw8
   ~ SPDX-License-Identifier: GPL-3.0-only
   -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingStart="?android:attr/dialogPreferredPadding"
-    android:paddingEnd="?android:attr/dialogPreferredPadding">
+    android:orientation="vertical"
+    android:padding="?android:attr/dialogPreferredPadding">
+
+    <TextView
+        style="@android:style/TextAppearance.Material.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@id/snippetNameView"
+        android:text="@string/snippet_name_hint" />
+
+    <EditText
+        android:id="@+id/snippetNameView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:maxLength="128"
+        android:maxLines="1"
+        android:singleLine="true" />
+
+    <TextView
+        style="@android:style/TextAppearance.Material.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@id/snippetTextView"
+        android:text="@string/snippet_taking_hint" />
 
     <EditText
         android:id="@+id/snippetTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/snippet_taking_hint"
         android:importantForAutofill="no"
         android:inputType="textMultiLine"
         android:singleLine="false" />
-</FrameLayout>
+</LinearLayout>
