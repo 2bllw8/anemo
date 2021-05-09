@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import eu.bbllw8.anemo.home.HomeEnvironment;
@@ -104,17 +105,17 @@ public final class SnippetTakingActivity extends Activity {
         TaskExecutor.runTask(() -> writeSnippet(fileName, text), callback);
     }
 
-
     @WorkerThread
     private boolean writeSnippet(@NonNull String fileName,
                                  @NonNull String text) {
-        final File snippetsDir = homeEnvironment.getDefaultDirectory(HomeEnvironment.SNIPPETS);
-        if (snippetsDir == null) {
+        final Optional<File> snippetsDirOpt = homeEnvironment.getDefaultDirectory(
+                HomeEnvironment.SNIPPETS);
+        if (!snippetsDirOpt.isPresent()) {
             Log.e(TAG, "Can't access the " + HomeEnvironment.SNIPPETS + " directory");
             return false;
         }
 
-        final File file = new File(snippetsDir, fileName);
+        final File file = new File(snippetsDirOpt.get(), fileName);
         try (OutputStream outputStream = new FileOutputStream(file)) {
             try (InputStream inputStream = new ByteArrayInputStream(text.getBytes())) {
                 final byte[] buffer = new byte[4096];

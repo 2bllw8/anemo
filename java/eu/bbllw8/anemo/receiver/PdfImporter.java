@@ -31,7 +31,7 @@ public final class PdfImporter extends Importer {
     @NonNull
     @Override
     protected Optional<File> getDestinationFolder() {
-        return Optional.ofNullable(homeEnvironment.getDefaultDirectory(HomeEnvironment.DOCUMENTS));
+        return homeEnvironment.getDefaultDirectory(HomeEnvironment.DOCUMENTS);
     }
 
     @NonNull

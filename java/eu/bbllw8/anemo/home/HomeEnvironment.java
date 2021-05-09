@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public final class HomeEnvironment {
     public static final String AUTHORITY = "eu.bbllw8.anemo.documents";
@@ -71,11 +72,11 @@ public final class HomeEnvironment {
         return baseDir;
     }
 
-    @Nullable
-    public File getDefaultDirectory(@NonNull String name) {
+    @NonNull
+    public Optional<File> getDefaultDirectory(@NonNull String name) {
         return defaultDirectories.containsKey(name)
-                ? defaultDirectories.get(name)
-                : null;
+                ? Optional.ofNullable(defaultDirectories.get(name))
+                : Optional.empty();
     }
 
     public boolean isDefaultDirectory(@NonNull File file) {

@@ -31,7 +31,7 @@ public final class AudioImporter extends Importer {
     @NonNull
     @Override
     protected Optional<File> getDestinationFolder() {
-        return Optional.ofNullable(homeEnvironment.getDefaultDirectory(HomeEnvironment.MUSIC));
+        return homeEnvironment.getDefaultDirectory(HomeEnvironment.MUSIC);
     }
 
     @NonNull

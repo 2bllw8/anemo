@@ -31,7 +31,7 @@ public final class VideoImporter extends Importer {
     @NonNull
     @Override
     protected Optional<File> getDestinationFolder() {
-        return Optional.ofNullable(homeEnvironment.getDefaultDirectory(HomeEnvironment.MOVIES));
+        return homeEnvironment.getDefaultDirectory(HomeEnvironment.MOVIES);
     }
 
     @NonNull

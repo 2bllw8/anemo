@@ -31,7 +31,7 @@ public final class ImageImporter extends Importer {
     @NonNull
     @Override
     protected Optional<File> getDestinationFolder() {
-        return Optional.ofNullable(homeEnvironment.getDefaultDirectory(HomeEnvironment.PICTURES));
+        return homeEnvironment.getDefaultDirectory(HomeEnvironment.PICTURES);
     }
 
     @NonNull
