@@ -20,3 +20,12 @@ Moreover it provides ways for the user to save content from other apps as files.
 ### To do
 
 - [ ] Password for unlocking access to the files
+
+## Build
+
+With bazel:
+- `bazel build //:app`
+- `bazel build //:app_debug`
+
+In AOSP / LineageOS
+- `mka anemo`
