@@ -34,6 +34,7 @@ public final class ReceiverActivity extends Activity {
             importers = new Importer[]{
                     new AudioImporter(this),
                     new ImageImporter(this),
+                    new PdfImporter(this),
                     new VideoImporter(this),
             };
 

@@ -15,5 +15,6 @@
 
     <string name="receiver_audio_default_name">Shared audio %s.mp3</string>
     <string name="receiver_image_default_name">Shared image %s.jpg</string>
+    <string name="receiver_pdf_default_name">Shared pdf %s.pdf</string>
     <string name="receiver_video_default_name">Shared video %s.mp4</string>
 </resources>
