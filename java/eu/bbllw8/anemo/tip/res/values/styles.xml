@@ -4,7 +4,7 @@
   -->
 <resources>
 
-    <style name="TipTheme" parent="android:Theme.Material.Light">
+    <style name="TipTheme" parent="android:Theme.Material.Dialog.NoActionBar">
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsFloating">true</item>

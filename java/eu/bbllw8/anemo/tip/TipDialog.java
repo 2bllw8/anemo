@@ -6,6 +6,7 @@ package eu.bbllw8.anemo.tip;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -17,7 +18,7 @@ import androidx.annotation.NonNull;
 public final class TipDialog extends Dialog {
 
     private TipDialog(@NonNull Context context) {
-        super(context, R.style.TipTheme);
+        super(new ContextThemeWrapper(context, R.style.TipTheme));
     }
 
     public static class Builder {
@@ -82,6 +83,13 @@ public final class TipDialog extends Dialog {
             }
             final TextView messageView = dialog.findViewById(android.R.id.message);
             messageView.setText(message);
+            return dialog;
+        }
+
+        @NonNull
+        public TipDialog show() {
+            final TipDialog dialog = create();
+            dialog.show();
             return dialog;
         }
     }
