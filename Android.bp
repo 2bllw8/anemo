@@ -1,0 +1,141 @@
+// Copyright (c) 2021 2bllw8
+// SPDX-License-Identifier: GPL-3.0-only
+
+android_app {
+    name: "anemo",
+    manifest: "AppManifest.xml",
+    sdk_version: "30",
+    optimize: {
+        proguard_flags_files: [
+            "proguard-rules.pro",
+        ],
+    },
+    static_libs: [
+        "anemo_documents",
+        "anemo_receiver",
+        "anemo_snippet",
+    ],
+}
+
+android_library {
+    name: "anemo_documents",
+    manifest: "java/eu/bbllw8/anemo/documents/AndroidManifest.xml",
+    sdk_version: "30",
+    resource_dirs: [
+        "java/eu/bbllw8/anemo/documents/res",
+    ],
+    srcs: [
+        "java/eu/bbllw8/anemo/documents/**/*.java",
+    ],
+    static_libs: [
+        "anemo_home",
+        "anemo_lock",
+        "anemo_shell",
+        "androidx.annotation_annotation",
+    ],
+}
+
+android_library {
+    name: "anemo_home",
+    manifest: "java/eu/bbllw8/anemo/home/AndroidManifest.xml",
+    sdk_version: "30",
+    srcs: [
+        "java/eu/bbllw8/anemo/home/**/*.java",
+    ],
+    static_libs: [
+        "androidx.annotation_annotation",
+    ],
+}
+
+android_library {
+    name: "anemo_lock",
+    manifest: "java/eu/bbllw8/anemo/lock/AndroidManifest.xml",
+    sdk_version: "30",
+    resource_dirs: [
+        "java/eu/bbllw8/anemo/lock/res",
+    ],
+    srcs: [
+        "java/eu/bbllw8/anemo/lock/**/*.java",
+    ],
+    static_libs: [
+        "androidx.annotation_annotation",
+    ],
+}
+
+android_library {
+    name: "anemo_receiver",
+    manifest: "java/eu/bbllw8/anemo/receiver/AndroidManifest.xml",
+    sdk_version: "30",
+    resource_dirs: [
+        "java/eu/bbllw8/anemo/receiver/res",
+    ],
+    srcs: [
+        "java/eu/bbllw8/anemo/receiver/**/*.java",
+    ],
+    static_libs: [
+        "anemo_home",
+        "anemo_shell",
+        "anemo_task",
+        "anemo_tip",
+        "androidx.annotation_annotation",
+    ],
+}
+
+android_library {
+    name: "anemo_shell",
+    manifest: "java/eu/bbllw8/anemo/shell/AndroidManifest.xml",
+    sdk_version: "30",
+    resource_dirs: [
+        "java/eu/bbllw8/anemo/shell/res",
+    ],
+    static_libs: [
+        "androidx.annotation_annotation",
+    ],
+}
+
+android_library {
+    name: "anemo_snippet",
+    manifest: "java/eu/bbllw8/anemo/snippet/AndroidManifest.xml",
+    sdk_version: "30",
+    resource_dirs: [
+        "java/eu/bbllw8/anemo/snippet/res",
+    ],
+    srcs: [
+        "java/eu/bbllw8/anemo/snippet/**/*.java",
+    ],
+    static_libs: [
+        "anemo_home",
+        "anemo_shell",
+        "anemo_task",
+        "anemo_tip",
+        "androidx.annotation_annotation",
+    ],
+}
+
+android_library {
+    name: "anemo_task",
+    manifest: "java/eu/bbllw8/anemo/task/AndroidManifest.xml",
+    sdk_version: "30",
+    srcs: [
+        "java/eu/bbllw8/anemo/task/**/*.java",
+    ],
+    static_libs: [
+        "androidx.annotation_annotation",
+    ],
+}
+
+
+android_library {
+    name: "anemo_tip",
+    manifest: "java/eu/bbllw8/anemo/tip/AndroidManifest.xml",
+    sdk_version: "30",
+    resource_dirs: [
+        "java/eu/bbllw8/anemo/tip/res",
+    ],
+    srcs: [
+        "java/eu/bbllw8/anemo/tip/**/*.java",
+    ],
+    static_libs: [
+        "androidx.annotation_annotation",
+    ],
+}

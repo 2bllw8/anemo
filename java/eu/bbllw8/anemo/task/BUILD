@@ -4,6 +4,7 @@ load("@rules_android//android:rules.bzl", "android_library")
 
 android_library(
     name = "task",
+    manifest = "AndroidManifest.xml",
     srcs = glob([
         "**/*.java",
     ]),
