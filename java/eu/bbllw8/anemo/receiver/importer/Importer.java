@@ -2,7 +2,7 @@
  * Copyright (c) 2021 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package eu.bbllw8.anemo.receiver;
+package eu.bbllw8.anemo.receiver.importer;
 
 import android.content.ContentResolver;
 import android.content.Context;

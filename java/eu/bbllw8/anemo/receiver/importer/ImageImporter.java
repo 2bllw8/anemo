@@ -2,7 +2,7 @@
  * Copyright (c) 2021 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package eu.bbllw8.anemo.receiver;
+package eu.bbllw8.anemo.receiver.importer;
 
 import android.content.Context;
 
@@ -14,30 +14,32 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import eu.bbllw8.anemo.home.HomeEnvironment;
+import eu.bbllw8.anemo.receiver.R;
 
-public final class AudioImporter extends Importer {
-    public static final String TYPE_AUDIO = "audio/";
+public final class ImageImporter extends Importer {
+    public static final String TYPE_IMAGE = "image/";
 
-    public AudioImporter(@NonNull Context context) throws IOException {
+    public ImageImporter(@NonNull Context context) throws IOException {
         super(context);
     }
 
     @NonNull
     @Override
     protected String getTypePrefix() {
-        return TYPE_AUDIO;
+        return TYPE_IMAGE;
     }
 
     @NonNull
     @Override
     protected Optional<File> getDestinationFolder() {
-        return homeEnvironment.getDefaultDirectory(HomeEnvironment.MUSIC);
+        return homeEnvironment.getDefaultDirectory(HomeEnvironment.PICTURES);
     }
 
     @NonNull
+
     @Override
     protected String getDefaultName() {
-        return resources.getString(R.string.receiver_audio_default_name,
+        return resources.getString(R.string.receiver_image_default_name,
                 dateTimeFormatter.format(LocalDateTime.now()));
     }
 }
