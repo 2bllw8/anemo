@@ -12,7 +12,7 @@
     <application>
 
         <activity
-            android:name="eu.bbllw8.anemo.snippet.SnippetTakingActivity"
+            android:name=".SnippetTakingActivity"
             android:label="@string/snippet_taking_label"
             android:theme="@style/SnippetTakingTheme">
             <intent-filter>

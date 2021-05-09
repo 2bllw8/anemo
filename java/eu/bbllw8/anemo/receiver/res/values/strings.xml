@@ -9,12 +9,12 @@
     <string name="receiver_notification_channel_title">Save files</string>
     <string name="receiver_notification_channel_description">Progress report for saving files to Anemo</string>
 
-    <string name="receiver_importing_message">Saving %s…</string>
-    <string name="receiver_importing_done_ok">Saved to Anemo/%s/%s</string>
-    <string name="receiver_importing_done_fail">Could not import %s. Try again</string>
+    <string name="receiver_importing_message">Saving %1$s…</string>
+    <string name="receiver_importing_done_ok">Saved to Anemo/%1$s/%2$s</string>
+    <string name="receiver_importing_done_fail">Could not import %1$s. Try again</string>
 
-    <string name="receiver_audio_default_name">Shared audio %s.mp3</string>
-    <string name="receiver_image_default_name">Shared image %s.jpg</string>
-    <string name="receiver_pdf_default_name">Shared pdf %s.pdf</string>
-    <string name="receiver_video_default_name">Shared video %s.mp4</string>
+    <string name="receiver_audio_default_name">Shared audio %1$s.mp3</string>
+    <string name="receiver_image_default_name">Shared image %1$s.jpg</string>
+    <string name="receiver_pdf_default_name">Shared pdf %1$s.pdf</string>
+    <string name="receiver_video_default_name">Shared video %1$s.mp4</string>
 </resources>
