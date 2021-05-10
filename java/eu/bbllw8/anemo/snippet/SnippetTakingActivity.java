@@ -79,7 +79,10 @@ public final class SnippetTakingActivity extends Activity {
                 (d, which) -> onSaveSnippet(dialog));
         dialog.setButton(DialogInterface.BUTTON_NEGATIVE,
                 getString(R.string.snippet_cancel),
-                (d, which) -> d.dismiss());
+                (d, which) -> {
+                    d.dismiss();
+                    finish();
+                });
         dialog.show();
 
         final EditText snippetNameView = dialog.findViewById(R.id.snippetNameView);
