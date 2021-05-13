@@ -11,6 +11,9 @@ import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 
 public final class LockTileService extends TileService {
+    private static final String ACTION_ANEMO_UNLOCK = "eu.bbllw8.anemo.action.UNLOCK";
+
+    private final Intent unlockIntent = new Intent();
 
     private LockStore lockStore;
     private int listenerToken = -1;
@@ -18,6 +21,9 @@ public final class LockTileService extends TileService {
     @Override
     public IBinder onBind(Intent intent) {
         lockStore = LockStore.getInstance(this);
+
+        unlockIntent.setAction(ACTION_ANEMO_UNLOCK);
+        unlockIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         return super.onBind(intent);
     }
@@ -45,7 +51,7 @@ public final class LockTileService extends TileService {
         super.onClick();
 
         if (lockStore.isLocked()) {
-            lockStore.unlock();
+            startActivityAndCollapse(unlockIntent);
         } else {
             lockStore.lock();
         }

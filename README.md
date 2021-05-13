@@ -16,10 +16,12 @@ Moreover it provides ways for the user to save content from other apps as files.
     - Images
     - PDF files
     - Videos
+- [x] Password for unlocking access to the files
 
 ### To do
 
-- [ ] Password for unlocking access to the files
+- [ ] Password change
+- [ ] Password reset
 
 ## Build
 
