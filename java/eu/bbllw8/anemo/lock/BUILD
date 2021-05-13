@@ -13,6 +13,7 @@ android_library(
     ]),
     visibility = [
         "//java/eu/bbllw8/anemo/documents:__pkg__",
+        "//java/eu/bbllw8/anemo/password:__pkg__",
     ],
     deps = [
         "@maven//:androidx_annotation_annotation",

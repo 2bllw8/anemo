@@ -1,0 +1,18 @@
+<!--
+  ~ Copyright (c) 2021 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="eu.bbllw8.anemo.password">
+
+    <uses-sdk
+        android:minSdkVersion="26"
+        android:targetSdkVersion="30" />
+
+    <application>
+        <activity
+            android:name=".PasswordActivity"
+            android:label="@string/password_label"
+            android:theme="@style/AppTheme" />
+    </application>
+</manifest>

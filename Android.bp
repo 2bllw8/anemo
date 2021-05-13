@@ -12,6 +12,7 @@ android_app {
     },
     static_libs: [
         "anemo_documents",
+        "anemo_password",
         "anemo_receiver",
         "anemo_snippet",
     ],
@@ -61,6 +62,24 @@ android_library {
         "androidx.annotation_annotation",
     ],
 }
+
+android_library {
+    name: "anemo_password",
+    manifest: "java/eu/bbllw8/anemo/password/AndroidManifest.xml",
+    sdk_version: "30",
+    resource_dirs: [
+        "java/eu/bbllw8/anemo/password/res",
+    ],
+    srcs: [
+        "java/eu/bbllw8/anemo/password/**/*.java",
+    ],
+    static_libs: [
+        "anemo_lock",
+        "anemo_shell",
+        "androidx.annotation_annotation",
+    ],
+}
+
 
 android_library {
     name: "anemo_receiver",
