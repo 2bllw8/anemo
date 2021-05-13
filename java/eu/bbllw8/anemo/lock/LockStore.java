@@ -6,18 +6,23 @@ package eu.bbllw8.anemo.lock;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.util.SparseArray;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public final class LockStore implements SharedPreferences.OnSharedPreferenceChangeListener {
-
+    private static final String TAG = "LockStore";
     private static final String LOCK_PREFERENCES = "lock_store";
     private static final String KEY_LOCK = "is_locked";
+    private static final String KEY_PASSWORD = "password_hash";
     private static final boolean DEFAULT_LOCK_VALUE = false;
 
     @NonNull
@@ -83,6 +88,42 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
                 .apply();
     }
 
+    public boolean setPassword(@NonNull String password) {
+        final Optional<String> hashOpt = hashString(password);
+        if (hashOpt.isPresent()) {
+            synchronized (this) {
+                preferences.edit()
+                        .putString(KEY_PASSWORD, hashOpt.get())
+                        .apply();
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public synchronized boolean passwordMatch(@NonNull String password) {
+        final Optional<String> hashOpt = hashString(password);
+        if (hashOpt.isPresent()) {
+            synchronized (this) {
+                final String stored = preferences.getString(KEY_PASSWORD, null);
+                return hashOpt.get().equals(stored);
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public synchronized boolean hasPassword() {
+        return preferences.getString(KEY_PASSWORD, null) != null;
+    }
+
+    public synchronized void removePassword() {
+        preferences.edit()
+                .remove(KEY_PASSWORD)
+                .apply();
+    }
+
     public int addListener(@NonNull Consumer<Boolean> listener) {
         synchronized (listeners) {
             final int key = listeners.size();
@@ -94,6 +135,18 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
     public void removeListener(int key) {
         synchronized (listeners) {
             listeners.removeAt(key);
+        }
+    }
+
+    @NonNull
+    private Optional<String> hashString(@NonNull String string) {
+        try {
+            final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            digest.update(string.getBytes());
+            return Optional.of(new String(digest.digest()));
+        } catch (NoSuchAlgorithmException e) {
+            Log.e(TAG, "Couldn't get hash", e);
+            return Optional.empty();
         }
     }
 }
