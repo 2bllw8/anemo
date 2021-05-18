@@ -55,18 +55,6 @@ public final class HomeEnvironment {
         prepare();
     }
 
-    public void prepare() throws IOException {
-        if (!baseDir.exists() && !baseDir.mkdir()) {
-            throw new IOException("Failed to prepare root directory");
-        }
-
-        for (final File d : defaultDirectories.values()) {
-            if (!d.exists() && !d.mkdir()) {
-                throw new IOException("Failed to prepare " + d.getName() + " directory");
-            }
-        }
-    }
-
     @NonNull
     public File getBaseDir() {
         return baseDir;
@@ -90,5 +78,26 @@ public final class HomeEnvironment {
             }
         }
         return false;
+    }
+
+    public boolean wipe() throws IOException {
+        if (baseDir.delete()) {
+            prepare();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void prepare() throws IOException {
+        if (!baseDir.exists() && !baseDir.mkdir()) {
+            throw new IOException("Failed to prepare root directory");
+        }
+
+        for (final File d : defaultDirectories.values()) {
+            if (!d.exists() && !d.mkdir()) {
+                throw new IOException("Failed to prepare " + d.getName() + " directory");
+            }
+        }
     }
 }
