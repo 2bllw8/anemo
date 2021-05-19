@@ -3,7 +3,7 @@
   ~ SPDX-License-Identifier: GPL-3.0-only
   -->
 <resources>
-    <style name="AppTheme" parent="android:Theme.Material.Dialog.NoActionBar">
+    <style name="AppTheme" parent="android:Theme.DeviceDefault.Dialog.NoActionBar">
         <item name="android:colorAccent">@color/anemoColor</item>
         <item name="android:background">@null</item>
     </style>
