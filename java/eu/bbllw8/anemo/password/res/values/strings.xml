@@ -7,6 +7,8 @@
 
     <string name="password_hint_field">Password</string>
     <string name="password_hint_repeat">Type again to confirm</string>
+    <string name="password_hint_current">Current password</string>
+    <string name="password_hint_new">New password</string>
 
     <string name="password_error_length">The password should have length at least %1$d</string>
     <string name="password_error_mismatch">The passwords do not match</string>
@@ -20,4 +22,9 @@
     <string name="password_set_title">Add password protection</string>
     <string name="password_set_message">Set a password to lock the access to the Anemo Storage</string>
     <string name="password_set_action">Set password</string>
+
+    <string name="password_change_title">Change password</string>
+    <string name="password_change_message">Change the password to unlock the Anemo Storage</string>
+    <string name="password_change_action">Change</string>
+    <string name="password_change_forgot">Forgot</string>
 </resources>
