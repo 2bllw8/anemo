@@ -15,6 +15,7 @@ android_library(
         "//:__pkg__"
     ],
     deps = [
+        "//java/eu/bbllw8/anemo/home",
         "//java/eu/bbllw8/anemo/lock",
         "//java/eu/bbllw8/anemo/shell",
         "@maven//:androidx_annotation_annotation",

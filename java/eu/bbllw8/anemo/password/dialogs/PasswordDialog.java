@@ -40,14 +40,14 @@ public abstract class PasswordDialog {
                 .create();
     }
 
-    public void dismiss() {
+    public final void dismiss() {
         if (dialog.isShowing()) {
             dialog.dismiss();
         }
         activity.finish();
     }
 
-    public void show() {
+    public final void show() {
         dialog.show();
         build();
     }

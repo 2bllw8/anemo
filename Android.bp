@@ -74,6 +74,7 @@ android_library {
         "java/eu/bbllw8/anemo/password/**/*.java",
     ],
     static_libs: [
+        "anemo_home",
         "anemo_lock",
         "anemo_shell",
         "androidx.annotation_annotation",

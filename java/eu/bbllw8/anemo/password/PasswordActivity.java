@@ -7,13 +7,12 @@ package eu.bbllw8.anemo.password;
 import android.app.Activity;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import eu.bbllw8.anemo.lock.LockStore;
 import eu.bbllw8.anemo.password.dialogs.ChangePasswordDialog;
 import eu.bbllw8.anemo.password.dialogs.InputPasswordDialog;
-import eu.bbllw8.anemo.password.dialogs.PasswordDialog;
+import eu.bbllw8.anemo.password.dialogs.ResetPasswordDialog;
 import eu.bbllw8.anemo.password.dialogs.SetPasswordDialog;
 
 public final class PasswordActivity extends Activity {
@@ -34,11 +33,15 @@ public final class PasswordActivity extends Activity {
     }
 
     private void showChangePasswordDialog() {
-        new ChangePasswordDialog(this, lockStore).show();
+        new ChangePasswordDialog(this, lockStore, this::showResetPasswordDialog).show();
     }
 
     private void showInputPasswordDialog() {
         new InputPasswordDialog(this, lockStore, this::showChangePasswordDialog).show();
+    }
+
+    private void showResetPasswordDialog() {
+        new ResetPasswordDialog(this, lockStore).show();
     }
 
     private void showSetPasswordDialog() {

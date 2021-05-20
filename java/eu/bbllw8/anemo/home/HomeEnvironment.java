@@ -11,6 +11,11 @@ import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -80,13 +85,26 @@ public final class HomeEnvironment {
         return false;
     }
 
-    public boolean wipe() throws IOException {
-        if (baseDir.delete()) {
-            prepare();
-            return true;
-        } else {
-            return false;
-        }
+    public void wipe() throws IOException {
+        Files.walkFileTree(baseDir.toPath(),
+                new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult visitFile(@NonNull Path file,
+                                                     @NonNull BasicFileAttributes attrs)
+                            throws IOException {
+                        Files.delete(file);
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult postVisitDirectory(@NonNull Path dir,
+                                                              @Nullable IOException exc)
+                            throws IOException {
+                        Files.delete(dir);
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+        prepare();
     }
 
     private void prepare() throws IOException {

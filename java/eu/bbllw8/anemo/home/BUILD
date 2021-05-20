@@ -10,6 +10,7 @@ android_library(
     ]),
     visibility = [
         "//java/eu/bbllw8/anemo/documents:__pkg__",
+        "//java/eu/bbllw8/anemo/password:__pkg__",
         "//java/eu/bbllw8/anemo/receiver:__pkg__",
         "//java/eu/bbllw8/anemo/snippet:__pkg__",
     ],

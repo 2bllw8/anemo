@@ -18,10 +18,7 @@ Moreover it provides ways for the user to save content from other apps as files.
     - Videos
 - [x] Password for unlocking access to the files
     - Password change
-
-### To do
-
-- [ ] Password reset
+    - Password reset
 
 ## Build
 

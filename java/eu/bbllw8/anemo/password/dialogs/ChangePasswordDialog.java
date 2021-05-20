@@ -16,9 +16,14 @@ import eu.bbllw8.anemo.password.TextListener;
 
 public final class ChangePasswordDialog extends PasswordDialog {
 
+    @NonNull
+    private final Runnable resetPassword;
+
     public ChangePasswordDialog(@NonNull Activity activity,
-                                @NonNull LockStore lockStore) {
+                                @NonNull LockStore lockStore,
+                                @NonNull Runnable resetPassword) {
         super(activity, lockStore, R.string.password_change_title, R.layout.password_change);
+        this.resetPassword = resetPassword;
     }
 
     @Override
@@ -27,6 +32,7 @@ public final class ChangePasswordDialog extends PasswordDialog {
         final EditText passwordField = dialog.findViewById(R.id.passwordFieldView);
         final EditText repeatField = dialog.findViewById(R.id.repeatFieldView);
         final Button positiveBtn = dialog.findViewById(R.id.changeBtnPositive);
+        final Button neutralBtn = dialog.findViewById(R.id.changeBtnNeutral);
         final Button negativeBtn = dialog.findViewById(R.id.changeBtnNegative);
 
         final TextListener validator = buildTextListener(passwordField, repeatField, positiveBtn);
@@ -48,6 +54,10 @@ public final class ChangePasswordDialog extends PasswordDialog {
             }
         });
         negativeBtn.setOnClickListener(v -> dismiss());
+        neutralBtn.setOnClickListener(v -> {
+            dialog.dismiss();
+            resetPassword.run();
+        });
     }
 
     @NonNull
