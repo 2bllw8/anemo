@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 
 import eu.bbllw8.anemo.lock.LockStore;
+import eu.bbllw8.anemo.password.R;
 
 public abstract class PasswordDialog {
     protected static final int MIN_PASSWORD_LENGTH = 4;
@@ -33,7 +34,7 @@ public abstract class PasswordDialog {
         this.activity = activity;
         this.res = activity.getResources();
         this.lockStore = lockStore;
-        this.dialog = new AlertDialog.Builder(activity)
+        this.dialog = new AlertDialog.Builder(activity, R.style.AppTheme)
                 .setTitle(title)
                 .setView(layout)
                 .setCancelable(false)
