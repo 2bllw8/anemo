@@ -8,23 +8,22 @@ Moreover it provides ways for the user to save content from other apps as files.
 
 ## Features
 
-- [x] File storage available in the default Files application (the DocumentsProviderUI)
-- [x] Lock access to the storage using a quick tile
-- [x] Saving text snippets from selected text as "Snippet" files
-- [x] Import from the share Android functionality
-    - Audio
-    - Images
-    - PDF files
-    - Videos
-- [x] Password for unlocking access to the files
-    - Password change
-    - Password reset
+- File storage available in the default Files application (the DocumentsProviderUI)
+- Lock access to the storage using a quick tile
+  - Auto lock after 15 minutes
+  - Password for unlocking access to the files
+- Saving text snippets from selected text as "Snippet" files
+- Import from the share Android functionality
+  - Audio
+  - Images
+  - PDF files
+  - Videos
 
 ## Build
 
-With bazel:
+With Bazel:
 - `bazel build //:app`
 - `bazel build //:app_debug`
 
-In AOSP / LineageOS
+With AOSP / LineageOS:
 - `mka anemo`
