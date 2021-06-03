@@ -20,7 +20,7 @@ public final class LockTileService extends TileService {
     private boolean hasUnlockActivity;
 
     private LockStore lockStore;
-    private int listenerToken = -1;
+    private int listenerToken = LockStore.NULL_LISTENER_ID;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -47,9 +47,9 @@ public final class LockTileService extends TileService {
     public void onStopListening() {
         super.onStopListening();
 
-        if (listenerToken != -1) {
+        if (listenerToken != LockStore.NULL_LISTENER_ID) {
             lockStore.removeListener(listenerToken);
-            listenerToken = -1;
+            listenerToken = LockStore.NULL_LISTENER_ID;
         }
     }
 

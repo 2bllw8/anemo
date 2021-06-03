@@ -22,12 +22,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public final class LockStore implements SharedPreferences.OnSharedPreferenceChangeListener {
+    public static final int NULL_LISTENER_ID = -1;
+
     private static final String TAG = "LockStore";
 
     private static final String LOCK_PREFERENCES = "lock_store";
     private static final String KEY_LOCK = "is_locked";
     private static final String KEY_PASSWORD = "password_hash";
     private static final boolean DEFAULT_LOCK_VALUE = false;
+
+    private static final String HASH_ALGORITHM = "SHA-256";
 
     private static final int AUTO_LOCK_JOB_ID = 64;
     // 15 minutes in milliseconds
@@ -165,7 +169,7 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
     @NonNull
     private Optional<String> hashString(@NonNull String string) {
         try {
-            final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            final MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
             digest.update(string.getBytes());
             return Optional.of(new String(digest.digest()));
         } catch (NoSuchAlgorithmException e) {

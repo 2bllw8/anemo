@@ -33,7 +33,7 @@ public final class AnemoUtils {
             return Collections.emptyList();
         }
 
-        final PriorityQueue<File> lastModifiedFiles = new PriorityQueue<>(atMost,
+        final Queue<File> lastModifiedFiles = new PriorityQueue<>(atMost,
                 (i, j) -> Long.compare(i.lastModified(), j.lastModified()));
 
         final Queue<File> toVisit = new ArrayDeque<>();
@@ -121,7 +121,7 @@ public final class AnemoUtils {
 
         final StringBuilder mimeTypesString = new StringBuilder();
         for (final String mimeType : mimeTypes) {
-            mimeTypesString.append(mimeType).append("\n");
+            mimeTypesString.append(mimeType).append('\n');
         }
 
         return mimeTypesString.toString();

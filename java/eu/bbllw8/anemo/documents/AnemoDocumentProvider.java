@@ -59,7 +59,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     private HomeEnvironment homeEnvironment;
 
     private LockStore lockStore;
-    private int lockStoreListenerToken = -1;
+    private int lockStoreListenerToken = LockStore.NULL_LISTENER_ID;
 
     @Override
     public boolean onCreate() {
@@ -80,9 +80,9 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
 
     @Override
     public void shutdown() {
-        if (lockStoreListenerToken != -1) {
+        if (lockStoreListenerToken != LockStore.NULL_LISTENER_ID) {
             lockStore.removeListener(lockStoreListenerToken);
-            lockStoreListenerToken = -1;
+            lockStoreListenerToken = LockStore.NULL_LISTENER_ID;
         }
 
         super.shutdown();

@@ -33,9 +33,9 @@ public final class HomeEnvironment {
     private final File baseDir;
     private final Map<String, File> defaultDirectories;
 
-    @Nullable
     private static volatile HomeEnvironment instance;
 
+    @NonNull
     public static HomeEnvironment getInstance(@NonNull Context context) throws IOException {
         if (instance == null) {
             synchronized (HomeEnvironment.class) {

@@ -28,7 +28,6 @@ public final class TaskExecutor {
     private TaskExecutor() {
     }
 
-
     public static <T> void runTask(@NonNull @WorkerThread Callable<T> callable,
                                    @NonNull Consumer<T> consumer) {
         final Handler handler = new Handler(Looper.getMainLooper());
