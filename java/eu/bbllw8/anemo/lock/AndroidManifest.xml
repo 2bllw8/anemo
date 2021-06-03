@@ -14,7 +14,12 @@
     <application>
 
         <service
-            android:name="eu.bbllw8.anemo.lock.LockTileService"
+            android:name=".AutoLockJobService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <service
+            android:name=".LockTileService"
             android:exported="true"
             android:icon="@drawable/ic_key_tile"
             android:label="@string/tile_title"
