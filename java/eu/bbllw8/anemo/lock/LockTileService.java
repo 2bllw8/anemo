@@ -75,8 +75,8 @@ public final class LockTileService extends TileService {
                 ? R.string.tile_unlock
                 : R.string.tile_lock));
         tile.setSubtitle(getString(isLocked
-                ? R.string.tiles_status_locked
-                : R.string.tiles_status_unlocked));
+                ? R.string.tile_status_locked
+                : R.string.tile_status_unlocked));
         tile.setState(isLocked ? Tile.STATE_INACTIVE : Tile.STATE_ACTIVE);
         tile.updateTile();
     }

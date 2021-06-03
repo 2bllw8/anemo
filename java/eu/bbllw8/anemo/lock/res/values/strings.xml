@@ -7,8 +7,8 @@
 
     <string name="tile_lock">Lock Anemo</string>
     <string name="tile_unlock">Unlock Anemo</string>
-    <string name="tiles_status_locked">Now locked</string>
-    <string name="tiles_status_unlocked">Now unlocked</string>
+    <string name="tile_status_locked">Now locked</string>
+    <string name="tile_status_unlocked">Now unlocked</string>
 
     <string name="tile_auto_lock">Anemo storage was automatically locked</string>
 </resources>
