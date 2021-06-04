@@ -5,7 +5,7 @@
 <resources>
 
     <style name="TransparentTheme" parent="android:Theme.Material.NoActionBar.TranslucentDecor">
-        <item name="android:windowBackground">@null</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsTranslucent">true</item>
     </style>
 </resources>
