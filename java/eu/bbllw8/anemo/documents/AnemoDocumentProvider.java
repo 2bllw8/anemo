@@ -276,7 +276,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                 + " to " + targetParentDocumentId + ": " + e.getMessage());
         }
 
-        notifyChange(sourceDocumentId);
+        notifyChange(sourceParentDocumentId);
         notifyChange(targetParentDocumentId);
         return getDocIdForFile(target);
     }
@@ -287,7 +287,8 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                                  @NonNull String displayName)
             throws FileNotFoundException {
         final File file = getFileForId(documentId);
-        final File target = new File(file.getParent(), displayName);
+        final File parent = file.getParentFile();
+        final File target = new File(parent, displayName);
 
         try {
             Files.move(file.toPath(), target.toPath());
@@ -296,9 +297,10 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                     + " to " + displayName);
         }
 
-        final String targetDocumentId = getDocIdForFile(target);
-        notifyChange(targetDocumentId);
-        return targetDocumentId;
+        if (parent != null) {
+            notifyChange(getDocIdForFile(parent));
+        }
+        return getDocIdForFile(target);
     }
 
     @NonNull
