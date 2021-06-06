@@ -14,6 +14,8 @@ android_library(
     ],
     deps = [
         "//java/eu/bbllw8/anemo/shell",
+        "//java/eu/bbllw8/anemo/task",
+        "//java/eu/bbllw8/anemo/tip",
         "@maven//:androidx_annotation_annotation",
     ],
 )

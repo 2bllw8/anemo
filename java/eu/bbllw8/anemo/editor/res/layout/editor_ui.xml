@@ -1,0 +1,51 @@
+<!--
+  ~ Copyright (c) 2021 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Capture focus -->
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true" />
+
+    <ProgressBar
+        android:id="@android:id/progress"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:indeterminate="true"
+        android:indeterminateTint="?android:attr/textColorPrimary"
+        android:layout_gravity="center"
+        android:padding="8dp"
+        android:progress="50" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:padding="6dp"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical">
+
+        <EditText
+            android:id="@android:id/edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:fontFamily="monospace"
+            android:gravity="start|top"
+            android:imeOptions="actionDone|flagNoFullscreen"
+            android:importantForAutofill="no"
+            android:inputType="textMultiLine|textImeMultiLine"
+            android:maxLength="@integer/editor_max_file_size"
+            android:singleLine="false"
+            tools:text="Example text"
+            tools:visibility="visible"
+            tools:ignore="LabelFor" />
+    </ScrollView>
+</FrameLayout>

@@ -1,0 +1,12 @@
+<!--
+  ~ Copyright (c) 2021 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/editorSave"
+        android:title="@string/editor_action_save"
+        android:icon="@drawable/ic_editor_save"
+        android:showAsAction="always" />
+</menu>

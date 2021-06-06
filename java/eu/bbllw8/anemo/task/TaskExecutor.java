@@ -11,6 +11,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -23,7 +24,7 @@ import java.util.function.Consumer;
 public final class TaskExecutor {
     private static final String TAG = "TaskExecutor";
 
-    private static final ExecutorService executor = Executors.newFixedThreadPool(1);
+    private static final ExecutorService executor = Executors.newFixedThreadPool(2);
 
     private TaskExecutor() {
     }
@@ -46,5 +47,17 @@ public final class TaskExecutor {
             }
         };
         executor.execute(future);
+    }
+
+    public static <T> void runTask(@NonNull @WorkerThread Callable<Optional<T>> callable,
+                                   @NonNull Consumer<T> ifPresent,
+                                   @NonNull Runnable ifNotPresent) {
+        runTask(callable, opt -> {
+            if (opt.isPresent()) {
+                ifPresent.accept(opt.get());
+            } else {
+                ifNotPresent.run();
+            }
+        });
     }
 }

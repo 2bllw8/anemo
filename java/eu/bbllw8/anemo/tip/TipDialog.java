@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public final class TipDialog extends Dialog {
 
@@ -26,6 +27,8 @@ public final class TipDialog extends Dialog {
         private final Context context;
         @NonNull
         private CharSequence message;
+        @Nullable
+        private Runnable onDismissListener;
         @DrawableRes
         private int icon;
         private boolean cancelable;
@@ -48,6 +51,7 @@ public final class TipDialog extends Dialog {
             return this;
         }
 
+        @NonNull
         public Builder setProgress() {
             this.icon = 0;
             return this;
@@ -62,6 +66,12 @@ public final class TipDialog extends Dialog {
         @NonNull
         public Builder setDismissOnTouchOutside(boolean dismissOnTouchOutside) {
             this.dismissOnTouchOutside = dismissOnTouchOutside;
+            return this;
+        }
+
+        @NonNull
+        public Builder setOnDismissListener(@NonNull Runnable onDismissListener) {
+            this.onDismissListener = onDismissListener;
             return this;
         }
 
@@ -83,6 +93,9 @@ public final class TipDialog extends Dialog {
             }
             final TextView messageView = dialog.findViewById(android.R.id.message);
             messageView.setText(message);
+            if (onDismissListener != null) {
+                dialog.setOnDismissListener(d -> onDismissListener.run());
+            }
             return dialog;
         }
 

@@ -49,6 +49,8 @@ android_library {
     ],
     static_libs: [
         "anemo_shell",
+        "anemo_task",
+        "anemo_tip",
         "androidx.annotation_annotation",
     ],
 }

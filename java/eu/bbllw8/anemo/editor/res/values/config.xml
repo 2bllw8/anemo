@@ -1,0 +1,9 @@
+<!--
+  ~ Copyright (c) 2021 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<resources>
+
+    <!-- Max file size: 8MB -->
+    <integer name="editor_max_file_size">8388608</integer>
+</resources>
