@@ -16,6 +16,7 @@ android_binary(
     ],
     deps = [
         "//java/eu/bbllw8/anemo/documents",
+        "//java/eu/bbllw8/anemo/editor",
         "//java/eu/bbllw8/anemo/password",
         "//java/eu/bbllw8/anemo/receiver",
         "//java/eu/bbllw8/anemo/snippet",
@@ -31,6 +32,7 @@ android_binary(
     ],
     deps = [
         "//java/eu/bbllw8/anemo/documents",
+        "//java/eu/bbllw8/anemo/editor",
         "//java/eu/bbllw8/anemo/password",
         "//java/eu/bbllw8/anemo/receiver",
         "//java/eu/bbllw8/anemo/snippet",

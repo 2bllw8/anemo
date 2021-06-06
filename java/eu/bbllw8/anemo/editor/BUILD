@@ -3,18 +3,19 @@
 load("@rules_android//android:rules.bzl", "android_library")
 
 android_library(
-    name = "shell",
+    name = "editor",
     manifest = "AndroidManifest.xml",
+    srcs = glob([
+        "**/*.java",
+    ]),
     resource_files = glob([
         "res/**",
     ]),
     visibility = [
-        "//java/eu/bbllw8/anemo/documents:__pkg__",
-        "//java/eu/bbllw8/anemo/editor:__pkg__",
-        "//java/eu/bbllw8/anemo/password:__pkg__",
-        "//java/eu/bbllw8/anemo/receiver:__pkg__",
-        "//java/eu/bbllw8/anemo/snippet:__pkg__",
+        "//:__pkg__"
     ],
     deps = [
+        "//java/eu/bbllw8/anemo/shell",
+        "@maven//:androidx_annotation_annotation",
     ],
 )
