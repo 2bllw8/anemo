@@ -1,7 +1,5 @@
 # Copyright (c) 2021 2bllw8
 # SPDX-License-Identifier: GPL-3.0-only
-load("@rules_android//android:rules.bzl", "android_binary")
-
 android_binary(
     name = "app",
     manifest = "AppManifest.xml",
