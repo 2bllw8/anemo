@@ -17,29 +17,28 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import eu.bbllw8.anemo.editor.tasks.EditorFileLoaderTask;
 import eu.bbllw8.anemo.editor.tasks.EditorFileReaderTask;
 import eu.bbllw8.anemo.editor.tasks.EditorFileWriterTask;
+import eu.bbllw8.anemo.editor.tasks.GetCursorCoordinatesTask;
 import eu.bbllw8.anemo.task.TaskExecutor;
 import eu.bbllw8.anemo.tip.TipDialog;
 
 public final class EditorActivity extends Activity implements TextWatcher {
     private static final String TAG = "EditorActivity";
 
-    @NonNull
-    private final AtomicBoolean dirty = new AtomicBoolean(false);
+    private boolean dirty = false;
 
     @Nullable
     private EditorFile editorFile = null;
     private View loadView;
-    private EditText textView;
+    private TextView summaryView;
+    private TextEditorView textEditorView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,8 +51,9 @@ public final class EditorActivity extends Activity implements TextWatcher {
             finish();
         } else {
             setContentView(R.layout.editor_ui);
-            textView = findViewById(android.R.id.edit);
             loadView = findViewById(android.R.id.progress);
+            summaryView = findViewById(android.R.id.summary);
+            textEditorView = findViewById(android.R.id.edit);
 
             if (savedInstanceState == null) {
                 openFile(inputUri, intent.getType());
@@ -110,12 +110,15 @@ public final class EditorActivity extends Activity implements TextWatcher {
 
     @Override
     public void afterTextChanged(Editable s) {
-        if (!dirty.get()) {
-            dirty.set(true);
+        if (!dirty) {
+            dirty = true;
         }
     }
 
     private void openFile(@NonNull Uri uri, @Nullable String type) {
+        summaryView.setText(R.string.editor_summary_loading);
+        loadView.setVisibility(View.VISIBLE);
+
         TaskExecutor.runTask(new EditorFileLoaderTask(getContentResolver(), uri, type),
                 this::readFile,
                 this::showOpenErrorMessage);
@@ -131,14 +134,15 @@ public final class EditorActivity extends Activity implements TextWatcher {
         this.editorFile = editorFile;
 
         loadView.setVisibility(View.GONE);
-        textView.setVisibility(View.VISIBLE);
-
-        textView.setText(content);
-        textView.addTextChangedListener(this);
+        summaryView.setText(getString(R.string.editor_summary_info, 1, 1));
+        textEditorView.setVisibility(View.VISIBLE);
+        textEditorView.setOnCursorChanged(this::updateSummary);
+        textEditorView.setText(content);
+        textEditorView.addTextChangedListener(this);
     }
 
     private void saveContents() {
-        if (editorFile == null || !dirty.get()) {
+        if (editorFile == null || !dirty) {
             finish();
             return;
         }
@@ -150,7 +154,7 @@ public final class EditorActivity extends Activity implements TextWatcher {
                 .setMessage(getString(R.string.editor_save_in_progress, editorFile.getName()))
                 .show();
 
-        final String contents = textView.getText().toString();
+        final String contents = textEditorView.getText().toString();
         TaskExecutor.runTask(new EditorFileWriterTask(getContentResolver(), editorFile, contents),
                 success -> {
                     if (success) {
@@ -162,11 +166,25 @@ public final class EditorActivity extends Activity implements TextWatcher {
                 });
     }
 
+    private void updateSummary(int cursorStart, int cursorEnd) {
+        final String content = textEditorView.getText().toString();
+        TaskExecutor.runTask(new GetCursorCoordinatesTask(content, cursorStart),
+                point -> {
+                    final String summary = cursorStart == cursorEnd
+                            ? getString(R.string.editor_summary_info,
+                            point.y, point.x)
+                            : getString(R.string.editor_summary_select,
+                            cursorEnd - cursorStart, point.y, point.x);
+                    summaryView.post(() -> summaryView.setText(summary));
+                });
+    }
+
+    /* Dialogs */
+
     private void showSavedMessage() {
         final TipDialog dialog = new TipDialog.Builder(this)
                 .setIcon(eu.bbllw8.anemo.tip.R.drawable.tip_ic_success)
-                .setMessage(getString(R.string.editor_saved))
-                .setOnDismissListener(this::finish)
+                .setMessage(getString(R.string.editor_save_success))
                 .setCancelable(false)
                 .show();
 
