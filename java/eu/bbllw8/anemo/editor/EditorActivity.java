@@ -66,6 +66,9 @@ public final class EditorActivity extends Activity implements TextWatcher {
             editorHistory = new EditorHistory(textEditorView::getEditableText,
                     getResources().getInteger(R.integer.editor_history_buffer_size));
 
+            summaryView.setText(getString(R.string.editor_summary_info, 1, 1));
+            textEditorView.setOnCursorChanged(this::updateSummary);
+
             if (savedInstanceState == null) {
                 openFile(inputUri, intent.getType());
             } else {
@@ -100,7 +103,7 @@ public final class EditorActivity extends Activity implements TextWatcher {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         final MenuInflater menuInflater = getMenuInflater();
         if (menuInflater == null) {
             return super.onCreateOptionsMenu(menu);
@@ -160,9 +163,7 @@ public final class EditorActivity extends Activity implements TextWatcher {
         updateTitle();
 
         loadView.setVisibility(View.GONE);
-        summaryView.setText(getString(R.string.editor_summary_info, 1, 1));
         textEditorView.setVisibility(View.VISIBLE);
-        textEditorView.setOnCursorChanged(this::updateSummary);
         textEditorView.setText(content);
 
         // Set listener after the contents
@@ -172,7 +173,6 @@ public final class EditorActivity extends Activity implements TextWatcher {
 
     private void saveContents() {
         if (editorFile == null || !dirty) {
-            finish();
             return;
         }
 
