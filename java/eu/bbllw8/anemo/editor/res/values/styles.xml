@@ -5,5 +5,9 @@
 <resources>
     <style name="EditorTheme" parent="android:Theme.DeviceDefault.Light">
         <item name="android:colorAccent">@color/anemoColor</item>
+        <item name="android:navigationBarColor">?android:colorPrimary</item>
+        <item name="android:statusBarColor">?android:colorPrimary</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
     </style>
 </resources>
