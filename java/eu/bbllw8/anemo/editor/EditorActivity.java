@@ -64,6 +64,8 @@ public final class EditorActivity extends Activity implements TextWatcher {
 
             if (savedInstanceState == null) {
                 openFile(inputUri, intent.getType());
+            } else {
+                loadView.setVisibility(View.GONE);
             }
         }
     }
