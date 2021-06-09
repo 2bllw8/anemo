@@ -14,7 +14,6 @@ import android.os.Looper;
 import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -33,8 +32,6 @@ import eu.bbllw8.anemo.task.TaskExecutor;
 import eu.bbllw8.anemo.tip.TipDialog;
 
 public final class EditorActivity extends Activity implements TextWatcher {
-    private static final String TAG = "EditorActivity";
-
     private static final String KEY_EDITOR_FILE = "editor_file";
     private static final String KEY_HISTORY_STATE = "editor_history";
 
@@ -55,7 +52,6 @@ public final class EditorActivity extends Activity implements TextWatcher {
         final Intent intent = getIntent();
         final Uri inputUri = intent.getData();
         if (inputUri == null) {
-            Log.e(TAG, intent.toString());
             finish();
         } else {
             setContentView(R.layout.editor_ui);
@@ -71,8 +67,6 @@ public final class EditorActivity extends Activity implements TextWatcher {
 
             if (savedInstanceState == null) {
                 openFile(inputUri, intent.getType());
-            } else {
-                loadView.setVisibility(View.GONE);
             }
         }
     }

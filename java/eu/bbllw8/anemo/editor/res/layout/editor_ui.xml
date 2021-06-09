@@ -22,7 +22,8 @@
         android:indeterminateTint="?android:attr/textColorPrimary"
         android:layout_gravity="center"
         android:padding="8dp"
-        android:progress="50" />
+        android:progress="50"
+        android:visibility="gone" />
 
     <TextView
         android:id="@android:id/summary"

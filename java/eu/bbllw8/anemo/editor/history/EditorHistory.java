@@ -4,8 +4,6 @@
  */
 package eu.bbllw8.anemo.editor.history;
 
-import android.os.Bundle;
-import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.Editable;
 import android.text.Selection;

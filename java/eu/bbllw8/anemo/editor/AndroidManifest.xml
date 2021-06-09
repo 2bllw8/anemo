@@ -18,7 +18,6 @@
             android:theme="@style/EditorTheme">
             <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.EDIT" />
-                <action android:name="android.intent.action.SEND" />
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/*" />
