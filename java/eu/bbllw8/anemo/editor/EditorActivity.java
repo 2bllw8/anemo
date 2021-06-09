@@ -22,6 +22,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import eu.bbllw8.anemo.editor.history.EditorHistory;
 import eu.bbllw8.anemo.editor.tasks.EditorFileLoaderTask;
 import eu.bbllw8.anemo.editor.tasks.EditorFileReaderTask;
 import eu.bbllw8.anemo.editor.tasks.EditorFileWriterTask;
@@ -36,9 +37,11 @@ public final class EditorActivity extends Activity implements TextWatcher {
 
     @Nullable
     private EditorFile editorFile = null;
+
     private View loadView;
     private TextView summaryView;
     private TextEditorView textEditorView;
+    private EditorHistory editorHistory;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,6 +57,9 @@ public final class EditorActivity extends Activity implements TextWatcher {
             loadView = findViewById(android.R.id.progress);
             summaryView = findViewById(android.R.id.summary);
             textEditorView = findViewById(android.R.id.edit);
+
+            editorHistory = new EditorHistory(textEditorView::getEditableText,
+                    getResources().getInteger(R.integer.editor_history_buffer_size));
 
             if (savedInstanceState == null) {
                 openFile(inputUri, intent.getType());
@@ -94,6 +100,9 @@ public final class EditorActivity extends Activity implements TextWatcher {
         final int id = item.getItemId();
         if (id == R.id.editorSave) {
             saveContents();
+            return true;
+        } else if (id == R.id.editorUndo) {
+            editorHistory.undo();
             return true;
         } else {
             return super.onMenuItemSelected(featureId, item);
@@ -138,7 +147,10 @@ public final class EditorActivity extends Activity implements TextWatcher {
         textEditorView.setVisibility(View.VISIBLE);
         textEditorView.setOnCursorChanged(this::updateSummary);
         textEditorView.setText(content);
+
+        // Set listener after the contents
         textEditorView.addTextChangedListener(this);
+        textEditorView.addTextChangedListener(editorHistory);
     }
 
     private void saveContents() {

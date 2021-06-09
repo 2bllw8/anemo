@@ -9,6 +9,7 @@
     <string name="editor_action_quit">Quit</string>
     <string name="editor_action_save">Save</string>
     <string name="editor_action_save_and_quit">Save &amp; quit</string>
+    <string name="editor_action_undo">Undo</string>
 
     <string name="editor_error_title">Error</string>
     <string name="editor_error_open">Failed to open file</string>

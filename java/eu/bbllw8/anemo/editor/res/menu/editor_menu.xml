@@ -3,6 +3,11 @@
   ~ SPDX-License-Identifier: GPL-3.0-only
   -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/editorUndo"
+        android:title="@string/editor_action_undo"
+        android:icon="@drawable/ic_editor_undo"
+        android:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/editorSave"

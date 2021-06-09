@@ -6,4 +6,7 @@
 
     <!-- Max file size: 8MB -->
     <integer name="editor_max_file_size">8388608</integer>
+
+    <!-- History buffer size -->
+    <integer name="editor_history_buffer_size">128</integer>
 </resources>
