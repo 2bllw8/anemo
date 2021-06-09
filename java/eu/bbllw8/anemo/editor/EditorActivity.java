@@ -4,6 +4,7 @@
  */
 package eu.bbllw8.anemo.editor;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -141,6 +142,11 @@ public final class EditorActivity extends Activity implements TextWatcher {
 
     private void setContent(@NonNull EditorFile editorFile, @NonNull String content) {
         this.editorFile = editorFile;
+
+        final ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(editorFile.getName());
+        }
 
         loadView.setVisibility(View.GONE);
         summaryView.setText(getString(R.string.editor_summary_info, 1, 1));
