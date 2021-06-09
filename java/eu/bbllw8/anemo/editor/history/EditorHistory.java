@@ -4,6 +4,9 @@
  */
 package eu.bbllw8.anemo.editor.history;
 
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.TextWatcher;
@@ -19,7 +22,7 @@ public final class EditorHistory implements TextWatcher {
     private final Supplier<Editable> editableTextSupplier;
 
     @NonNull
-    private final HistoryBuffer buffer;
+    private volatile HistoryBuffer buffer;
 
     private CharSequence contentBefore = "";
     private boolean trackChanges = true;
@@ -74,5 +77,14 @@ public final class EditorHistory implements TextWatcher {
                     : start + before.length());
 
         });
+    }
+
+    @NonNull
+    public Parcelable saveInstance() {
+        return buffer;
+    }
+
+    public void restoreInstance(@NonNull Parcelable in) {
+        buffer = (HistoryBuffer) in;
     }
 }

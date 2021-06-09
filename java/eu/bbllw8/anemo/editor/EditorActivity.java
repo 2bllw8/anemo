@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -33,6 +34,9 @@ import eu.bbllw8.anemo.tip.TipDialog;
 
 public final class EditorActivity extends Activity implements TextWatcher {
     private static final String TAG = "EditorActivity";
+
+    private static final String KEY_EDITOR_FILE = "editor_file";
+    private static final String KEY_HISTORY_STATE = "editor_history";
 
     private boolean dirty = false;
 
@@ -74,16 +78,24 @@ public final class EditorActivity extends Activity implements TextWatcher {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (editorFile != null) {
-            outState.putParcelable(TAG, editorFile);
+            outState.putParcelable(KEY_EDITOR_FILE, editorFile);
+        }
+        if (editorHistory != null) {
+            outState.putParcelable(KEY_HISTORY_STATE, editorHistory.saveInstance());
         }
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        final EditorFile savedEditorFile = savedInstanceState.getParcelable(TAG);
+        final EditorFile savedEditorFile = savedInstanceState.getParcelable(KEY_EDITOR_FILE);
         if (savedEditorFile != null) {
             editorFile = savedEditorFile;
+            updateTitle();
+        }
+        final Parcelable historyState = savedInstanceState.getParcelable(KEY_HISTORY_STATE);
+        if (historyState != null && editorHistory != null) {
+            editorHistory.restoreInstance(historyState);
         }
     }
 
@@ -145,10 +157,7 @@ public final class EditorActivity extends Activity implements TextWatcher {
     private void setContent(@NonNull EditorFile editorFile, @NonNull String content) {
         this.editorFile = editorFile;
 
-        final ActionBar actionBar = getActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(editorFile.getName());
-        }
+        updateTitle();
 
         loadView.setVisibility(View.GONE);
         summaryView.setText(getString(R.string.editor_summary_info, 1, 1));
@@ -184,6 +193,13 @@ public final class EditorActivity extends Activity implements TextWatcher {
                         showWriteErrorMessage(editorFile);
                     }
                 });
+    }
+
+    private void updateTitle() {
+        final ActionBar actionBar = getActionBar();
+        if (actionBar != null && editorFile != null) {
+            actionBar.setTitle(editorFile.getName());
+        }
     }
 
     private void updateSummary(int cursorStart, int cursorEnd) {
