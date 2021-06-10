@@ -166,6 +166,8 @@ public final class EditorActivity extends Activity implements TextWatcher {
         setDirty();
     }
 
+    /* File loading */
+
     private void openFile(@NonNull Uri uri, @Nullable String type) {
         summaryView.setText(R.string.editor_summary_loading);
         loadView.setVisibility(View.VISIBLE);
@@ -181,6 +183,8 @@ public final class EditorActivity extends Activity implements TextWatcher {
                 () -> showReadErrorMessage(editorFile));
     }
 
+    /* Content operations */
+
     private void setContent(@NonNull EditorFile editorFile, @NonNull String content) {
         this.editorFile = editorFile;
 
@@ -192,13 +196,6 @@ public final class EditorActivity extends Activity implements TextWatcher {
 
         // Set listener after the contents
         registerTextListeners();
-    }
-
-    private void registerTextListeners() {
-        textEditorView.post(() -> {
-            textEditorView.addTextChangedListener(this);
-            textEditorView.addTextChangedListener(editorHistory);
-        });
     }
 
     private void saveContents(boolean quitWhenSaved) {
@@ -230,6 +227,15 @@ public final class EditorActivity extends Activity implements TextWatcher {
         if (!editorHistory.canUndo()) {
             setNotDirty();
         }
+    }
+
+    /* UI */
+
+    private void registerTextListeners() {
+        textEditorView.post(() -> {
+            textEditorView.addTextChangedListener(this);
+            textEditorView.addTextChangedListener(editorHistory);
+        });
     }
 
     private void updateTitle() {
@@ -295,6 +301,7 @@ public final class EditorActivity extends Activity implements TextWatcher {
         new AlertDialog.Builder(this, R.style.AppTheme)
                 .setTitle(fileName)
                 .setMessage(getString(R.string.editor_save_quit_ask, fileName))
+                .setCancelable(false)
                 .setPositiveButton(R.string.editor_action_save_and_quit,
                         (d, which) -> {
                             d.dismiss();
