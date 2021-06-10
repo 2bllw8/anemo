@@ -55,9 +55,9 @@ public final class EditorActivity extends Activity implements TextWatcher {
             finish();
         } else {
             setContentView(R.layout.editor_ui);
-            loadView = findViewById(android.R.id.progress);
-            summaryView = findViewById(android.R.id.summary);
-            textEditorView = findViewById(android.R.id.edit);
+            loadView = findViewById(R.id.editorProgress);
+            summaryView = findViewById(R.id.editorSummary);
+            textEditorView = findViewById(R.id.editorContent);
 
             editorHistory = new EditorHistory(textEditorView::getEditableText,
                     getResources().getInteger(R.integer.editor_history_buffer_size));
