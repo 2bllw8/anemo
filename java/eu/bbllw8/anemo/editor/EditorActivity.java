@@ -45,6 +45,9 @@ public final class EditorActivity extends Activity implements TextWatcher {
     private TextEditorView textEditorView;
     private EditorHistory editorHistory;
 
+    private MenuItem undoButton;
+    private MenuItem saveButton;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +70,8 @@ public final class EditorActivity extends Activity implements TextWatcher {
 
             if (savedInstanceState == null) {
                 openFile(inputUri, intent.getType());
+            } else {
+                registerTextListeners();
             }
         }
     }
@@ -93,6 +98,11 @@ public final class EditorActivity extends Activity implements TextWatcher {
         final Parcelable historyState = savedInstanceState.getParcelable(KEY_HISTORY_STATE);
         if (historyState != null && editorHistory != null) {
             editorHistory.restoreInstance(historyState);
+            if (editorHistory.canUndo()) {
+                setDirty();
+            } else {
+                setNotDirty();
+            }
         }
     }
 
@@ -103,6 +113,8 @@ public final class EditorActivity extends Activity implements TextWatcher {
             return super.onCreateOptionsMenu(menu);
         } else {
             menuInflater.inflate(R.menu.editor_menu, menu);
+            undoButton = menu.findItem(R.id.editorUndo);
+            saveButton = menu.findItem(R.id.editorSave);
             return true;
         }
     }
@@ -114,7 +126,7 @@ public final class EditorActivity extends Activity implements TextWatcher {
             saveContents();
             return true;
         } else if (id == R.id.editorUndo) {
-            editorHistory.undo();
+            undoAction();
             return true;
         } else {
             return super.onMenuItemSelected(featureId, item);
@@ -131,9 +143,7 @@ public final class EditorActivity extends Activity implements TextWatcher {
 
     @Override
     public void afterTextChanged(Editable s) {
-        if (!dirty) {
-            dirty = true;
-        }
+        setDirty();
     }
 
     private void openFile(@NonNull Uri uri, @Nullable String type) {
@@ -161,8 +171,14 @@ public final class EditorActivity extends Activity implements TextWatcher {
         textEditorView.setText(content);
 
         // Set listener after the contents
-        textEditorView.addTextChangedListener(this);
-        textEditorView.addTextChangedListener(editorHistory);
+        registerTextListeners();
+    }
+
+    private void registerTextListeners() {
+        textEditorView.post(() -> {
+            textEditorView.addTextChangedListener(this);
+            textEditorView.addTextChangedListener(editorHistory);
+        });
     }
 
     private void saveContents() {
@@ -189,6 +205,13 @@ public final class EditorActivity extends Activity implements TextWatcher {
                 });
     }
 
+    private void undoAction() {
+        editorHistory.undo();
+        if (!editorHistory.canUndo()) {
+            setNotDirty();
+        }
+    }
+
     private void updateTitle() {
         final ActionBar actionBar = getActionBar();
         if (actionBar != null && editorFile != null) {
@@ -207,6 +230,24 @@ public final class EditorActivity extends Activity implements TextWatcher {
                             cursorEnd - cursorStart, point.y, point.x);
                     summaryView.post(() -> summaryView.setText(summary));
                 });
+    }
+
+    /* Dirty */
+
+    private void setNotDirty() {
+        if (dirty) {
+            dirty = false;
+            undoButton.setEnabled(false);
+            saveButton.setEnabled(false);
+        }
+    }
+
+    private void setDirty() {
+        if (!dirty) {
+            dirty = true;
+            undoButton.setEnabled(true);
+            saveButton.setEnabled(true);
+        }
     }
 
     /* Dialogs */

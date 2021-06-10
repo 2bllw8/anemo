@@ -20,7 +20,7 @@ public final class EditorHistory implements TextWatcher {
     private final Supplier<Editable> editableTextSupplier;
 
     @NonNull
-    private volatile HistoryBuffer buffer;
+    private volatile HistoryStack stack;
 
     private CharSequence contentBefore = "";
     private boolean trackChanges = true;
@@ -28,7 +28,7 @@ public final class EditorHistory implements TextWatcher {
     public EditorHistory(@NonNull Supplier<Editable> editableTextSupplier,
                          int bufferSize) {
         this.editableTextSupplier = editableTextSupplier;
-        this.buffer = new HistoryBuffer(bufferSize);
+        this.stack = new HistoryStack(bufferSize);
     }
 
     @Override
@@ -42,7 +42,7 @@ public final class EditorHistory implements TextWatcher {
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         if (trackChanges) {
             final CharSequence contentAfter = s.subSequence(start, start + count);
-            buffer.push(new HistoryEntry(contentBefore, contentAfter, start));
+            stack.push(new HistoryEntry(contentBefore, contentAfter, start));
         }
     }
 
@@ -51,7 +51,7 @@ public final class EditorHistory implements TextWatcher {
     }
 
     public void undo() {
-        buffer.pop().ifPresent(entry -> {
+        stack.pop().ifPresent(entry -> {
             final Editable editable = editableTextSupplier.get();
 
             final CharSequence before = entry.getBefore();
@@ -73,16 +73,19 @@ public final class EditorHistory implements TextWatcher {
             Selection.setSelection(editable, before == null
                     ? start
                     : start + before.length());
-
         });
+    }
+
+    public boolean canUndo() {
+        return stack.isNotEmpty();
     }
 
     @NonNull
     public Parcelable saveInstance() {
-        return buffer;
+        return stack;
     }
 
     public void restoreInstance(@NonNull Parcelable in) {
-        buffer = (HistoryBuffer) in;
+        stack = (HistoryStack) in;
     }
 }

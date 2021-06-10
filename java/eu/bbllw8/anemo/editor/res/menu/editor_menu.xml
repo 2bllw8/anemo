@@ -7,11 +7,13 @@
         android:id="@+id/editorUndo"
         android:title="@string/editor_action_undo"
         android:icon="@drawable/ic_editor_undo"
+        android:enabled="false"
         android:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/editorSave"
         android:title="@string/editor_action_save"
         android:icon="@drawable/ic_editor_save"
+        android:enabled="false"
         android:showAsAction="always" />
 </menu>
