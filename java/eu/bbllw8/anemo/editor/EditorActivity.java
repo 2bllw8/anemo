@@ -6,6 +6,7 @@ package eu.bbllw8.anemo.editor;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -68,6 +69,13 @@ public final class EditorActivity extends Activity implements TextWatcher {
             summaryView.setText(getString(R.string.editor_summary_info, 1, 1));
             textEditorView.setOnCursorChanged(this::updateSummary);
 
+            final ActionBar actionBar = getActionBar();
+            if (actionBar != null) {
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_editor_close);
+                actionBar.setHomeActionContentDescription(R.string.editor_action_quit);
+                actionBar.setDisplayHomeAsUpEnabled(true);
+            }
+
             if (savedInstanceState == null) {
                 openFile(inputUri, intent.getType());
             } else {
@@ -123,13 +131,25 @@ public final class EditorActivity extends Activity implements TextWatcher {
     public boolean onMenuItemSelected(int featureId, @NonNull MenuItem item) {
         final int id = item.getItemId();
         if (id == R.id.editorSave) {
-            saveContents();
+            saveContents(false);
             return true;
         } else if (id == R.id.editorUndo) {
             undoAction();
             return true;
+        } else if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
         } else {
             return super.onMenuItemSelected(featureId, item);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (dirty) {
+            showQuitMessage();
+        } else {
+            super.onBackPressed();
         }
     }
 
@@ -181,7 +201,7 @@ public final class EditorActivity extends Activity implements TextWatcher {
         });
     }
 
-    private void saveContents() {
+    private void saveContents(boolean quitWhenSaved) {
         if (editorFile == null || !dirty) {
             return;
         }
@@ -198,7 +218,7 @@ public final class EditorActivity extends Activity implements TextWatcher {
                 success -> {
                     if (success) {
                         savingDialog.dismiss();
-                        showSavedMessage();
+                        showSavedMessage(quitWhenSaved);
                     } else {
                         showWriteErrorMessage(editorFile);
                     }
@@ -252,14 +272,40 @@ public final class EditorActivity extends Activity implements TextWatcher {
 
     /* Dialogs */
 
-    private void showSavedMessage() {
+    private void showSavedMessage(boolean finishOnDismiss) {
         final TipDialog dialog = new TipDialog.Builder(this)
                 .setIcon(eu.bbllw8.anemo.tip.R.drawable.tip_ic_success)
                 .setMessage(getString(R.string.editor_save_success))
                 .setCancelable(false)
+                .setOnDismissListener(() -> {
+                    if (finishOnDismiss) {
+                        finish();
+                    }
+                })
                 .show();
 
         new Handler(Looper.getMainLooper()).postDelayed(dialog::dismiss, 1500L);
+    }
+
+    private void showQuitMessage() {
+        final String fileName = editorFile == null
+                ? getString(R.string.editor_title_generic)
+                : editorFile.getName();
+
+        new AlertDialog.Builder(this, R.style.AppTheme)
+                .setTitle(fileName)
+                .setMessage(getString(R.string.editor_save_quit_ask, fileName))
+                .setPositiveButton(R.string.editor_action_save_and_quit,
+                        (d, which) -> {
+                            d.dismiss();
+                            saveContents(true);
+                        })
+                .setNegativeButton(R.string.editor_action_quit,
+                        (d, which) -> {
+                            d.dismiss();
+                            finish();
+                        })
+                .show();
     }
 
     private void showOpenErrorMessage() {
