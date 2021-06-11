@@ -21,6 +21,15 @@
 
     <string name="editor_title_generic">Text file</string>
 
+    <string name="editor_menu_size">Text size</string>
+    <string name="editor_menu_size_small">Small</string>
+    <string name="editor_menu_size_medium">Medium</string>
+    <string name="editor_menu_size_large">Large</string>
+    <string name="editor_menu_font">Font style</string>
+    <string name="editor_menu_font_mono">Monospace</string>
+    <string name="editor_menu_font_sans">Sans serif</string>
+    <string name="editor_menu_font_serif">Serif</string>
+
     <string name="editor_save_quit_ask">Quit without saving changes to \'%1$s\'?</string>
     <string name="editor_save_in_progress">Saving \'%1$s\'…</string>
     <string name="editor_save_success">Saved</string>

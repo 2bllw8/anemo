@@ -1,0 +1,9 @@
+<!--
+  ~ Copyright (c) 2021 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<resources>
+    <dimen name="editorFontSizeSmall">14sp</dimen>
+    <dimen name="editorFontSizeMedium">18sp</dimen>
+    <dimen name="editorFontSizeLarge">22sp</dimen>
+</resources>

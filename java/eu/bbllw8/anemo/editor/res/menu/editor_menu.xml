@@ -7,6 +7,8 @@
         android:id="@+id/editorUndo"
         android:title="@string/editor_action_undo"
         android:icon="@drawable/ic_editor_undo"
+        android:alphabeticModifiers="CTRL"
+        android:alphabeticShortcut="z"
         android:enabled="false"
         android:showAsAction="ifRoom" />
 
@@ -14,6 +16,49 @@
         android:id="@+id/editorSave"
         android:title="@string/editor_action_save"
         android:icon="@drawable/ic_editor_save"
+        android:alphabeticModifiers="CTRL"
+        android:alphabeticShortcut="s"
         android:enabled="false"
         android:showAsAction="always" />
+
+    <item
+        android:id="@+id/editorFontSize"
+        android:showAsAction="never"
+        android:title="@string/editor_menu_size">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/editorFontSizeSmall"
+                    android:title="@string/editor_menu_size_small" />
+                <item
+                    android:id="@+id/editorFontSizeMedium"
+                    android:title="@string/editor_menu_size_medium"
+                    android:checked="true" />
+                <item
+                    android:id="@+id/editorFontSizeLarge"
+                    android:title="@string/editor_menu_size_large" />
+            </group>
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/editorFontStyle"
+        android:showAsAction="never"
+        android:title="@string/editor_menu_font">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/editorFontStyleMono"
+                    android:title="@string/editor_menu_font_mono"
+                    android:checked="true" />
+                <item
+                    android:id="@+id/editorFontStyleSans"
+                    android:title="@string/editor_menu_font_sans" />
+                <item
+                    android:id="@+id/editorFontStyleSerif"
+                    android:title="@string/editor_menu_font_serif" />
+            </group>
+        </menu>
+    </item>
+
 </menu>

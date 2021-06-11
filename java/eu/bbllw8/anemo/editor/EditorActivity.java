@@ -8,6 +8,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +16,7 @@ import android.os.Looper;
 import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -44,6 +46,7 @@ public final class EditorActivity extends Activity implements TextWatcher {
     private View loadView;
     private TextView summaryView;
     private TextEditorView textEditorView;
+
     private EditorHistory editorHistory;
 
     private MenuItem undoButton;
@@ -135,6 +138,16 @@ public final class EditorActivity extends Activity implements TextWatcher {
             return true;
         } else if (id == R.id.editorUndo) {
             undoAction();
+            return true;
+        } else if (id == R.id.editorFontSizeSmall
+                || id == R.id.editorFontSizeMedium
+                || id == R.id.editorFontSizeLarge) {
+            changeFontSize(item);
+            return true;
+        } else if (id == R.id.editorFontStyleMono
+                || id == R.id.editorFontStyleSans
+                || id == R.id.editorFontStyleSerif) {
+            changeFontStyle(item);
             return true;
         } else if (id == android.R.id.home) {
             onBackPressed();
@@ -256,6 +269,39 @@ public final class EditorActivity extends Activity implements TextWatcher {
                             cursorEnd - cursorStart, point.y, point.x);
                     summaryView.post(() -> summaryView.setText(summary));
                 });
+    }
+
+    /* Config */
+
+    private void changeFontSize(@NonNull MenuItem item) {
+        final int id = item.getItemId();
+        final int newTextSizeRes;
+        if (id == R.id.editorFontSizeSmall) {
+            newTextSizeRes = R.dimen.editorFontSizeSmall;
+        } else if (id == R.id.editorFontSizeLarge) {
+            newTextSizeRes = R.dimen.editorFontSizeLarge;
+        } else {
+            newTextSizeRes = R.dimen.editorFontSizeMedium;
+        }
+
+        textEditorView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                getResources().getDimensionPixelSize(newTextSizeRes));
+        item.setChecked(true);
+    }
+
+    private void changeFontStyle(@NonNull MenuItem item) {
+        final int id = item.getItemId();
+        final Typeface newTypeface;
+        if (id == R.id.editorFontStyleSans) {
+            newTypeface = Typeface.SANS_SERIF;
+        } else if (id == R.id.editorFontStyleSerif) {
+            newTypeface = Typeface.SERIF;
+        } else {
+            newTypeface = Typeface.MONOSPACE;
+        }
+
+        textEditorView.setTypeface(newTypeface);
+        item.setChecked(true);
     }
 
     /* Dirty */
