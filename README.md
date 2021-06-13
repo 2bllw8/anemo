@@ -7,7 +7,7 @@ Anemo is a file utility application that provides private local storage, but ins
 stand-alone file manager user interface, it hooks into various components of Android making
 it feel like a native part of the operative system.
 It also includes a simple text editor for editing text files on the device.
-Moreover it provides ways for the user to export contents from other apps and save them files.
+Moreover it provides ways for the user to export contents from other apps and save them as files.
 
 ## Features
 
@@ -35,13 +35,11 @@ Moreover it provides ways for the user to export contents from other apps and sa
 
 - Improvements and more features to the text editor
 
-## Get
-
-### Download
+## Download
 
 Download the apk from [latest](https://github.com/2bllw8/anemo/releases/latest) release tag.
 
-### Build
+## Build
 
 With Bazel:
 - `bazel build //:app`
@@ -49,3 +47,11 @@ With Bazel:
 
 With AOSP / LineageOS:
 - `mka anemo`
+
+## Get help
+
+Open an issue [on github](https://github.com/2bllw8/anemo/issues/)
+
+## License
+
+Anemo is licensed under the [GNU General Public License v3 (GPL-3)](http://www.gnu.org/copyleft/gpl.html).
