@@ -61,4 +61,9 @@
         </menu>
     </item>
 
+    <item
+        android:id="@+id/editorCommandVisibility"
+        android:checkable="true"
+        android:showAsAction="never"
+        android:title="@string/editor_menu_command" />
 </menu>

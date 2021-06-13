@@ -17,26 +17,38 @@ import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.Optional;
+
+import eu.bbllw8.anemo.editor.commands.EditorCommand;
+import eu.bbllw8.anemo.editor.commands.EditorCommandParser;
 import eu.bbllw8.anemo.editor.history.EditorHistory;
 import eu.bbllw8.anemo.editor.tasks.EditorFileLoaderTask;
 import eu.bbllw8.anemo.editor.tasks.EditorFileReaderTask;
 import eu.bbllw8.anemo.editor.tasks.EditorFileWriterTask;
 import eu.bbllw8.anemo.editor.tasks.GetCursorCoordinatesTask;
+import eu.bbllw8.anemo.editor.tasks.TextDeleteTask;
+import eu.bbllw8.anemo.editor.tasks.TextFindTask;
+import eu.bbllw8.anemo.editor.tasks.TextSubstituteTask;
 import eu.bbllw8.anemo.task.TaskExecutor;
 import eu.bbllw8.anemo.tip.TipDialog;
 
 public final class EditorActivity extends Activity implements TextWatcher {
     private static final String KEY_EDITOR_FILE = "editor_file";
     private static final String KEY_HISTORY_STATE = "editor_history";
+    private static final String KEY_SHOW_COMMAND_BAR = "editor_show_command_bar";
 
     private boolean dirty = false;
 
@@ -46,8 +58,13 @@ public final class EditorActivity extends Activity implements TextWatcher {
     private View loadView;
     private TextView summaryView;
     private TextEditorView textEditorView;
+    private ViewGroup commandBar;
+    private EditText commandField;
 
     private EditorHistory editorHistory;
+
+    private final EditorCommandParser editorCommandParser = new EditorCommandParser();
+    private boolean showCommandBar = false;
 
     private MenuItem undoButton;
     private MenuItem saveButton;
@@ -65,12 +82,27 @@ public final class EditorActivity extends Activity implements TextWatcher {
             loadView = findViewById(R.id.editorProgress);
             summaryView = findViewById(R.id.editorSummary);
             textEditorView = findViewById(R.id.editorContent);
+            commandBar = findViewById(R.id.editorCommandBar);
+            commandField = findViewById(R.id.editorCommandField);
+            final ImageView commandHelpButton = findViewById(R.id.editorCommandHelp);
+            final ImageView commandRunButton = findViewById(R.id.editorCommandRun);
 
             editorHistory = new EditorHistory(textEditorView::getEditableText,
                     getResources().getInteger(R.integer.editor_history_buffer_size));
 
             summaryView.setText(getString(R.string.editor_summary_info, 1, 1));
             textEditorView.setOnCursorChanged(this::updateSummary);
+            commandField.setOnKeyListener((v, code, ev) -> {
+                if (code == KeyEvent.KEYCODE_ENTER) {
+                    runCurrentCommand();
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            commandHelpButton.setOnClickListener(v -> showCommandHelpMessage());
+            commandRunButton.setOnClickListener(v -> runCurrentCommand());
 
             final ActionBar actionBar = getActionBar();
             if (actionBar != null) {
@@ -96,6 +128,7 @@ public final class EditorActivity extends Activity implements TextWatcher {
         if (editorHistory != null) {
             outState.putParcelable(KEY_HISTORY_STATE, editorHistory.saveInstance());
         }
+        outState.putBoolean(KEY_SHOW_COMMAND_BAR, showCommandBar);
     }
 
     @Override
@@ -114,6 +147,10 @@ public final class EditorActivity extends Activity implements TextWatcher {
             } else {
                 setNotDirty();
             }
+        }
+        showCommandBar = savedInstanceState.getBoolean(KEY_SHOW_COMMAND_BAR);
+        if (showCommandBar) {
+            commandBar.setVisibility(View.VISIBLE);
         }
     }
 
@@ -148,6 +185,9 @@ public final class EditorActivity extends Activity implements TextWatcher {
                 || id == R.id.editorFontStyleSans
                 || id == R.id.editorFontStyleSerif) {
             changeFontStyle(item);
+            return true;
+        } else if (id == R.id.editorCommandVisibility) {
+            changeCommandBarVisibility(item);
             return true;
         } else if (id == android.R.id.home) {
             onBackPressed();
@@ -304,6 +344,68 @@ public final class EditorActivity extends Activity implements TextWatcher {
         item.setChecked(true);
     }
 
+    /* Commands */
+
+    private void changeCommandBarVisibility(@NonNull MenuItem item) {
+        if (item.isChecked()) {
+            // Hide
+            commandBar.setVisibility(View.GONE);
+            item.setChecked(false);
+            showCommandBar = false;
+        } else {
+            // Show
+            commandBar.setVisibility(View.VISIBLE);
+            item.setChecked(true);
+            showCommandBar = true;
+        }
+    }
+
+    private void runCurrentCommand() {
+        final String input = commandField.getText().toString();
+        final Optional<EditorCommand> commandOpt = editorCommandParser.parse(input);
+        if (commandOpt.isPresent()) {
+            final EditorCommand command = commandOpt.get();
+            if (command instanceof EditorCommand.Find) {
+                runFindCommand((EditorCommand.Find) command);
+            } else if (command instanceof EditorCommand.Delete) {
+                runDeleteCommand((EditorCommand.Delete) command);
+            } else if (command instanceof EditorCommand.Substitute) {
+                runSubstituteCommand((EditorCommand.Substitute) command);
+            } else {
+                showTmpErrorMessage(getString(R.string.editor_command_unknown));
+            }
+        } else {
+            showTmpErrorMessage(getString(R.string.editor_command_unknown));
+        }
+    }
+
+    private void runFindCommand(@NonNull EditorCommand.Find command) {
+        final String content = textEditorView.getText().toString();
+        final int selectionEnd = textEditorView.getSelectionEnd();
+        final int cursor = selectionEnd == -1
+                ? textEditorView.getSelectionStart()
+                : selectionEnd;
+        TaskExecutor.runTask(new TextFindTask(command.getToFind(), content, cursor),
+                range -> {
+                    textEditorView.requestFocus();
+                    textEditorView.setSelection(range.getLower(), range.getUpper());
+                },
+                () -> showTmpErrorMessage(getString(R.string.editor_command_find_none)));
+    }
+
+    private void runDeleteCommand(@NonNull EditorCommand.Delete command) {
+        final String content = textEditorView.getText().toString();
+        TaskExecutor.runTask(new TextDeleteTask(command.getToDelete(), content),
+                textEditorView::setText);
+    }
+
+    private void runSubstituteCommand(@NonNull EditorCommand.Substitute command) {
+        final String content = textEditorView.getText().toString();
+        TaskExecutor.runTask(new TextSubstituteTask(command.getToFind(),
+                        command.getReplaceWith(), content),
+                textEditorView::setText);
+    }
+
     /* Dirty */
 
     private void setNotDirty() {
@@ -361,24 +463,46 @@ public final class EditorActivity extends Activity implements TextWatcher {
                 .show();
     }
 
+    private void showCommandHelpMessage() {
+        new AlertDialog.Builder(this, R.style.AppTheme)
+                .setTitle(R.string.editor_menu_command)
+                .setMessage(R.string.editor_command_help)
+                .setPositiveButton(R.string.editor_action_dismiss,
+                        (d, which) -> d.dismiss())
+                .show();
+    }
+
     private void showOpenErrorMessage() {
-        showErrorMessage(getString(R.string.editor_error_open));
+        showFatalErrorMessage(getString(R.string.editor_error_open));
     }
 
     private void showReadErrorMessage(@NonNull EditorFile editorFile) {
-        showErrorMessage(getString(R.string.editor_error_read, editorFile.getName()));
+        showFatalErrorMessage(getString(R.string.editor_error_read, editorFile.getName()));
     }
 
     private void showWriteErrorMessage(@NonNull EditorFile editorFile) {
-        showErrorMessage(getString(R.string.editor_save_failed, editorFile.getName()));
+        showFatalErrorMessage(getString(R.string.editor_save_failed, editorFile.getName()));
     }
 
-    private void showErrorMessage(@NonNull CharSequence message) {
+    private void showFatalErrorMessage(@NonNull CharSequence message) {
         new TipDialog.Builder(this)
                 .setMessage(message)
                 .setIcon(eu.bbllw8.anemo.tip.R.drawable.tip_ic_error)
                 .setDismissOnTouchOutside(true)
                 .setOnDismissListener(this::finish)
                 .show();
+    }
+
+    private void showTmpErrorMessage(@NonNull CharSequence message) {
+        final TipDialog dialog = new TipDialog.Builder(this)
+                .setMessage(message)
+                .setIcon(eu.bbllw8.anemo.tip.R.drawable.tip_ic_error)
+                .setDismissOnTouchOutside(true)
+                .show();
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        }, 1000L);
     }
 }

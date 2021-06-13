@@ -14,6 +14,7 @@ Moreover it provides ways for the user to export contents from other apps and sa
 - Simple text editor to open edit and save text files
   - Cursor and selection information
   - Undo actions
+  - Find, substitute, delete commands
 - Lock access to the private storage using a quick tile
   - Auto lock after 15 minutes
   - Password for locking access to the files
@@ -27,7 +28,6 @@ Moreover it provides ways for the user to export contents from other apps and sa
 ### Planned features
 
 - Improvements and more features to the text editor
-- Replace snippets UI with new editor interface
 
 ## Get
 

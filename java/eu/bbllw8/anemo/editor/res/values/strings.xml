@@ -5,7 +5,10 @@
 <resources>
     <string name="editor_label">Text editor</string>
 
+    <string name="editor_action_dismiss">Dismiss</string>
+    <string name="editor_action_help">Help</string>
     <string name="editor_action_ignore">Ignore</string>
+    <string name="editor_action_run">Run</string>
     <string name="editor_action_quit">Quit</string>
     <string name="editor_action_save">Save</string>
     <string name="editor_action_save_and_quit">Save &amp; quit</string>
@@ -29,6 +32,16 @@
     <string name="editor_menu_font_mono">Monospace</string>
     <string name="editor_menu_font_sans">Sans serif</string>
     <string name="editor_menu_font_serif">Serif</string>
+    <string name="editor_menu_command">Command field</string>
+
+    <string name="editor_command_help">Type commands in the command field to operate on the text:\n
+        • /my text : find next occurrence of \"my text\"\n
+        • d/my text/ : remove all occurrences of \"my text\"\n
+        • s/my text/new text/ : substitute all occurrences of \"my text\" with \"new text\"
+    </string>
+    <string name="editor_command_hint">Type a command…</string>
+    <string name="editor_command_unknown">Error: unknown or badly–formatted command</string>
+    <string name="editor_command_find_none">Find: no match</string>
 
     <string name="editor_save_quit_ask">Quit without saving changes to \'%1$s\'?</string>
     <string name="editor_save_in_progress">Saving \'%1$s\'…</string>

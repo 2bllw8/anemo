@@ -33,6 +33,44 @@
         android:layout_alignParentBottom="true"
         android:orientation="vertical">
 
+        <FrameLayout
+            android:id="@+id/editorCommandBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <EditText
+                android:id="@+id/editorCommandField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="42dp"
+                android:hint="@string/editor_command_hint"
+                android:importantForAutofill="no"
+                android:inputType="textNoSuggestions"
+                android:maxLines="1" />
+
+            <ImageView
+                android:id="@+id/editorCommandHelp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_gravity="center_vertical|start"
+                android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="@string/editor_action_help"
+                android:padding="6dp"
+                android:src="@drawable/ic_editor_help" />
+
+            <ImageView
+                android:id="@+id/editorCommandRun"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_gravity="center_vertical|end"
+                android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="@string/editor_action_run"
+                android:padding="6dp"
+                android:src="@drawable/ic_editor_run" />
+        </FrameLayout>
+
         <TextView
             android:id="@+id/editorSummary"
             android:layout_width="match_parent"
