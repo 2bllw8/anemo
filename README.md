@@ -14,7 +14,12 @@ Moreover it provides ways for the user to export contents from other apps and sa
 - Simple text editor to open edit and save text files
   - Cursor and selection information
   - Undo actions
-  - Find, substitute, delete commands
+  - Commands
+    - `/my text`: find next occurrence of _my text_ from the current cursor position
+    - `d/my text/`: delete all occurrences of _my text_
+    - `s/my text/new text/`: substitute all occurrences of _my text_ with _new text_
+    - `N s/my text/new text/`: substitute first N occurrence of _my text_ with _new text_
+      (write the number instead of N)
 - Lock access to the private storage using a quick tile
   - Auto lock after 15 minutes
   - Password for locking access to the files
