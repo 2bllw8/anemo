@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
 
-public final class TextSubstituteTask implements Callable<String> {
+public final class TextSubstituteAllTask implements Callable<String> {
     @NonNull
     private final String toFind;
     @NonNull
@@ -17,9 +17,9 @@ public final class TextSubstituteTask implements Callable<String> {
     @NonNull
     private final String content;
 
-    public TextSubstituteTask(@NonNull String toFind,
-                              @NonNull String replacement,
-                              @NonNull String content) {
+    public TextSubstituteAllTask(@NonNull String toFind,
+                                 @NonNull String replacement,
+                                 @NonNull String content) {
         this.toFind = toFind;
         this.replacement = replacement;
         this.content = content;

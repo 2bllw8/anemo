@@ -41,7 +41,8 @@ import eu.bbllw8.anemo.editor.tasks.EditorFileWriterTask;
 import eu.bbllw8.anemo.editor.tasks.GetCursorCoordinatesTask;
 import eu.bbllw8.anemo.editor.tasks.TextDeleteTask;
 import eu.bbllw8.anemo.editor.tasks.TextFindTask;
-import eu.bbllw8.anemo.editor.tasks.TextSubstituteTask;
+import eu.bbllw8.anemo.editor.tasks.TextSubstituteFirstTask;
+import eu.bbllw8.anemo.editor.tasks.TextSubstituteAllTask;
 import eu.bbllw8.anemo.task.TaskExecutor;
 import eu.bbllw8.anemo.tip.TipDialog;
 
@@ -369,10 +370,12 @@ public final class EditorActivity extends Activity implements TextWatcher {
                 runFindCommand((EditorCommand.Find) command);
             } else if (command instanceof EditorCommand.Delete) {
                 runDeleteCommand((EditorCommand.Delete) command);
-            } else if (command instanceof EditorCommand.Substitute) {
-                runSubstituteCommand((EditorCommand.Substitute) command);
+            } else if (command instanceof EditorCommand.SubstituteAll) {
+                runSubstituteAllCommand((EditorCommand.SubstituteAll) command);
+            } else if (command instanceof EditorCommand.SubstituteFirst) {
+                runSubstituteFirstCommand((EditorCommand.SubstituteFirst) command);
             } else {
-                showTmpErrorMessage(getString(R.string.editor_command_unknown));
+                showTmpErrorMessage(getString(R.string.editor_command_not_implemented));
             }
         } else {
             showTmpErrorMessage(getString(R.string.editor_command_unknown));
@@ -399,10 +402,18 @@ public final class EditorActivity extends Activity implements TextWatcher {
                 textEditorView::setText);
     }
 
-    private void runSubstituteCommand(@NonNull EditorCommand.Substitute command) {
+    private void runSubstituteAllCommand(@NonNull EditorCommand.SubstituteAll command) {
         final String content = textEditorView.getText().toString();
-        TaskExecutor.runTask(new TextSubstituteTask(command.getToFind(),
+        TaskExecutor.runTask(new TextSubstituteAllTask(command.getToFind(),
                         command.getReplaceWith(), content),
+                textEditorView::setText);
+    }
+
+    private void runSubstituteFirstCommand(@NonNull EditorCommand.SubstituteFirst command) {
+        final String content = textEditorView.getText().toString();
+        final int cursor = textEditorView.getSelectionStart();
+        TaskExecutor.runTask(new TextSubstituteFirstTask(command.getToFind(),
+                command.getReplaceWith(), content, command.getCount(), cursor),
                 textEditorView::setText);
     }
 

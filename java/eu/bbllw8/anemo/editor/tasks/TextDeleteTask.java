@@ -22,6 +22,6 @@ public final class TextDeleteTask implements Callable<String> {
 
     @Override
     public String call() {
-        return new TextSubstituteTask(toDelete, "", content).call();
+        return new TextSubstituteAllTask(toDelete, "", content).call();
     }
 }

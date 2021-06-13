@@ -39,16 +39,46 @@ public class EditorCommand {
         }
     }
 
-    public static class Substitute extends EditorCommand {
+    public static class SubstituteAll extends EditorCommand {
         @NonNull
         private final String toFind;
         @NonNull
         private final String replaceWith;
 
-        public Substitute(@NonNull String toFind,
-                          @NonNull String replaceWith) {
+        public SubstituteAll(@NonNull String toFind,
+                             @NonNull String replaceWith) {
             this.toFind = toFind;
             this.replaceWith = replaceWith;
+        }
+
+        @NonNull
+        public String getToFind() {
+            return toFind;
+        }
+
+        @NonNull
+        public String getReplaceWith() {
+            return replaceWith;
+        }
+    }
+
+    public static class SubstituteFirst extends EditorCommand {
+        private final int count;
+        @NonNull
+        private final String toFind;
+        @NonNull
+        private final String replaceWith;
+
+        public SubstituteFirst(int count,
+                               @NonNull String toFind,
+                               @NonNull String replaceWith) {
+            this.count = count;
+            this.toFind = toFind;
+            this.replaceWith = replaceWith;
+        }
+
+        public int getCount() {
+            return count;
         }
 
         @NonNull
