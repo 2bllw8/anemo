@@ -114,7 +114,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
         row.add(Root.COLUMN_AVAILABLE_BYTES, baseDir.getFreeSpace());
         row.add(Root.COLUMN_FLAGS, flags);
         row.add(Root.COLUMN_ICON, R.drawable.ic_storage);
-        row.add(Root.COLUMN_MIME_TYPES, AnemoUtils.getChildMimeTypes(baseDir));
+        row.add(Root.COLUMN_MIME_TYPES, DocumentUtils.getChildMimeTypes(baseDir));
         row.add(Root.COLUMN_TITLE, context.getString(R.string.app_name));
         row.add(Root.COLUMN_SUMMARY, context.getString(R.string.anemo_description));
         return result;
@@ -161,7 +161,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                                        @NonNull String[] projection)
             throws FileNotFoundException {
         final MatrixCursor result = new MatrixCursor(documentProjection(projection));
-        AnemoUtils.getLastModifiedFiles(getFileForId(rootId), MAX_LAST_MODIFIED)
+        DocumentUtils.getLastModifiedFiles(getFileForId(rootId), MAX_LAST_MODIFIED)
                 .forEach(file -> includeFile(result, file));
         return result;
     }
@@ -173,7 +173,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                                        @Nullable String[] projection)
             throws FileNotFoundException {
         final MatrixCursor result = new MatrixCursor(documentProjection(projection));
-        AnemoUtils.queryFiles(getFileForId(rootId), query, MAX_SEARCH_RESULTS)
+        DocumentUtils.queryFiles(getFileForId(rootId), query, MAX_SEARCH_RESULTS)
                 .forEach(file -> includeFile(result, file));
         return result;
     }
@@ -311,7 +311,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     @NonNull
     @Override
     public String getDocumentType(@NonNull String documentId) throws FileNotFoundException {
-        return AnemoUtils.getTypeForFile(getFileForId(documentId));
+        return DocumentUtils.getTypeForFile(getFileForId(documentId));
     }
 
     @Override
@@ -371,7 +371,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
         }
 
         final String fileName = file.getName();
-        final String mimeType = AnemoUtils.getTypeForFile(file);
+        final String mimeType = DocumentUtils.getTypeForFile(file);
 
         if (mimeType.startsWith("image/")) {
             flags |= Document.FLAG_SUPPORTS_THUMBNAIL;

@@ -19,11 +19,10 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
-public final class AnemoUtils {
-
+final class DocumentUtils {
     private static final String MIME_TYPE_GENERIC = "application/octet-stream";
 
-    private AnemoUtils() {
+    private DocumentUtils() {
     }
 
     @NonNull
@@ -98,15 +97,16 @@ public final class AnemoUtils {
     @NonNull
     public static String getTypeForName(@NonNull String name) {
         final int idxDot = name.lastIndexOf('.');
-        if (idxDot >= 0) {
+        if (idxDot < 0) {
+            return MIME_TYPE_GENERIC;
+        } else {
             final String extension = name.substring(idxDot + 1);
-            final String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-            if (mime != null) {
-                return mime;
-            }
+            final String mime = MimeTypeMap.getSingleton()
+                    .getMimeTypeFromExtension(extension);
+            return mime == null
+                    ? MIME_TYPE_GENERIC
+                    : mime;
         }
-        // Fallback to generic mime type
-        return MIME_TYPE_GENERIC;
     }
 
     @NonNull
@@ -119,11 +119,6 @@ public final class AnemoUtils {
             }
         }
 
-        final StringBuilder mimeTypesString = new StringBuilder();
-        for (final String mimeType : mimeTypes) {
-            mimeTypesString.append(mimeType).append('\n');
-        }
-
-        return mimeTypesString.toString();
+        return String.join("\n", mimeTypes);
     }
 }
