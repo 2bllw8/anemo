@@ -102,13 +102,17 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
         final MatrixCursor.RowBuilder row = result.newRow();
         final File baseDir = homeEnvironment.getBaseDir();
 
+        int flags = Root.FLAG_SUPPORTS_CREATE
+                | Root.FLAG_SUPPORTS_RECENTS
+                | Root.FLAG_SUPPORTS_SEARCH;
+        if (context.getResources().getBoolean(R.bool.documents_support_eject)) {
+            flags |= Root.FLAG_SUPPORTS_EJECT;
+        }
+
         row.add(Root.COLUMN_ROOT_ID, HomeEnvironment.ROOT);
         row.add(Root.COLUMN_DOCUMENT_ID, getDocIdForFile(baseDir));
         row.add(Root.COLUMN_AVAILABLE_BYTES, baseDir.getFreeSpace());
-        row.add(Root.COLUMN_FLAGS, Root.FLAG_SUPPORTS_CREATE
-                | Root.FLAG_SUPPORTS_RECENTS
-                | Root.FLAG_SUPPORTS_SEARCH
-                | Root.FLAG_SUPPORTS_EJECT);
+        row.add(Root.COLUMN_FLAGS, flags);
         row.add(Root.COLUMN_ICON, R.drawable.ic_storage);
         row.add(Root.COLUMN_MIME_TYPES, AnemoUtils.getChildMimeTypes(baseDir));
         row.add(Root.COLUMN_TITLE, context.getString(R.string.app_name));
