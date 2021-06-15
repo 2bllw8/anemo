@@ -107,7 +107,8 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
         row.add(Root.COLUMN_AVAILABLE_BYTES, baseDir.getFreeSpace());
         row.add(Root.COLUMN_FLAGS, Root.FLAG_SUPPORTS_CREATE
                 | Root.FLAG_SUPPORTS_RECENTS
-                | Root.FLAG_SUPPORTS_SEARCH);
+                | Root.FLAG_SUPPORTS_SEARCH
+                | Root.FLAG_SUPPORTS_EJECT);
         row.add(Root.COLUMN_ICON, R.drawable.ic_storage);
         row.add(Root.COLUMN_MIME_TYPES, AnemoUtils.getChildMimeTypes(baseDir));
         row.add(Root.COLUMN_TITLE, context.getString(R.string.app_name));
@@ -307,6 +308,13 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     @Override
     public String getDocumentType(@NonNull String documentId) throws FileNotFoundException {
         return AnemoUtils.getTypeForFile(getFileForId(documentId));
+    }
+
+    @Override
+    public void ejectRoot(String rootId) {
+        if (HomeEnvironment.ROOT.equals(rootId)) {
+            lockStore.lock();
+        }
     }
 
     /* Projection */
