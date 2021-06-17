@@ -58,6 +58,7 @@ public final class EditorActivity extends Activity implements TextWatcher {
     @Nullable
     private EditorFile editorFile = null;
 
+    private ActionBar actionBar;
     private View loadView;
     private TextView summaryView;
     private TextEditorView textEditorView;
@@ -77,12 +78,12 @@ public final class EditorActivity extends Activity implements TextWatcher {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.editor_ui);
+        actionBar = getActionBar();
         loadView = findViewById(R.id.editorProgress);
         summaryView = findViewById(R.id.editorSummary);
         textEditorView = findViewById(R.id.editorContent);
         commandBar = findViewById(R.id.editorCommandBar);
         commandField = findViewById(R.id.editorCommandField);
-        final ActionBar actionBar = getActionBar();
         final ImageView commandHelpButton = findViewById(R.id.editorCommandHelp);
         final ImageView commandRunButton = findViewById(R.id.editorCommandRun);
 
@@ -297,6 +298,9 @@ public final class EditorActivity extends Activity implements TextWatcher {
     private void saveNewFile(@NonNull EditorFile editorFile,
                              boolean quitWhenSaved) {
         this.editorFile = editorFile;
+        if (!quitWhenSaved) {
+            updateTitle();
+        }
         writeContents(editorFile, quitWhenSaved);
     }
 
@@ -350,7 +354,6 @@ public final class EditorActivity extends Activity implements TextWatcher {
     }
 
     private void updateTitle() {
-        final ActionBar actionBar = getActionBar();
         if (actionBar != null && editorFile != null) {
             actionBar.setTitle(editorFile.getName());
         }
