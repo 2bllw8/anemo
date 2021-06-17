@@ -517,7 +517,6 @@ public final class EditorActivity extends Activity implements TextWatcher {
         new AlertDialog.Builder(this, R.style.AppTheme)
                 .setTitle(fileName)
                 .setMessage(getString(R.string.editor_save_quit_ask, fileName))
-                .setCancelable(false)
                 .setPositiveButton(R.string.editor_action_save_and_quit,
                         (d, which) -> {
                             d.dismiss();
@@ -528,6 +527,8 @@ public final class EditorActivity extends Activity implements TextWatcher {
                             d.dismiss();
                             finish();
                         })
+                .setNeutralButton(android.R.string.cancel,
+                        (d, which) -> d.dismiss())
                 .show();
     }
 
