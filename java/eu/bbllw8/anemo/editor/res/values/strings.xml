@@ -24,6 +24,7 @@
 
     <string name="editor_title_generic">Text file</string>
 
+    <string name="editor_menu_new">New file</string>
     <string name="editor_menu_size">Text size</string>
     <string name="editor_menu_size_small">Small</string>
     <string name="editor_menu_size_medium">Medium</string>

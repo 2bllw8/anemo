@@ -41,8 +41,8 @@ import eu.bbllw8.anemo.editor.tasks.EditorFileWriterTask;
 import eu.bbllw8.anemo.editor.tasks.GetCursorCoordinatesTask;
 import eu.bbllw8.anemo.editor.tasks.TextDeleteTask;
 import eu.bbllw8.anemo.editor.tasks.TextFindTask;
-import eu.bbllw8.anemo.editor.tasks.TextSubstituteFirstTask;
 import eu.bbllw8.anemo.editor.tasks.TextSubstituteAllTask;
+import eu.bbllw8.anemo.editor.tasks.TextSubstituteFirstTask;
 import eu.bbllw8.anemo.task.TaskExecutor;
 import eu.bbllw8.anemo.tip.TipDialog;
 
@@ -50,6 +50,8 @@ public final class EditorActivity extends Activity implements TextWatcher {
     private static final String KEY_EDITOR_FILE = "editor_file";
     private static final String KEY_HISTORY_STATE = "editor_history";
     private static final String KEY_SHOW_COMMAND_BAR = "editor_show_command_bar";
+    private static final int REQUEST_CREATE_FILE_AND_QUIT = 10;
+    private static final int REQUEST_CREATE_FILE = 11;
 
     private boolean dirty = false;
 
@@ -74,49 +76,49 @@ public final class EditorActivity extends Activity implements TextWatcher {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.editor_ui);
+        loadView = findViewById(R.id.editorProgress);
+        summaryView = findViewById(R.id.editorSummary);
+        textEditorView = findViewById(R.id.editorContent);
+        commandBar = findViewById(R.id.editorCommandBar);
+        commandField = findViewById(R.id.editorCommandField);
+        final ActionBar actionBar = getActionBar();
+        final ImageView commandHelpButton = findViewById(R.id.editorCommandHelp);
+        final ImageView commandRunButton = findViewById(R.id.editorCommandRun);
+
+        editorHistory = new EditorHistory(textEditorView::getEditableText,
+                getResources().getInteger(R.integer.editor_history_buffer_size));
+
+        summaryView.setText(getString(R.string.editor_summary_info, 1, 1));
+        textEditorView.setOnCursorChanged(this::updateSummary);
+        commandField.setOnKeyListener((v, code, ev) -> {
+            if (code == KeyEvent.KEYCODE_ENTER) {
+                runCurrentCommand();
+                return true;
+            } else {
+                return false;
+            }
+        });
+
+        commandHelpButton.setOnClickListener(v -> showCommandHelpMessage());
+        commandRunButton.setOnClickListener(v -> runCurrentCommand());
+
+        if (actionBar != null) {
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_editor_close);
+            actionBar.setHomeActionContentDescription(R.string.editor_action_quit);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         final Intent intent = getIntent();
         final Uri inputUri = intent.getData();
-        if (inputUri == null) {
-            finish();
-        } else {
-            setContentView(R.layout.editor_ui);
-            loadView = findViewById(R.id.editorProgress);
-            summaryView = findViewById(R.id.editorSummary);
-            textEditorView = findViewById(R.id.editorContent);
-            commandBar = findViewById(R.id.editorCommandBar);
-            commandField = findViewById(R.id.editorCommandField);
-            final ImageView commandHelpButton = findViewById(R.id.editorCommandHelp);
-            final ImageView commandRunButton = findViewById(R.id.editorCommandRun);
-
-            editorHistory = new EditorHistory(textEditorView::getEditableText,
-                    getResources().getInteger(R.integer.editor_history_buffer_size));
-
-            summaryView.setText(getString(R.string.editor_summary_info, 1, 1));
-            textEditorView.setOnCursorChanged(this::updateSummary);
-            commandField.setOnKeyListener((v, code, ev) -> {
-                if (code == KeyEvent.KEYCODE_ENTER) {
-                    runCurrentCommand();
-                    return true;
-                } else {
-                    return false;
-                }
-            });
-
-            commandHelpButton.setOnClickListener(v -> showCommandHelpMessage());
-            commandRunButton.setOnClickListener(v -> runCurrentCommand());
-
-            final ActionBar actionBar = getActionBar();
-            if (actionBar != null) {
-                actionBar.setHomeAsUpIndicator(R.drawable.ic_editor_close);
-                actionBar.setHomeActionContentDescription(R.string.editor_action_quit);
-                actionBar.setDisplayHomeAsUpEnabled(true);
-            }
-
-            if (savedInstanceState == null) {
-                openFile(inputUri, intent.getType());
-            } else {
+        if (savedInstanceState == null) {
+            if (inputUri == null) {
                 registerTextListeners();
+            } else {
+                openFile(inputUri, intent.getType());
             }
+        } else {
+            registerTextListeners();
         }
     }
 
@@ -190,6 +192,9 @@ public final class EditorActivity extends Activity implements TextWatcher {
         } else if (id == R.id.editorCommandVisibility) {
             changeCommandBarVisibility(item);
             return true;
+        } else if (id == R.id.editorNew) {
+            openNewFile();
+            return true;
         } else if (id == android.R.id.home) {
             onBackPressed();
             return true;
@@ -204,6 +209,19 @@ public final class EditorActivity extends Activity implements TextWatcher {
             showQuitMessage();
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CREATE_FILE:
+                loadSaveFile(data.getData(), data.getType(), false);
+                break;
+            case REQUEST_CREATE_FILE_AND_QUIT:
+                loadSaveFile(data.getData(), data.getType(), true);
+                break;
         }
     }
 
@@ -237,6 +255,20 @@ public final class EditorActivity extends Activity implements TextWatcher {
                 () -> showReadErrorMessage(editorFile));
     }
 
+    private void loadSaveFile(@NonNull Uri uri,
+                              @Nullable String type,
+                              boolean quitWhenSaved) {
+        TaskExecutor.runTask(new EditorFileLoaderTask(getContentResolver(), uri, type),
+                editorFile -> saveNewFile(editorFile, quitWhenSaved),
+                this::showOpenErrorMessage);
+    }
+
+    private void openNewFile() {
+        final Intent intent = new Intent(this, EditorActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        startActivity(intent);
+    }
+
     /* Content operations */
 
     private void setContent(@NonNull EditorFile editorFile, @NonNull String content) {
@@ -253,10 +285,23 @@ public final class EditorActivity extends Activity implements TextWatcher {
     }
 
     private void saveContents(boolean quitWhenSaved) {
-        if (editorFile == null || !dirty) {
-            return;
+        if (dirty) {
+            if (editorFile == null) {
+                pickFileToSave(quitWhenSaved);
+            } else {
+                writeContents(editorFile, quitWhenSaved);
+            }
         }
+    }
 
+    private void saveNewFile(@NonNull EditorFile editorFile,
+                             boolean quitWhenSaved) {
+        this.editorFile = editorFile;
+        writeContents(editorFile, quitWhenSaved);
+    }
+
+    private void writeContents(@NonNull EditorFile editorFile,
+                               boolean quitWhenSaved) {
         final TipDialog savingDialog = new TipDialog.Builder(this)
                 .setCancelable(false)
                 .setDismissOnTouchOutside(false)
@@ -268,12 +313,24 @@ public final class EditorActivity extends Activity implements TextWatcher {
         TaskExecutor.runTask(new EditorFileWriterTask(getContentResolver(), editorFile, contents),
                 success -> {
                     if (success) {
+                        // Change only the variable, still allow undo
+                        dirty = false;
                         savingDialog.dismiss();
                         showSavedMessage(quitWhenSaved);
                     } else {
                         showWriteErrorMessage(editorFile);
                     }
                 });
+
+    }
+
+    private void pickFileToSave(boolean quitWhenSaved) {
+        final Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT)
+                .addCategory(Intent.CATEGORY_OPENABLE)
+                .setType("text/plain");
+        startActivityForResult(intent, quitWhenSaved
+                ? REQUEST_CREATE_FILE_AND_QUIT
+                : REQUEST_CREATE_FILE);
     }
 
     private void undoAction() {
