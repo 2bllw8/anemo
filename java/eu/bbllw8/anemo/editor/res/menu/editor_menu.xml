@@ -27,6 +27,11 @@
         android:title="@string/editor_menu_new" />
 
     <item
+        android:id="@+id/editorOpen"
+        android:showAsAction="never"
+        android:title="@string/editor_menu_open" />
+
+    <item
         android:id="@+id/editorFontSize"
         android:showAsAction="never"
         android:title="@string/editor_menu_size">

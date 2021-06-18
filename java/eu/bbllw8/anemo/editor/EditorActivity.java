@@ -50,8 +50,10 @@ public final class EditorActivity extends Activity implements TextWatcher {
     private static final String KEY_EDITOR_FILE = "editor_file";
     private static final String KEY_HISTORY_STATE = "editor_history";
     private static final String KEY_SHOW_COMMAND_BAR = "editor_show_command_bar";
+    private static final String TYPE_PLAIN_TEXT = "text/plain";
     private static final int REQUEST_CREATE_FILE_AND_QUIT = 10;
     private static final int REQUEST_CREATE_FILE = 11;
+    private static final int REQUEST_OPEN_FILE = 12;
 
     private boolean dirty = false;
 
@@ -116,7 +118,7 @@ public final class EditorActivity extends Activity implements TextWatcher {
             if (inputUri == null) {
                 registerTextListeners();
             } else {
-                openFile(inputUri, intent.getType());
+                loadFile(inputUri, intent.getType());
             }
         } else {
             registerTextListeners();
@@ -194,7 +196,10 @@ public final class EditorActivity extends Activity implements TextWatcher {
             changeCommandBarVisibility(item);
             return true;
         } else if (id == R.id.editorNew) {
-            openNewFile();
+            createNewFile();
+            return true;
+        } else if (id == R.id.editorOpen) {
+            openFileFromPicker();
             return true;
         } else if (id == android.R.id.home) {
             onBackPressed();
@@ -223,6 +228,9 @@ public final class EditorActivity extends Activity implements TextWatcher {
             case REQUEST_CREATE_FILE_AND_QUIT:
                 loadSaveFile(data.getData(), data.getType(), true);
                 break;
+            case REQUEST_OPEN_FILE:
+                openPickedFile(data.getData(), data.getType());
+                break;
         }
     }
 
@@ -241,7 +249,7 @@ public final class EditorActivity extends Activity implements TextWatcher {
 
     /* File loading */
 
-    private void openFile(@NonNull Uri uri, @Nullable String type) {
+    private void loadFile(@NonNull Uri uri, @Nullable String type) {
         summaryView.setText(R.string.editor_summary_loading);
         loadView.setVisibility(View.VISIBLE);
 
@@ -264,9 +272,25 @@ public final class EditorActivity extends Activity implements TextWatcher {
                 this::showOpenErrorMessage);
     }
 
-    private void openNewFile() {
+    private void createNewFile() {
         final Intent intent = new Intent(this, EditorActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        startActivity(intent);
+    }
+
+    private void openFileFromPicker() {
+        final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT)
+                .addCategory(Intent.CATEGORY_OPENABLE)
+                .setType("text/*");
+        startActivityForResult(intent, REQUEST_OPEN_FILE);
+    }
+
+    private void openPickedFile(@NonNull Uri uri, @Nullable String type) {
+        final Intent intent = new Intent(this, EditorActivity.class)
+                .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                        | Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
+                .setDataAndType(uri, type == null ? TYPE_PLAIN_TEXT : type);
         startActivity(intent);
     }
 
@@ -331,7 +355,7 @@ public final class EditorActivity extends Activity implements TextWatcher {
     private void pickFileToSave(boolean quitWhenSaved) {
         final Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT)
                 .addCategory(Intent.CATEGORY_OPENABLE)
-                .setType("text/plain");
+                .setType(TYPE_PLAIN_TEXT);
         startActivityForResult(intent, quitWhenSaved
                 ? REQUEST_CREATE_FILE_AND_QUIT
                 : REQUEST_CREATE_FILE);
