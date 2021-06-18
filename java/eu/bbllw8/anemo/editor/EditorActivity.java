@@ -169,6 +169,9 @@ public final class EditorActivity extends Activity implements TextWatcher {
             menuInflater.inflate(R.menu.editor_menu, menu);
             undoButton = menu.findItem(R.id.editorUndo);
             saveButton = menu.findItem(R.id.editorSave);
+
+            final MenuItem shellButton = menu.findItem(R.id.editorShowShell);
+            shellButton.setChecked(EditorShell.isEnabled(this));
             return true;
         }
     }
@@ -200,6 +203,9 @@ public final class EditorActivity extends Activity implements TextWatcher {
             return true;
         } else if (id == R.id.editorOpen) {
             openFileSelector();
+            return true;
+        } else if (id == R.id.editorShowShell) {
+            changeShellStatus(item);
             return true;
         } else if (id == android.R.id.home) {
             onBackPressed();
@@ -428,6 +434,16 @@ public final class EditorActivity extends Activity implements TextWatcher {
 
         textEditorView.setTypeface(newTypeface);
         item.setChecked(true);
+    }
+
+    private void changeShellStatus(@NonNull MenuItem item) {
+        if (item.isChecked()) {
+            EditorShell.setEnabled(this, false);
+            item.setChecked(false);
+        } else {
+            EditorShell.setEnabled(this, true);
+            item.setChecked(true);
+        }
     }
 
     /* Commands */

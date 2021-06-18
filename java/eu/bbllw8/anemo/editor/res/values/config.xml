@@ -9,4 +9,7 @@
 
     <!-- History buffer size -->
     <integer name="editor_history_buffer_size">128</integer>
+
+    <!-- Enable the editor shell by default -->
+    <bool name="editor_shell_enabled_default">false</bool>
 </resources>
