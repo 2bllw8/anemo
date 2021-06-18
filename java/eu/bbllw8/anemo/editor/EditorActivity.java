@@ -225,8 +225,14 @@ public final class EditorActivity extends Activity implements TextWatcher {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode,
+                                    int resultCode,
+                                    @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (data == null || resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
         switch (requestCode) {
             case REQUEST_CREATE_FILE:
                 loadNewSaveFile(data.getData(), data.getType(), false);
