@@ -6,6 +6,7 @@ package eu.bbllw8.anemo.editor;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -398,8 +399,10 @@ public final class EditorActivity extends Activity implements TextWatcher {
     }
 
     private void updateTitle() {
-        if (actionBar != null && editorFile != null) {
-            actionBar.setTitle(editorFile.getName());
+        if (editorFile != null) {
+            final String title = editorFile.getName();
+            actionBar.setTitle(title);
+            setTaskDescription(new ActivityManager.TaskDescription(title));
         }
     }
 
