@@ -292,9 +292,16 @@ public final class EditorActivity extends Activity implements TextWatcher {
     }
 
     private void openFileSaver(boolean quitWhenSaved) {
+        String title = textEditorView.getText().toString().split("\n")[0];
+        if (title.length() > 20) {
+            title = title.substring(0, 20);
+        }
+        title += ".txt";
+
         final Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT)
                 .addCategory(Intent.CATEGORY_OPENABLE)
-                .setType(TYPE_PLAIN_TEXT);
+                .setType(TYPE_PLAIN_TEXT)
+                .putExtra(Intent.EXTRA_TITLE, title);
         startActivityForResult(intent, quitWhenSaved
                 ? REQUEST_CREATE_FILE_AND_QUIT
                 : REQUEST_CREATE_FILE);
