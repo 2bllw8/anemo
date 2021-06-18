@@ -196,10 +196,10 @@ public final class EditorActivity extends Activity implements TextWatcher {
             changeCommandBarVisibility(item);
             return true;
         } else if (id == R.id.editorNew) {
-            createNewFile();
+            openFileSaver();
             return true;
         } else if (id == R.id.editorOpen) {
-            openFileFromPicker();
+            openFileSelector();
             return true;
         } else if (id == android.R.id.home) {
             onBackPressed();
@@ -223,13 +223,13 @@ public final class EditorActivity extends Activity implements TextWatcher {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQUEST_CREATE_FILE:
-                loadSaveFile(data.getData(), data.getType(), false);
+                loadNewSaveFile(data.getData(), data.getType(), false);
                 break;
             case REQUEST_CREATE_FILE_AND_QUIT:
-                loadSaveFile(data.getData(), data.getType(), true);
+                loadNewSaveFile(data.getData(), data.getType(), true);
                 break;
             case REQUEST_OPEN_FILE:
-                openPickedFile(data.getData(), data.getType());
+                openInNewWindow(data.getData(), data.getType());
                 break;
         }
     }
@@ -264,28 +264,38 @@ public final class EditorActivity extends Activity implements TextWatcher {
                 () -> showReadErrorMessage(editorFile));
     }
 
-    private void loadSaveFile(@NonNull Uri uri,
-                              @Nullable String type,
-                              boolean quitWhenSaved) {
+    private void loadNewSaveFile(@NonNull Uri uri,
+                                 @Nullable String type,
+                                 boolean quitWhenSaved) {
         TaskExecutor.runTask(new EditorFileLoaderTask(getContentResolver(), uri, type),
                 editorFile -> saveNewFile(editorFile, quitWhenSaved),
                 this::showOpenErrorMessage);
     }
 
-    private void createNewFile() {
+    private void openFileSaver() {
         final Intent intent = new Intent(this, EditorActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
         startActivity(intent);
     }
 
-    private void openFileFromPicker() {
+    private void openFileSelector() {
         final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT)
                 .addCategory(Intent.CATEGORY_OPENABLE)
                 .setType("text/*");
         startActivityForResult(intent, REQUEST_OPEN_FILE);
     }
 
-    private void openPickedFile(@NonNull Uri uri, @Nullable String type) {
+    private void openFileSaver(boolean quitWhenSaved) {
+        final Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT)
+                .addCategory(Intent.CATEGORY_OPENABLE)
+                .setType(TYPE_PLAIN_TEXT);
+        startActivityForResult(intent, quitWhenSaved
+                ? REQUEST_CREATE_FILE_AND_QUIT
+                : REQUEST_CREATE_FILE);
+    }
+
+    private void openInNewWindow(@NonNull Uri uri,
+                                 @Nullable String type) {
         final Intent intent = new Intent(this, EditorActivity.class)
                 .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
                         | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
@@ -312,7 +322,7 @@ public final class EditorActivity extends Activity implements TextWatcher {
     private void saveContents(boolean quitWhenSaved) {
         if (dirty) {
             if (editorFile == null) {
-                pickFileToSave(quitWhenSaved);
+                openFileSaver(quitWhenSaved);
             } else {
                 writeContents(editorFile, quitWhenSaved);
             }
@@ -350,15 +360,6 @@ public final class EditorActivity extends Activity implements TextWatcher {
                     }
                 });
 
-    }
-
-    private void pickFileToSave(boolean quitWhenSaved) {
-        final Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT)
-                .addCategory(Intent.CATEGORY_OPENABLE)
-                .setType(TYPE_PLAIN_TEXT);
-        startActivityForResult(intent, quitWhenSaved
-                ? REQUEST_CREATE_FILE_AND_QUIT
-                : REQUEST_CREATE_FILE);
     }
 
     private void undoAction() {
