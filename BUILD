@@ -13,11 +13,11 @@ android_binary(
         "//visibility:public",
     ],
     deps = [
-        "//java/eu/bbllw8/anemo/documents",
         "//java/eu/bbllw8/anemo/editor",
-        "//java/eu/bbllw8/anemo/password",
-        "//java/eu/bbllw8/anemo/receiver",
-        "//java/eu/bbllw8/anemo/snippet",
+        "//java/eu/bbllw8/anemo/documents/password",
+        "//java/eu/bbllw8/anemo/documents/provider",
+        "//java/eu/bbllw8/anemo/documents/receiver",
+        "//java/eu/bbllw8/anemo/documents/snippet",
     ],
 )
 
@@ -29,10 +29,10 @@ android_binary(
         "//visibility:public",
     ],
     deps = [
-        "//java/eu/bbllw8/anemo/documents",
         "//java/eu/bbllw8/anemo/editor",
-        "//java/eu/bbllw8/anemo/password",
-        "//java/eu/bbllw8/anemo/receiver",
-        "//java/eu/bbllw8/anemo/snippet",
+        "//java/eu/bbllw8/anemo/documents/password",
+        "//java/eu/bbllw8/anemo/documents/provider",
+        "//java/eu/bbllw8/anemo/documents/receiver",
+        "//java/eu/bbllw8/anemo/documents/snippet",
     ],
 )

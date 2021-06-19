@@ -11,8 +11,8 @@ android_library(
     ]),
     visibility = [
         "//java/eu/bbllw8/anemo/editor:__pkg__",
-        "//java/eu/bbllw8/anemo/receiver:__pkg__",
-        "//java/eu/bbllw8/anemo/snippet:__pkg__",
+        "//java/eu/bbllw8/anemo/documents/receiver:__pkg__",
+        "//java/eu/bbllw8/anemo/documents/snippet:__pkg__",
     ],
     deps = [
         "@maven//:androidx_annotation_annotation",
