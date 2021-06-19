@@ -200,7 +200,7 @@ public final class EditorActivity extends Activity implements TextWatcher {
             changeCommandBarVisibility(item);
             return true;
         } else if (id == R.id.editorNew) {
-            openFileSaver();
+            openNewWindow();
             return true;
         } else if (id == R.id.editorOpen) {
             openFileSelector();
@@ -285,7 +285,7 @@ public final class EditorActivity extends Activity implements TextWatcher {
                 this::showOpenErrorMessage);
     }
 
-    private void openFileSaver() {
+    private void openNewWindow() {
         final Intent intent = new Intent(this, EditorActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
         startActivity(intent);
