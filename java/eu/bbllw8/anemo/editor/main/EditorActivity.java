@@ -2,7 +2,7 @@
  * Copyright (c) 2021 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package eu.bbllw8.anemo.editor;
+package eu.bbllw8.anemo.editor.main;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -35,18 +35,18 @@ import java.util.Optional;
 
 import eu.bbllw8.anemo.editor.commands.EditorCommand;
 import eu.bbllw8.anemo.editor.commands.EditorCommandParser;
+import eu.bbllw8.anemo.editor.commands.task.DeleteCommandTask;
+import eu.bbllw8.anemo.editor.commands.task.FindCommandTask;
+import eu.bbllw8.anemo.editor.commands.task.SubstituteAllCommandTask;
+import eu.bbllw8.anemo.editor.commands.task.SubstituteFirstCommandTask;
 import eu.bbllw8.anemo.editor.config.Config;
 import eu.bbllw8.anemo.editor.config.EditorConfig;
 import eu.bbllw8.anemo.editor.config.EditorConfigListener;
 import eu.bbllw8.anemo.editor.history.EditorHistory;
-import eu.bbllw8.anemo.editor.tasks.EditorFileLoaderTask;
-import eu.bbllw8.anemo.editor.tasks.EditorFileReaderTask;
-import eu.bbllw8.anemo.editor.tasks.EditorFileWriterTask;
-import eu.bbllw8.anemo.editor.tasks.GetCursorCoordinatesTask;
-import eu.bbllw8.anemo.editor.tasks.TextDeleteTask;
-import eu.bbllw8.anemo.editor.tasks.TextFindTask;
-import eu.bbllw8.anemo.editor.tasks.TextSubstituteAllTask;
-import eu.bbllw8.anemo.editor.tasks.TextSubstituteFirstTask;
+import eu.bbllw8.anemo.editor.io.EditorFile;
+import eu.bbllw8.anemo.editor.io.EditorFileLoaderTask;
+import eu.bbllw8.anemo.editor.io.EditorFileReaderTask;
+import eu.bbllw8.anemo.editor.io.EditorFileWriterTask;
 import eu.bbllw8.anemo.task.TaskExecutor;
 import eu.bbllw8.anemo.tip.TipDialog;
 
@@ -85,7 +85,6 @@ public final class EditorActivity extends Activity
     private MenuItem styleSansMenuItem;
     private MenuItem styleSerifMenuItem;
     private MenuItem showCommandBarMenuItem;
-    private MenuItem showShellMenuItem;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -186,7 +185,7 @@ public final class EditorActivity extends Activity
             styleSansMenuItem = menu.findItem(R.id.editorFontStyleSans);
             styleSerifMenuItem = menu.findItem(R.id.editorFontStyleSerif);
             showCommandBarMenuItem = menu.findItem(R.id.editorShowCommandBar);
-            showShellMenuItem = menu.findItem(R.id.editorShowShell);
+            final MenuItem showShellMenuItem = menu.findItem(R.id.editorShowShell);
 
             switch (editorConfig.getTextSize()) {
                 case Config.Size.LARGE:
@@ -211,7 +210,7 @@ public final class EditorActivity extends Activity
                     break;
             }
             showCommandBarMenuItem.setChecked(editorConfig.getShowCommandBar());
-            showShellMenuItem.setChecked(editorConfig.getShowShell());
+            showShellMenuItem.setChecked(EditorShell.isEnabled(this));
 
             return true;
         }
@@ -254,7 +253,7 @@ public final class EditorActivity extends Activity
             openFileSelector();
             return true;
         } else if (id == R.id.editorShowShell) {
-            editorConfig.setShowShell(!item.isChecked());
+            EditorShell.setEnabled(this, !item.isChecked());
             item.setChecked(!item.isChecked());
             return true;
         } else if (id == android.R.id.home) {
@@ -566,7 +565,7 @@ public final class EditorActivity extends Activity
         final int cursor = selectionEnd == -1
                 ? textEditorView.getSelectionStart()
                 : selectionEnd;
-        TaskExecutor.runTask(new TextFindTask(command.getToFind(), content, cursor),
+        TaskExecutor.runTask(new FindCommandTask(command.getToFind(), content, cursor),
                 range -> {
                     textEditorView.requestFocus();
                     textEditorView.setSelection(range.getLower(), range.getUpper());
@@ -576,13 +575,13 @@ public final class EditorActivity extends Activity
 
     private void runDeleteCommand(@NonNull EditorCommand.Delete command) {
         final String content = textEditorView.getText().toString();
-        TaskExecutor.runTask(new TextDeleteTask(command.getToDelete(), content),
+        TaskExecutor.runTask(new DeleteCommandTask(command.getToDelete(), content),
                 textEditorView::setText);
     }
 
     private void runSubstituteAllCommand(@NonNull EditorCommand.SubstituteAll command) {
         final String content = textEditorView.getText().toString();
-        TaskExecutor.runTask(new TextSubstituteAllTask(command.getToFind(),
+        TaskExecutor.runTask(new SubstituteAllCommandTask(command.getToFind(),
                         command.getReplaceWith(), content),
                 textEditorView::setText);
     }
@@ -590,7 +589,7 @@ public final class EditorActivity extends Activity
     private void runSubstituteFirstCommand(@NonNull EditorCommand.SubstituteFirst command) {
         final String content = textEditorView.getText().toString();
         final int cursor = textEditorView.getSelectionStart();
-        TaskExecutor.runTask(new TextSubstituteFirstTask(command.getToFind(),
+        TaskExecutor.runTask(new SubstituteFirstCommandTask(command.getToFind(),
                 command.getReplaceWith(), content, command.getCount(), cursor),
                 textEditorView::setText);
     }

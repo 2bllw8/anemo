@@ -2,14 +2,14 @@
  * Copyright (c) 2021 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package eu.bbllw8.anemo.editor.tasks;
+package eu.bbllw8.anemo.editor.commands.task;
 
 import androidx.annotation.NonNull;
 
 import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
 
-public final class TextSubstituteFirstTask implements Callable<String> {
+public final class SubstituteFirstCommandTask implements Callable<String> {
     @NonNull
     private final String toFind;
     @NonNull
@@ -19,11 +19,11 @@ public final class TextSubstituteFirstTask implements Callable<String> {
     private final int count;
     private final int cursor;
 
-    public TextSubstituteFirstTask(@NonNull String toFind,
-                                   @NonNull String replacement,
-                                   @NonNull String content,
-                                   int count,
-                                   int cursor) {
+    public SubstituteFirstCommandTask(@NonNull String toFind,
+                                      @NonNull String replacement,
+                                      @NonNull String content,
+                                      int count,
+                                      int cursor) {
         this.toFind = toFind;
         this.replacement = replacement;
         this.content = content;

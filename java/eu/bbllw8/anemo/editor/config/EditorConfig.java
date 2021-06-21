@@ -10,16 +10,12 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import eu.bbllw8.anemo.editor.EditorShell;
-
 public final class EditorConfig {
     private static final String CONFIG_PREFERENCES = "editor_config";
     private static final String KEY_SIZE = "text_size";
     private static final String KEY_STYLE = "text_style";
     private static final String KEY_SHOW_COMMAND_BAR = "show_command_bar";
 
-    @NonNull
-    private final Context context;
     @Nullable
     private final EditorConfigListener configListener;
 
@@ -29,7 +25,6 @@ public final class EditorConfig {
 
     public EditorConfig(@NonNull Context context,
                         @Nullable EditorConfigListener listener) {
-        this.context = context;
         this.configListener = listener;
         this.preferences = context.getSharedPreferences(CONFIG_PREFERENCES, Context.MODE_PRIVATE);
         this.ready = false;
@@ -78,13 +73,5 @@ public final class EditorConfig {
         if (configListener != null && ready) {
             configListener.onShowCommandBarChanged(show);
         }
-    }
-
-    public boolean getShowShell() {
-        return EditorShell.isEnabled(context);
-    }
-
-    public void setShowShell(boolean show) {
-        EditorShell.setEnabled(context, show);
     }
 }

@@ -88,11 +88,4 @@ public final class EditorHistory implements TextWatcher {
     public void restoreInstance(@NonNull Parcelable in) {
         stack = (HistoryStack) in;
     }
-
-    public void onContentChanged() {
-        // Clear the stack
-        while (stack.isNotEmpty()) {
-            stack.pop();
-        }
-    }
 }

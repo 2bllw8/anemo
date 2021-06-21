@@ -2,7 +2,7 @@
  * Copyright (c) 2021 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package eu.bbllw8.anemo.editor.tasks;
+package eu.bbllw8.anemo.editor.io;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
@@ -14,8 +14,6 @@ import androidx.annotation.Nullable;
 
 import java.util.Optional;
 import java.util.concurrent.Callable;
-
-import eu.bbllw8.anemo.editor.EditorFile;
 
 public final class EditorFileLoaderTask implements Callable<Optional<EditorFile>> {
     private static final String[] FILE_INFO_QUERY = {

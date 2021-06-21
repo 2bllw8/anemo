@@ -2,7 +2,7 @@
  * Copyright (c) 2021 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package eu.bbllw8.anemo.editor.tasks;
+package eu.bbllw8.anemo.editor.commands.task;
 
 import android.util.Range;
 
@@ -13,7 +13,7 @@ import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class TextFindTask implements Callable<Optional<Range<Integer>>> {
+public final class FindCommandTask implements Callable<Optional<Range<Integer>>> {
     @NonNull
     private final Pattern pattern;
     @NonNull
@@ -21,9 +21,9 @@ public final class TextFindTask implements Callable<Optional<Range<Integer>>> {
     private final int cursor;
     private final int toFindLength;
 
-    public TextFindTask(@NonNull String toFind,
-                        @NonNull CharSequence content,
-                        int cursor) {
+    public FindCommandTask(@NonNull String toFind,
+                           @NonNull CharSequence content,
+                           int cursor) {
         this.pattern = Pattern.compile(toFind, Pattern.LITERAL);
         this.content = content;
         this.cursor = cursor;

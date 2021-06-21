@@ -11,7 +11,7 @@ android_app {
         ],
     },
     static_libs: [
-        "anemo_editor",
+        "anemo_editor_main",
         "anemo_documents_password",
         "anemo_documents_provider",
         "anemo_documents_receiver",
@@ -22,16 +22,68 @@ android_app {
 // Editor
 
 android_library {
-    name: "anemo_editor",
-    manifest: "java/eu/bbllw8/anemo/editor/AndroidManifest.xml",
+    name: "anemo_editor_commands",
+    manifest: "java/eu/bbllw8/anemo/editor/commands/AndroidManifest.xml",
     sdk_version: "30",
-    resource_dirs: [
-        "java/eu/bbllw8/anemo/editor/res",
-    ],
     srcs: [
-        "java/eu/bbllw8/anemo/editor/**/*.java",
+        "java/eu/bbllw8/anemo/editor/commands/**/*.java",
     ],
     static_libs: [
+        "androidx.annotation_annotation",
+    ],
+}
+
+android_library {
+    name: "anemo_editor_config",
+    manifest: "java/eu/bbllw8/anemo/editor/config/AndroidManifest.xml",
+    sdk_version: "30",
+    srcs: [
+        "java/eu/bbllw8/anemo/editor/config/**/*.java",
+    ],
+    static_libs: [
+        "androidx.annotation_annotation",
+    ],
+}
+
+android_library {
+    name: "anemo_editor_history",
+    manifest: "java/eu/bbllw8/anemo/editor/history/AndroidManifest.xml",
+    sdk_version: "30",
+    srcs: [
+        "java/eu/bbllw8/anemo/editor/history/**/*.java",
+    ],
+    static_libs: [
+        "androidx.annotation_annotation",
+    ],
+}
+
+android_library {
+    name: "anemo_editor_io",
+    manifest: "java/eu/bbllw8/anemo/editor/io/AndroidManifest.xml",
+    sdk_version: "30",
+    srcs: [
+        "java/eu/bbllw8/anemo/editor/io/**/*.java",
+    ],
+    static_libs: [
+        "androidx.annotation_annotation",
+    ],
+}
+
+android_library {
+    name: "anemo_editor_main",
+    manifest: "java/eu/bbllw8/anemo/editor/main/AndroidManifest.xml",
+    sdk_version: "30",
+    resource_dirs: [
+        "java/eu/bbllw8/anemo/editor/main/res",
+    ],
+    srcs: [
+        "java/eu/bbllw8/anemo/editor/main/**/*.java",
+    ],
+    static_libs: [
+        "anemo_editor_commands",
+        "anemo_editor_config",
+        "anemo_editor_history",
+        "anemo_editor_io",
         "anemo_shell",
         "anemo_task",
         "anemo_tip",
@@ -142,6 +194,8 @@ android_library {
     ],
 }
 
+// Common
+
 android_library {
     name: "anemo_shell",
     manifest: "java/eu/bbllw8/anemo/shell/AndroidManifest.xml",
@@ -165,7 +219,6 @@ android_library {
         "androidx.annotation_annotation",
     ],
 }
-
 
 android_library {
     name: "anemo_tip",

@@ -97,7 +97,7 @@
             android:scrollbarStyle="outsideOverlay"
             android:scrollbars="vertical">
 
-            <eu.bbllw8.anemo.editor.TextEditorView
+            <eu.bbllw8.anemo.editor.main.TextEditorView
                 android:id="@+id/editorContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -2,7 +2,7 @@
  * Copyright (c) 2021 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package eu.bbllw8.anemo.editor.tasks;
+package eu.bbllw8.anemo.editor.io;
 
 import android.content.ContentResolver;
 import android.util.Log;
@@ -13,8 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.concurrent.Callable;
-
-import eu.bbllw8.anemo.editor.EditorFile;
 
 public final class EditorFileReaderTask implements Callable<Optional<String>> {
     private static final String TAG = "EditorFileReaderTask";
