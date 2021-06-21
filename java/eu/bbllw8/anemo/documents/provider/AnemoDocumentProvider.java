@@ -106,7 +106,8 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
 
         int flags = Root.FLAG_SUPPORTS_CREATE
                 | Root.FLAG_SUPPORTS_RECENTS
-                | Root.FLAG_SUPPORTS_SEARCH;
+                | Root.FLAG_SUPPORTS_SEARCH
+                | Root.FLAG_LOCAL_ONLY;
         if (context.getResources().getBoolean(R.bool.documents_support_eject)) {
             flags |= Root.FLAG_SUPPORTS_EJECT;
         }
