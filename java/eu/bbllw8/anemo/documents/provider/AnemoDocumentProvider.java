@@ -17,6 +17,7 @@ import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Document;
 import android.provider.DocumentsContract.Root;
 import android.provider.DocumentsProvider;
+import android.system.Int64Ref;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -25,8 +26,12 @@ import androidx.annotation.Nullable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 
 import eu.bbllw8.anemo.documents.home.HomeEnvironment;
 import eu.bbllw8.anemo.documents.lock.LockStore;
@@ -317,6 +322,60 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     @Override
     public String getDocumentType(@NonNull String documentId) throws FileNotFoundException {
         return DocumentUtils.getTypeForFile(getFileForId(documentId));
+    }
+
+    @Nullable
+    @Override
+    public Bundle getDocumentMetadata(@NonNull String documentId) throws FileNotFoundException {
+        final File file = getFileForId(documentId);
+        Bundle bundle = null;
+        if (file.exists()) {
+            if (file.isDirectory()) {
+                final Int64Ref treeCount = new Int64Ref(0);
+                final Int64Ref treeSize = new Int64Ref(0);
+
+                try {
+                    Files.walkFileTree(file.toPath(), new FileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult preVisitDirectory(Path dir,
+                                                                 BasicFileAttributes attrs) {
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public FileVisitResult visitFile(Path file,
+                                                         BasicFileAttributes attrs) {
+                            treeCount.value += 1;
+                            treeSize.value += attrs.size();
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public FileVisitResult visitFileFailed(Path file,
+                                                               IOException exc) {
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        @Override
+                        public FileVisitResult postVisitDirectory(Path dir,
+                                                                  IOException exc) {
+                            return FileVisitResult.CONTINUE;
+                        }
+                    });
+
+                    bundle = new Bundle();
+                    bundle.putLong(DocumentsContract.METADATA_TREE_COUNT, treeCount.value);
+                    bundle.putLong(DocumentsContract.METADATA_TREE_SIZE, treeSize.value);
+                } catch (IOException e) {
+                    Log.e(TAG, "Failed to retrieve metadata", e);
+                }
+            } else if (file.isFile() && file.canRead()) {
+                bundle = new Bundle();
+                bundle.putLong(DocumentsContract.METADATA_TREE_SIZE, file.length());
+            }
+        }
+
+        return bundle;
     }
 
     @Override
