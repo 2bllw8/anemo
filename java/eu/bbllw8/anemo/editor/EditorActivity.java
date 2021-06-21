@@ -35,6 +35,9 @@ import java.util.Optional;
 
 import eu.bbllw8.anemo.editor.commands.EditorCommand;
 import eu.bbllw8.anemo.editor.commands.EditorCommandParser;
+import eu.bbllw8.anemo.editor.config.Config;
+import eu.bbllw8.anemo.editor.config.EditorConfig;
+import eu.bbllw8.anemo.editor.config.EditorConfigListener;
 import eu.bbllw8.anemo.editor.history.EditorHistory;
 import eu.bbllw8.anemo.editor.tasks.EditorFileLoaderTask;
 import eu.bbllw8.anemo.editor.tasks.EditorFileReaderTask;
@@ -47,10 +50,10 @@ import eu.bbllw8.anemo.editor.tasks.TextSubstituteFirstTask;
 import eu.bbllw8.anemo.task.TaskExecutor;
 import eu.bbllw8.anemo.tip.TipDialog;
 
-public final class EditorActivity extends Activity implements TextWatcher {
+public final class EditorActivity extends Activity
+        implements EditorConfigListener, TextWatcher {
     private static final String KEY_EDITOR_FILE = "editor_file";
     private static final String KEY_HISTORY_STATE = "editor_history";
-    private static final String KEY_SHOW_COMMAND_BAR = "editor_show_command_bar";
     private static final String TYPE_PLAIN_TEXT = "text/plain";
     private static final int REQUEST_CREATE_FILE_AND_QUIT = 10;
     private static final int REQUEST_CREATE_FILE = 11;
@@ -68,13 +71,21 @@ public final class EditorActivity extends Activity implements TextWatcher {
     private ViewGroup commandBar;
     private EditText commandField;
 
+    private EditorConfig editorConfig;
     private EditorHistory editorHistory;
 
     private final EditorCommandParser editorCommandParser = new EditorCommandParser();
-    private boolean showCommandBar = false;
 
-    private MenuItem undoButton;
-    private MenuItem saveButton;
+    private MenuItem undoMenuItem;
+    private MenuItem saveMenuItem;
+    private MenuItem sizeSmallMenuItem;
+    private MenuItem sizeMediumMenuItem;
+    private MenuItem sizeLargeMenuItem;
+    private MenuItem styleMonoMenuItem;
+    private MenuItem styleSansMenuItem;
+    private MenuItem styleSerifMenuItem;
+    private MenuItem showCommandBarMenuItem;
+    private MenuItem showShellMenuItem;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,6 +101,7 @@ public final class EditorActivity extends Activity implements TextWatcher {
         final ImageView commandHelpButton = findViewById(R.id.editorCommandHelp);
         final ImageView commandRunButton = findViewById(R.id.editorCommandRun);
 
+        editorConfig = new EditorConfig(this, this);
         editorHistory = new EditorHistory(textEditorView::getEditableText,
                 getResources().getInteger(R.integer.editor_history_buffer_size));
 
@@ -118,11 +130,13 @@ public final class EditorActivity extends Activity implements TextWatcher {
         if (savedInstanceState == null) {
             if (inputUri == null) {
                 registerTextListeners();
+                loadConfig();
             } else {
                 loadFile(inputUri, intent.getType());
             }
         } else {
             registerTextListeners();
+            loadConfig();
         }
     }
 
@@ -135,7 +149,6 @@ public final class EditorActivity extends Activity implements TextWatcher {
         if (editorHistory != null) {
             outState.putParcelable(KEY_HISTORY_STATE, editorHistory.saveInstance());
         }
-        outState.putBoolean(KEY_SHOW_COMMAND_BAR, showCommandBar);
     }
 
     @Override
@@ -155,10 +168,6 @@ public final class EditorActivity extends Activity implements TextWatcher {
                 setNotDirty();
             }
         }
-        showCommandBar = savedInstanceState.getBoolean(KEY_SHOW_COMMAND_BAR);
-        if (showCommandBar) {
-            commandBar.setVisibility(View.VISIBLE);
-        }
     }
 
     @Override
@@ -168,11 +177,17 @@ public final class EditorActivity extends Activity implements TextWatcher {
             return super.onCreateOptionsMenu(menu);
         } else {
             menuInflater.inflate(R.menu.editor_menu, menu);
-            undoButton = menu.findItem(R.id.editorUndo);
-            saveButton = menu.findItem(R.id.editorSave);
+            undoMenuItem = menu.findItem(R.id.editorUndo);
+            saveMenuItem = menu.findItem(R.id.editorSave);
+            sizeSmallMenuItem = menu.findItem(R.id.editorFontSizeSmall);
+            sizeMediumMenuItem = menu.findItem(R.id.editorFontSizeMedium);
+            sizeLargeMenuItem = menu.findItem(R.id.editorFontSizeLarge);
+            styleMonoMenuItem = menu.findItem(R.id.editorFontStyleMono);
+            styleSansMenuItem = menu.findItem(R.id.editorFontStyleSans);
+            styleSerifMenuItem = menu.findItem(R.id.editorFontStyleSerif);
+            showCommandBarMenuItem = menu.findItem(R.id.editorShowCommandBar);
+            showShellMenuItem = menu.findItem(R.id.editorShowShell);
 
-            final MenuItem shellButton = menu.findItem(R.id.editorShowShell);
-            shellButton.setChecked(EditorShell.isEnabled(this));
             return true;
         }
     }
@@ -186,18 +201,26 @@ public final class EditorActivity extends Activity implements TextWatcher {
         } else if (id == R.id.editorUndo) {
             undoAction();
             return true;
-        } else if (id == R.id.editorFontSizeSmall
-                || id == R.id.editorFontSizeMedium
-                || id == R.id.editorFontSizeLarge) {
-            changeFontSize(item);
+        } else if (id == R.id.editorFontSizeSmall) {
+            editorConfig.setTextSize(Config.Size.SMALL);
             return true;
-        } else if (id == R.id.editorFontStyleMono
-                || id == R.id.editorFontStyleSans
-                || id == R.id.editorFontStyleSerif) {
-            changeFontStyle(item);
+        } else if (id == R.id.editorFontSizeMedium) {
+            editorConfig.setTextSize(Config.Size.MEDIUM);
             return true;
-        } else if (id == R.id.editorCommandVisibility) {
-            changeCommandBarVisibility(item);
+        } else if (id == R.id.editorFontSizeLarge) {
+            editorConfig.setTextSize(Config.Size.LARGE);
+            return true;
+        } else if (id == R.id.editorFontStyleMono) {
+            editorConfig.setTextStyle(Config.Style.MONO);
+            return true;
+        } else if (id == R.id.editorFontStyleSans) {
+            editorConfig.setTextStyle(Config.Style.SANS);
+            return true;
+        } else if (id == R.id.editorFontStyleSerif) {
+            editorConfig.setTextStyle(Config.Style.SERIF);
+            return true;
+        } else if (id == R.id.editorShowCommandBar) {
+            editorConfig.setShowCommandBar(!item.isChecked());
             return true;
         } else if (id == R.id.editorNew) {
             openNewWindow();
@@ -206,7 +229,7 @@ public final class EditorActivity extends Activity implements TextWatcher {
             openFileSelector();
             return true;
         } else if (id == R.id.editorShowShell) {
-            changeShellStatus(item);
+            editorConfig.setShowShell(!item.isChecked());
             return true;
         } else if (id == android.R.id.home) {
             onBackPressed();
@@ -337,6 +360,7 @@ public final class EditorActivity extends Activity implements TextWatcher {
 
         // Set listener after the contents
         registerTextListeners();
+        loadConfig();
     }
 
     private void saveContents(boolean quitWhenSaved) {
@@ -421,62 +445,73 @@ public final class EditorActivity extends Activity implements TextWatcher {
 
     /* Config */
 
-    private void changeFontSize(@NonNull MenuItem item) {
-        final int id = item.getItemId();
-        final int newTextSizeRes;
-        if (id == R.id.editorFontSizeSmall) {
-            newTextSizeRes = R.dimen.editorFontSizeSmall;
-        } else if (id == R.id.editorFontSizeLarge) {
-            newTextSizeRes = R.dimen.editorFontSizeLarge;
-        } else {
-            newTextSizeRes = R.dimen.editorFontSizeMedium;
-        }
+    private void loadConfig() {
+        onTextSizeChanged(editorConfig.getTextSize());
+        onTextStyleChanged(editorConfig.getTextStyle());
+        onShowCommandBarChanged(editorConfig.getShowCommandBar());
+        editorConfig.setReady();
+    }
 
+    @Override
+    public void onTextSizeChanged(@Config.Size int newSize) {
+        final int newTextSizeRes;
+        final MenuItem menuItem;
+        switch (newSize) {
+            case Config.Size.SMALL:
+                newTextSizeRes = R.dimen.editorFontSizeSmall;
+                menuItem = sizeSmallMenuItem;
+                break;
+            case Config.Size.LARGE:
+                newTextSizeRes = R.dimen.editorFontSizeLarge;
+                menuItem = sizeLargeMenuItem;
+                break;
+            case Config.Size.MEDIUM:
+            default:
+                newTextSizeRes = R.dimen.editorFontSizeMedium;
+                menuItem = sizeMediumMenuItem;
+                break;
+        }
         textEditorView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimensionPixelSize(newTextSizeRes));
-        item.setChecked(true);
-    }
-
-    private void changeFontStyle(@NonNull MenuItem item) {
-        final int id = item.getItemId();
-        final Typeface newTypeface;
-        if (id == R.id.editorFontStyleSans) {
-            newTypeface = Typeface.SANS_SERIF;
-        } else if (id == R.id.editorFontStyleSerif) {
-            newTypeface = Typeface.SERIF;
-        } else {
-            newTypeface = Typeface.MONOSPACE;
+        if (menuItem != null) {
+            menuItem.setChecked(true);
         }
-
-        textEditorView.setTypeface(newTypeface);
-        item.setChecked(true);
     }
 
-    private void changeShellStatus(@NonNull MenuItem item) {
-        if (item.isChecked()) {
-            EditorShell.setEnabled(this, false);
-            item.setChecked(false);
-        } else {
-            EditorShell.setEnabled(this, true);
-            item.setChecked(true);
+    @Override
+    public void onTextStyleChanged(@Config.Style int newStyle) {
+        final Typeface newTypeface;
+        final MenuItem menuItem;
+        switch (newStyle) {
+            case Config.Style.SANS:
+                newTypeface = Typeface.SANS_SERIF;
+                menuItem = styleSansMenuItem;
+                break;
+            case Config.Style.SERIF:
+                newTypeface = Typeface.SERIF;
+                menuItem = styleSerifMenuItem;
+                break;
+            case Config.Style.MONO:
+            default:
+                newTypeface = Typeface.MONOSPACE;
+                menuItem = styleMonoMenuItem;
+                break;
+        }
+        textEditorView.setTypeface(newTypeface);
+        if (menuItem != null) {
+            menuItem.setChecked(true);
+        }
+    }
+
+    @Override
+    public void onShowCommandBarChanged(boolean show) {
+        commandBar.setVisibility(show ? View.VISIBLE : View.GONE);
+        if (showCommandBarMenuItem != null) {
+            showCommandBarMenuItem.setChecked(show);
         }
     }
 
     /* Commands */
-
-    private void changeCommandBarVisibility(@NonNull MenuItem item) {
-        if (item.isChecked()) {
-            // Hide
-            commandBar.setVisibility(View.GONE);
-            item.setChecked(false);
-            showCommandBar = false;
-        } else {
-            // Show
-            commandBar.setVisibility(View.VISIBLE);
-            item.setChecked(true);
-            showCommandBar = true;
-        }
-    }
 
     private void runCurrentCommand() {
         final String input = commandField.getText().toString();
@@ -539,16 +574,16 @@ public final class EditorActivity extends Activity implements TextWatcher {
     private void setNotDirty() {
         if (dirty) {
             dirty = false;
-            undoButton.setEnabled(false);
-            saveButton.setEnabled(false);
+            undoMenuItem.setEnabled(false);
+            saveMenuItem.setEnabled(false);
         }
     }
 
     private void setDirty() {
         if (!dirty) {
             dirty = true;
-            undoButton.setEnabled(true);
-            saveButton.setEnabled(true);
+            undoMenuItem.setEnabled(true);
+            saveMenuItem.setEnabled(true);
         }
     }
 

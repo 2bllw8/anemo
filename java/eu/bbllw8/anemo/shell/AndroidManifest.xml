@@ -2,10 +2,6 @@
   ~ Copyright (c) 2021 2bllw8
   ~ SPDX-License-Identifier: GPL-3.0-only
   -->
-<!--
-  ~ Copyright (c) 2021 2bllw8
-  ~ SPDX-License-Identifier: GPL-3.0-only
-  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="eu.bbllw8.anemo.shell">
 
