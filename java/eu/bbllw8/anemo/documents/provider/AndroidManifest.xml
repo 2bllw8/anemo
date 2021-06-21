@@ -13,7 +13,7 @@
 
         <provider
             android:name="eu.bbllw8.anemo.documents.provider.AnemoDocumentProvider"
-            android:authorities="eu.bbllw8.anemo.documents.provider"
+            android:authorities="eu.bbllw8.anemo.documents"
             android:exported="true"
             android:grantUriPermissions="true"
             android:permission="android.permission.MANAGE_DOCUMENTS">
