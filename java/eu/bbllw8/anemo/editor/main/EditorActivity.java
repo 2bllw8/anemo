@@ -31,10 +31,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.Optional;
-
 import eu.bbllw8.anemo.editor.commands.EditorCommand;
 import eu.bbllw8.anemo.editor.commands.EditorCommandParser;
+import eu.bbllw8.anemo.editor.commands.EditorCommandsExecutor;
 import eu.bbllw8.anemo.editor.commands.task.DeleteCommandTask;
 import eu.bbllw8.anemo.editor.commands.task.FindCommandTask;
 import eu.bbllw8.anemo.editor.commands.task.SubstituteAllCommandTask;
@@ -50,8 +49,10 @@ import eu.bbllw8.anemo.editor.io.EditorFileWriterTask;
 import eu.bbllw8.anemo.task.TaskExecutor;
 import eu.bbllw8.anemo.tip.TipDialog;
 
-public final class EditorActivity extends Activity
-        implements EditorConfigListener, TextWatcher {
+public final class EditorActivity extends Activity implements
+        EditorConfigListener,
+        EditorCommandsExecutor,
+        TextWatcher {
     private static final String KEY_EDITOR_FILE = "editor_file";
     private static final String KEY_HISTORY_STATE = "editor_history";
     private static final String TYPE_PLAIN_TEXT = "text/plain";
@@ -126,13 +127,8 @@ public final class EditorActivity extends Activity
 
         final Intent intent = getIntent();
         final Uri inputUri = intent.getData();
-        if (savedInstanceState == null) {
-            if (inputUri == null) {
-                registerTextListeners();
-                loadConfig();
-            } else {
-                loadFile(inputUri, intent.getType());
-            }
+        if (savedInstanceState == null && inputUri != null) {
+            loadFile(inputUri, intent.getType());
         } else {
             registerTextListeners();
             loadConfig();
@@ -540,26 +536,16 @@ public final class EditorActivity extends Activity
 
     private void runCurrentCommand() {
         final String input = commandField.getText().toString();
-        final Optional<EditorCommand> commandOpt = editorCommandParser.parse(input);
-        if (commandOpt.isPresent()) {
-            final EditorCommand command = commandOpt.get();
-            if (command instanceof EditorCommand.Find) {
-                runFindCommand((EditorCommand.Find) command);
-            } else if (command instanceof EditorCommand.Delete) {
-                runDeleteCommand((EditorCommand.Delete) command);
-            } else if (command instanceof EditorCommand.SubstituteAll) {
-                runSubstituteAllCommand((EditorCommand.SubstituteAll) command);
-            } else if (command instanceof EditorCommand.SubstituteFirst) {
-                runSubstituteFirstCommand((EditorCommand.SubstituteFirst) command);
-            } else {
-                showTmpErrorMessage(getString(R.string.editor_command_not_implemented));
-            }
-        } else {
+        final boolean success = editorCommandParser.parse(input)
+                .map(this::runCommand)
+                .orElse(false);
+        if (!success) {
             showTmpErrorMessage(getString(R.string.editor_command_unknown));
         }
     }
 
-    private void runFindCommand(@NonNull EditorCommand.Find command) {
+    @Override
+    public void runFindCommand(@NonNull EditorCommand.Find command) {
         final String content = textEditorView.getText().toString();
         final int selectionEnd = textEditorView.getSelectionEnd();
         final int cursor = selectionEnd == -1
@@ -573,20 +559,23 @@ public final class EditorActivity extends Activity
                 () -> showTmpErrorMessage(getString(R.string.editor_command_find_none)));
     }
 
-    private void runDeleteCommand(@NonNull EditorCommand.Delete command) {
+    @Override
+    public void runDeleteCommand(@NonNull EditorCommand.Delete command) {
         final String content = textEditorView.getText().toString();
         TaskExecutor.runTask(new DeleteCommandTask(command.getToDelete(), content),
                 textEditorView::setText);
     }
 
-    private void runSubstituteAllCommand(@NonNull EditorCommand.SubstituteAll command) {
+    @Override
+    public void runSubstituteAllCommand(@NonNull EditorCommand.SubstituteAll command) {
         final String content = textEditorView.getText().toString();
         TaskExecutor.runTask(new SubstituteAllCommandTask(command.getToFind(),
                         command.getReplaceWith(), content),
                 textEditorView::setText);
     }
 
-    private void runSubstituteFirstCommand(@NonNull EditorCommand.SubstituteFirst command) {
+    @Override
+    public void runSubstituteFirstCommand(@NonNull EditorCommand.SubstituteFirst command) {
         final String content = textEditorView.getText().toString();
         final int cursor = textEditorView.getSelectionStart();
         TaskExecutor.runTask(new SubstituteFirstCommandTask(command.getToFind(),
