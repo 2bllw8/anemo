@@ -188,6 +188,31 @@ public final class EditorActivity extends Activity
             showCommandBarMenuItem = menu.findItem(R.id.editorShowCommandBar);
             showShellMenuItem = menu.findItem(R.id.editorShowShell);
 
+            switch (editorConfig.getTextSize()) {
+                case Config.Size.LARGE:
+                    sizeLargeMenuItem.setChecked(true);
+                    break;
+                case Config.Size.MEDIUM:
+                    sizeMediumMenuItem.setChecked(true);
+                    break;
+                case Config.Size.SMALL:
+                    sizeSmallMenuItem.setChecked(true);
+                    break;
+            }
+            switch (editorConfig.getTextStyle()) {
+                case Config.Style.MONO:
+                    styleMonoMenuItem.setChecked(true);
+                    break;
+                case Config.Style.SANS:
+                    styleSansMenuItem.setChecked(true);
+                    break;
+                case Config.Style.SERIF:
+                    styleSerifMenuItem.setChecked(true);
+                    break;
+            }
+            showCommandBarMenuItem.setChecked(editorConfig.getShowCommandBar());
+            showShellMenuItem.setChecked(editorConfig.getShowShell());
+
             return true;
         }
     }
@@ -230,6 +255,7 @@ public final class EditorActivity extends Activity
             return true;
         } else if (id == R.id.editorShowShell) {
             editorConfig.setShowShell(!item.isChecked());
+            item.setChecked(!item.isChecked());
             return true;
         } else if (id == android.R.id.home) {
             onBackPressed();
