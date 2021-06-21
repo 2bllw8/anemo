@@ -27,7 +27,7 @@ public final class SubstituteAllCommandTask implements Callable<String> {
 
     @Override
     public String call() {
-        return Pattern.compile(toFind, Pattern.LITERAL)
+        return Pattern.compile(toFind)
                 .matcher(content)
                 .replaceAll(replacement);
     }

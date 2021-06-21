@@ -33,7 +33,7 @@ public final class SubstituteFirstCommandTask implements Callable<String> {
 
     @Override
     public String call() {
-        return content.substring(0, cursor) + substitute(Pattern.compile(toFind, Pattern.LITERAL),
+        return content.substring(0, cursor) + substitute(Pattern.compile(toFind),
                 content.substring(cursor),
                 count);
     }
