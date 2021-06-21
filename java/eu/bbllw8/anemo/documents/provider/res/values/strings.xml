@@ -4,5 +4,5 @@
   -->
 <resources>
     <string name="anemo_description">Local private storage</string>
-    <string name="anemo_info">Files stored in the local private storage will not be accessible from other apps unless you are willingly selecting them.</string>
+    <string name="anemo_info">Files stored in the Anemo storage are private and other apps can\'t access them without the user\'s consent.</string>
 </resources>

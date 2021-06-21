@@ -61,6 +61,8 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     private LockStore lockStore;
     private int lockStoreListenerToken = LockStore.NULL_LISTENER_ID;
 
+    private boolean showInfo = true;
+
     @Override
     public boolean onCreate() {
         final Context context = getContext();
@@ -145,12 +147,14 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
             }
         }
 
-        if (parent.equals(homeEnvironment.getBaseDir())) {
+        if (parent.equals(homeEnvironment.getBaseDir()) && showInfo) {
             // Show info in root dir
             final Bundle extras = new Bundle();
             extras.putCharSequence(DocumentsContract.EXTRA_INFO,
                     getContext().getText(R.string.anemo_info));
             result.setExtras(extras);
+            // Hide from now on
+            showInfo = false;
         }
         return result;
     }
