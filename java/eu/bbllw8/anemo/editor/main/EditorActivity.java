@@ -316,7 +316,8 @@ public final class EditorActivity extends Activity implements
     }
 
     private void readFile(@NonNull EditorFile editorFile) {
-        TaskExecutor.runTask(new EditorFileReaderTask(getContentResolver(), editorFile),
+        final int maxSize = getResources().getInteger(R.integer.editor_max_file_size);
+        TaskExecutor.runTask(new EditorFileReaderTask(getContentResolver(), editorFile, maxSize),
                 content -> setContent(editorFile, content),
                 () -> showReadErrorMessage(editorFile));
     }
