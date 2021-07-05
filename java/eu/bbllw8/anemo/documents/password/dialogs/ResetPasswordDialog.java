@@ -68,11 +68,6 @@ public final class ResetPasswordDialog extends PasswordDialog {
     @NonNull
     private TextListener buildValidator(@NonNull Button positiveButton,
                                         @NonNull String resetCode) {
-        return new TextListener() {
-            @Override
-            protected void onTextChanged(@NonNull String text) {
-                positiveButton.setEnabled(resetCode.equals(text));
-            }
-        };
+        return text -> positiveButton.setEnabled(resetCode.equals(text));
     }
 }

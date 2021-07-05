@@ -48,27 +48,24 @@ public final class SetPasswordDialog extends PasswordDialog {
     private TextListener buildValidator(@NonNull EditText passwordField,
                                         @NonNull EditText repeatField,
                                         @NonNull Button positiveBtn) {
-        return new TextListener() {
-            @Override
-            protected void onTextChanged(@NonNull String text) {
-                final String passwordValue = passwordField.getText().toString();
-                final String repeatValue = repeatField.getText().toString();
+        return text -> {
+            final String passwordValue = passwordField.getText().toString();
+            final String repeatValue = repeatField.getText().toString();
 
-                if (passwordValue.length() < MIN_PASSWORD_LENGTH) {
-                    positiveBtn.setEnabled(false);
-                    passwordField.setError(res.getString(
-                            R.string.password_error_length, MIN_PASSWORD_LENGTH));
-                    repeatField.setError(null);
-                } else if (!passwordValue.equals(repeatValue)) {
-                    positiveBtn.setEnabled(false);
-                    passwordField.setError(null);
-                    repeatField.setError(res.getString(
-                            R.string.password_error_mismatch));
-                } else {
-                    positiveBtn.setEnabled(true);
-                    passwordField.setError(null);
-                    repeatField.setError(null);
-                }
+            if (passwordValue.length() < MIN_PASSWORD_LENGTH) {
+                positiveBtn.setEnabled(false);
+                passwordField.setError(res.getString(
+                        R.string.password_error_length, MIN_PASSWORD_LENGTH));
+                repeatField.setError(null);
+            } else if (!passwordValue.equals(repeatValue)) {
+                positiveBtn.setEnabled(false);
+                passwordField.setError(null);
+                repeatField.setError(res.getString(
+                        R.string.password_error_mismatch));
+            } else {
+                positiveBtn.setEnabled(true);
+                passwordField.setError(null);
+                repeatField.setError(null);
             }
         };
     }

@@ -56,12 +56,9 @@ public final class InputPasswordDialog extends PasswordDialog {
     @NonNull
     private TextListener buildInputValidator(@NonNull EditText passwordField,
                                              @NonNull Button positiveBtn) {
-        return new TextListener() {
-            @Override
-            protected void onTextChanged(@NonNull String text) {
-                final String value = passwordField.getText().toString();
-                positiveBtn.setEnabled(value.length() >= MIN_PASSWORD_LENGTH);
-            }
+        return text -> {
+            final String value = passwordField.getText().toString();
+            positiveBtn.setEnabled(value.length() >= MIN_PASSWORD_LENGTH);
         };
     }
 }
