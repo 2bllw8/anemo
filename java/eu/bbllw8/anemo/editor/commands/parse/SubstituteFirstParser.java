@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import eu.bbllw8.anemo.editor.commands.EditorCommand;
 
 public final class SubstituteFirstParser implements CommandParser<EditorCommand.SubstituteFirst> {
-    private static final Pattern SUBSTITUTE_FIRST_PATTERN = Pattern.compile("^\\d+ s/.+/?$");
+    private static final Pattern SUBSTITUTE_FIRST_PATTERN = Pattern.compile("^\\d+ s/.+/.+/?$");
 
     @Override
     public boolean matches(@NonNull String command) {
