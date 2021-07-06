@@ -39,7 +39,8 @@
 
     <string name="editor_command_help">Type commands in the command field to operate on the text:\n
         • /my text : find next occurrence of \"my text\"\n
-        • d/my text/ : remove all occurrences of \"my text\"\n
+        • d/my text/ : delete all occurrences of \"my text\"\n
+        • 1 d/my text/ : delete first next occurrence of \"my text\"\n
         • s/my text/new text/ : substitute all occurrences of \"my text\" with \"new text\"\n
         • 1 s/my text/new text/ : substitute first next occurrence of \"my text\" with \"new text\"\n
     </string>

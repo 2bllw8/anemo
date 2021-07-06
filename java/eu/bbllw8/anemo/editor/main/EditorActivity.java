@@ -34,7 +34,8 @@ import androidx.annotation.Nullable;
 import eu.bbllw8.anemo.editor.commands.EditorCommand;
 import eu.bbllw8.anemo.editor.commands.EditorCommandParser;
 import eu.bbllw8.anemo.editor.commands.EditorCommandsExecutor;
-import eu.bbllw8.anemo.editor.commands.task.DeleteCommandTask;
+import eu.bbllw8.anemo.editor.commands.task.DeleteAllCommandTask;
+import eu.bbllw8.anemo.editor.commands.task.DeleteFirstCommandTask;
 import eu.bbllw8.anemo.editor.commands.task.FindCommandTask;
 import eu.bbllw8.anemo.editor.commands.task.SubstituteAllCommandTask;
 import eu.bbllw8.anemo.editor.commands.task.SubstituteFirstCommandTask;
@@ -561,9 +562,18 @@ public final class EditorActivity extends Activity implements
     }
 
     @Override
-    public void runDeleteCommand(@NonNull EditorCommand.Delete command) {
+    public void runDeleteAllCommand(@NonNull EditorCommand.DeleteAll command) {
         final String content = textEditorView.getText().toString();
-        TaskExecutor.runTask(new DeleteCommandTask(command.getToDelete(), content),
+        TaskExecutor.runTask(new DeleteAllCommandTask(command.getToDelete(), content),
+                textEditorView::setText);
+    }
+
+    @Override
+    public void runDeleteFirstCommand(@NonNull EditorCommand.DeleteFirst command) {
+        final String content = textEditorView.getText().toString();
+        final int cursor = textEditorView.getSelectionStart();
+        TaskExecutor.runTask(new DeleteFirstCommandTask(command.getToDelete(),
+                content, command.getCount(), cursor),
                 textEditorView::setText);
     }
 

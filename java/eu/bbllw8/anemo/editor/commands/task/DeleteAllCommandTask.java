@@ -8,14 +8,14 @@ import androidx.annotation.NonNull;
 
 import java.util.concurrent.Callable;
 
-public final class DeleteCommandTask implements Callable<String> {
+public final class DeleteAllCommandTask implements Callable<String> {
     @NonNull
     private final String toDelete;
     @NonNull
     private final String content;
 
-    public DeleteCommandTask(@NonNull String toDelete,
-                             @NonNull String content) {
+    public DeleteAllCommandTask(@NonNull String toDelete,
+                                @NonNull String content) {
         this.toDelete = toDelete;
         this.content = content;
     }

@@ -10,7 +10,9 @@ public interface EditorCommandsExecutor {
 
     void runFindCommand(@NonNull EditorCommand.Find command);
 
-    void runDeleteCommand(@NonNull EditorCommand.Delete command);
+    void runDeleteAllCommand(@NonNull EditorCommand.DeleteAll command);
+
+    void runDeleteFirstCommand(@NonNull EditorCommand.DeleteFirst command);
 
     void runSubstituteAllCommand(@NonNull EditorCommand.SubstituteAll command);
 
@@ -20,8 +22,11 @@ public interface EditorCommandsExecutor {
         if (command instanceof EditorCommand.Find) {
             runFindCommand((EditorCommand.Find) command);
             return true;
-        } else if (command instanceof EditorCommand.Delete) {
-            runDeleteCommand((EditorCommand.Delete) command);
+        } else if (command instanceof EditorCommand.DeleteAll) {
+            runDeleteAllCommand((EditorCommand.DeleteAll) command);
+            return true;
+        } else if (command instanceof EditorCommand.DeleteFirst) {
+            runDeleteFirstCommand((EditorCommand.DeleteFirst) command);
             return true;
         } else if (command instanceof EditorCommand.SubstituteAll) {
             runSubstituteAllCommand((EditorCommand.SubstituteAll) command);

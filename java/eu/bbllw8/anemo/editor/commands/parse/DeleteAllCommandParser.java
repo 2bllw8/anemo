@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 import eu.bbllw8.anemo.editor.commands.EditorCommand;
 
-public final class DeleteCommandParser implements CommandParser<EditorCommand.Delete> {
+public final class DeleteAllCommandParser implements CommandParser<EditorCommand.DeleteAll> {
     private static final Pattern DELETE_PATTERN = Pattern.compile("^d/.+/$");
 
     @Override
@@ -20,8 +20,8 @@ public final class DeleteCommandParser implements CommandParser<EditorCommand.De
 
     @NonNull
     @Override
-    public EditorCommand.Delete parse(@NonNull String command) {
+    public EditorCommand.DeleteAll parse(@NonNull String command) {
         final String toDelete = command.substring(2, command.length() - 1);
-        return new EditorCommand.Delete(toDelete);
+        return new EditorCommand.DeleteAll(toDelete);
     }
 }

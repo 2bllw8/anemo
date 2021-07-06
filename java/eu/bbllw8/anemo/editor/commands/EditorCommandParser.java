@@ -9,14 +9,16 @@ import androidx.annotation.NonNull;
 import java.util.Optional;
 
 import eu.bbllw8.anemo.editor.commands.parse.CommandParser;
-import eu.bbllw8.anemo.editor.commands.parse.DeleteCommandParser;
+import eu.bbllw8.anemo.editor.commands.parse.DeleteAllCommandParser;
+import eu.bbllw8.anemo.editor.commands.parse.DeleteFirstCommandParser;
 import eu.bbllw8.anemo.editor.commands.parse.FindCommandParser;
 import eu.bbllw8.anemo.editor.commands.parse.SubstituteAllParser;
 import eu.bbllw8.anemo.editor.commands.parse.SubstituteFirstParser;
 
 public final class EditorCommandParser {
     private static final CommandParser<?>[] COMMAND_PARSERS = {
-            new DeleteCommandParser(),
+            new DeleteAllCommandParser(),
+            new DeleteFirstCommandParser(),
             new FindCommandParser(),
             new SubstituteAllParser(),
             new SubstituteFirstParser(),

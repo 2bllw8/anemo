@@ -11,12 +11,33 @@ public class EditorCommand {
     private EditorCommand() {
     }
 
-    public static class Delete extends EditorCommand {
+    public static class DeleteAll extends EditorCommand {
         @NonNull
         private final String toDelete;
 
-        public Delete(@NonNull String toDelete) {
+        public DeleteAll(@NonNull String toDelete) {
             this.toDelete = toDelete;
+        }
+
+        @NonNull
+        public String getToDelete() {
+            return toDelete;
+        }
+    }
+
+    public static class DeleteFirst extends EditorCommand {
+        private final int count;
+        @NonNull
+        private final String toDelete;
+
+        public DeleteFirst(int count,
+                         @NonNull String toDelete) {
+            this.count = count;
+            this.toDelete = toDelete;
+        }
+
+        public int getCount() {
+            return count;
         }
 
         @NonNull

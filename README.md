@@ -18,8 +18,9 @@ Moreover it provides ways for the user to export contents from other apps and sa
   - Commands
     - `/my text`: find next occurrence of _my text_ from the current cursor position
     - `d/my text/`: delete all occurrences of _my text_
+    - `N d/my text/`: delete first N occurrences of _my text_ (write the number instead of N)
     - `s/my text/new text/`: substitute all occurrences of _my text_ with _new text_
-    - `N s/my text/new text/`: substitute first N occurrence of _my text_ with _new text_
+    - `N s/my text/new text/`: substitute first N occurrences of _my text_ with _new text_
       (write the number instead of N)
 - Lock access to the private storage using a quick tile
   - Auto lock after 15 minutes
