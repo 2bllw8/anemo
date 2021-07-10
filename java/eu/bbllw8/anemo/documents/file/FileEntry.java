@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import java.util.Objects;
 
 final class FileEntry {
+    public static final String MIME_DIR = "vnd.android.document/directory";
     @NonNull
     private final String id;
     @NonNull
@@ -17,8 +18,9 @@ final class FileEntry {
     private final int flags;
     private final long lastModified;
     @NonNull
-    public final String mimeType;
+    private final String mimeType;
     private final long size;
+    private final boolean isDirectory;
 
     public FileEntry(@NonNull String id,
                      @NonNull String displayName,
@@ -32,6 +34,7 @@ final class FileEntry {
         this.lastModified = lastModified;
         this.mimeType = mimeType;
         this.size = size;
+        this.isDirectory = MIME_DIR.equals(mimeType);
     }
 
     @NonNull
@@ -59,6 +62,10 @@ final class FileEntry {
 
     public long getSize() {
         return size;
+    }
+
+    public boolean isDirectory() {
+        return isDirectory;
     }
 
     @Override

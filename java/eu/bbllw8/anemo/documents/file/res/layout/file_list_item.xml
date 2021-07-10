@@ -1,0 +1,29 @@
+<!--
+  ~ Copyright (c) 2021 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="66dp"
+    android:paddingHorizontal="12dp">
+
+    <ImageView
+        android:id="@+id/fileItemIcon"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_file_directory" />
+
+    <TextView
+        android:id="@+id/fileItemDisplayName"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="60dp"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:textColor="?android:textColorPrimary"
+        android:textSize="18sp"
+        tools:text="Documents" />
+</FrameLayout>

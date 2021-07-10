@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import eu.bbllw8.anemo.documents.home.HomeEnvironment;
 
@@ -33,9 +34,13 @@ final class FileSource {
         this.cr = cr;
     }
 
+    public List<FileEntry> browseRoot() {
+        return filesInUri(uriForChildrenOf(HomeEnvironment.ROOT));
+    }
+
     @NonNull
-    public List<FileEntry> browseDir(@NonNull String id) {
-        return filesInUri(uriForChildrenOf(id));
+    public List<FileEntry> browseDir(@NonNull FileEntry fileEntry) {
+        return filesInUri(uriForChildrenOf(fileEntry.getId()));
     }
 
     @NonNull
@@ -51,6 +56,25 @@ final class FileSource {
     @NonNull
     public Uri uriFor(@NonNull FileEntry fileEntry) {
         return DocumentsContract.buildDocumentUri(HomeEnvironment.AUTHORITY, fileEntry.getId());
+    }
+
+    @NonNull
+    public Optional<FileEntry> parentOf(@NonNull String id) {
+        if (HomeEnvironment.ROOT.equals(id)) {
+            return Optional.empty();
+        } else {
+            final int lastDivider = id.lastIndexOf('/');
+            if (lastDivider < 1) {
+                return Optional.empty();
+            } else {
+                return Optional.of(new FileEntry(id.substring(0, lastDivider),
+                        "..",
+                        0,
+                        0,
+                        FileEntry.MIME_DIR,
+                        0));
+            }
+        }
     }
 
     @NonNull
