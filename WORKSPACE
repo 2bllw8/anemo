@@ -10,6 +10,7 @@ RULES_JVM_EXTERNAL_TAG = "4.0"
 RULES_JVM_EXTERNAL_SHA = "31701ad93dbfe544d597dbe62c9a1fdd76d81d8a9150c2bf1ecf928ecdf97169"
 # Maven
 ANNOTATION_VERSION = "1.1.0"
+RECYLERVIEW_VERSION = "1.2.1"
 
 android_sdk_repository(
     name = "androidsdk",
@@ -29,6 +30,7 @@ load("@rules_jvm_external//:defs.bzl", "maven_install")
 maven_install(
     artifacts = [
         "androidx.annotation:annotation:%s" % ANNOTATION_VERSION,
+        "androidx.recyclerview:recyclerview:%s" % RECYLERVIEW_VERSION,
     ],
     fetch_sources = True,
     repositories = [

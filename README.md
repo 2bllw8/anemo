@@ -3,9 +3,8 @@
 [![Anemo CI](https://github.com/2bllw8/anemo/actions/workflows/main.yml/badge.svg)](https://github.com/2bllw8/anemo/actions/workflows/main.yml)
 [![Latest release](https://img.shields.io/github/v/release/2bllw8/anemo?color=red&label=download)](https://github.com/2bllw8/anemo/releases/latest)
 
-Anemo is a file utility application that provides private local storage, but instead of being a
-stand-alone file manager user interface, it hooks into various components of Android making
-it feel like a native part of the operative system.
+Anemo is a file utility application that provides private local storage, it hooks into various
+components of Android making it feel like a native part of the operative system.
 It also includes a simple text editor for editing text files on the device.
 Moreover it provides ways for the user to export contents from other apps and save them as files.
 
@@ -34,7 +33,8 @@ Moreover it provides ways for the user to export contents from other apps and sa
 
 ### Planned features
 
-- Improvements and more features to the text editor
+- Stand-alone file UI so that devices without the _DocumentsProviderUI_ app icon
+  can access files stored in anemo
 
 ## Download
 
