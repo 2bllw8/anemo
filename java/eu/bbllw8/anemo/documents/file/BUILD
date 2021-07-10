@@ -13,6 +13,7 @@ android_library(
         "//:__pkg__",
     ],
     deps = [
+        "//java/eu/bbllw8/anemo/documents/home",
         "//java/eu/bbllw8/anemo/shell",
         "//java/eu/bbllw8/anemo/task",
         "//java/eu/bbllw8/anemo/tip",
