@@ -4,4 +4,5 @@
   -->
 <resources>
     <color name="anemoColor">#C85125</color>
+    <color name="anemoColorNight">#F19D7D</color>
 </resources>

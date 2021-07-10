@@ -13,7 +13,7 @@
         <activity
             android:name="eu.bbllw8.anemo.documents.password.PasswordActivity"
             android:label="@string/password_label"
-            android:theme="@style/AppTheme"
+            android:theme="@style/DialogTheme"
             android:excludeFromRecents="true">
             <intent-filter>
                 <action android:name="eu.bbllw8.anemo.action.UNLOCK" />

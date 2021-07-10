@@ -34,7 +34,7 @@ public abstract class PasswordDialog {
         this.activity = activity;
         this.res = activity.getResources();
         this.lockStore = lockStore;
-        this.dialog = new AlertDialog.Builder(activity, R.style.AppTheme)
+        this.dialog = new AlertDialog.Builder(activity, R.style.DialogTheme)
                 .setTitle(title)
                 .setView(layout)
                 .setCancelable(false)

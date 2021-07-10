@@ -15,7 +15,7 @@
         <activity
             android:name=".EditorActivity"
             android:label="@string/editor_label"
-            android:theme="@style/EditorTheme">
+            android:theme="@style/AppTheme">
             <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.EDIT" />
                 <action android:name="android.intent.action.VIEW" />

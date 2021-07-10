@@ -3,7 +3,15 @@
   ~ SPDX-License-Identifier: GPL-3.0-only
   -->
 <resources>
-    <style name="AppTheme" parent="android:Theme.DeviceDefault.Light.Dialog.NoActionBar.MinWidth">
+    <style name="AppTheme" parent="android:Theme.DeviceDefault.Light">
+        <item name="android:colorAccent">@color/anemoColor</item>
+        <item name="android:navigationBarColor">?android:colorPrimary</item>
+        <item name="android:statusBarColor">?android:colorPrimary</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+
+    <style name="DialogTheme" parent="android:Theme.DeviceDefault.Light.Dialog.NoActionBar.MinWidth">
         <item name="android:colorAccent">@color/anemoColor</item>
         <item name="android:background">@null</item>
     </style>

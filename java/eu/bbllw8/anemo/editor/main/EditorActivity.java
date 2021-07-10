@@ -634,7 +634,7 @@ public final class EditorActivity extends Activity implements
                 ? getString(R.string.editor_title_generic)
                 : editorFile.getName();
 
-        new AlertDialog.Builder(this, R.style.AppTheme)
+        new AlertDialog.Builder(this, R.style.DialogTheme)
                 .setTitle(fileName)
                 .setMessage(getString(R.string.editor_save_quit_ask, fileName))
                 .setPositiveButton(R.string.editor_action_save_and_quit,
@@ -653,7 +653,7 @@ public final class EditorActivity extends Activity implements
     }
 
     private void showCommandHelpMessage() {
-        new AlertDialog.Builder(this, R.style.AppTheme)
+        new AlertDialog.Builder(this, R.style.DialogTheme)
                 .setTitle(R.string.editor_menu_command)
                 .setMessage(R.string.editor_command_help)
                 .setPositiveButton(R.string.editor_action_dismiss,
