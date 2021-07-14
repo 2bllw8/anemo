@@ -5,6 +5,7 @@
 package eu.bbllw8.anemo.editor.main;
 
 import android.content.Context;
+import android.text.Layout;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
@@ -20,17 +21,20 @@ public final class TextEditorView extends EditText {
 
     public TextEditorView(@NonNull Context context) {
         super(context);
+        setHyphenationFrequency(Layout.HYPHENATION_FREQUENCY_NONE);
     }
 
     public TextEditorView(@NonNull Context context,
                           @Nullable AttributeSet attrs) {
         super(context, attrs);
+        setHyphenationFrequency(Layout.HYPHENATION_FREQUENCY_NONE);
     }
 
     public TextEditorView(@NonNull Context context,
                           @Nullable AttributeSet attrs,
                           int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        setHyphenationFrequency(Layout.HYPHENATION_FREQUENCY_NONE);
     }
 
     @Override
