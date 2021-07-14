@@ -60,4 +60,8 @@ public final class TaskExecutor {
             }
         });
     }
+
+    public static void submit(@NonNull @WorkerThread Runnable runnable) {
+        executor.submit(runnable);
+    }
 }

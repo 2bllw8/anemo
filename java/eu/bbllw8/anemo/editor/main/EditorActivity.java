@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
 import android.text.Editable;
+import android.text.PrecomputedText;
 import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -30,6 +31,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
 
 import eu.bbllw8.anemo.editor.commands.EditorCommand;
 import eu.bbllw8.anemo.editor.commands.EditorCommandParser;
@@ -379,11 +383,28 @@ public final class EditorActivity extends Activity implements
 
         loadView.setVisibility(View.GONE);
         textEditorView.setVisibility(View.VISIBLE);
-        textEditorView.setText(content);
 
-        // Set listener after the contents
-        registerTextListeners();
         loadConfig();
+
+        final PrecomputedText.Params params = textEditorView.getTextMetricsParams();
+        final Reference<TextEditorView> editorViewRef = new WeakReference<>(textEditorView);
+        TaskExecutor.submit(() -> {
+            final TextEditorView ev = editorViewRef.get();
+            if (ev == null) {
+                return;
+            }
+            final PrecomputedText preCompText = PrecomputedText.create(content, params);
+            ev.post(() -> {
+                final TextEditorView ev2 = editorViewRef.get();
+                if (ev2 == null) {
+                    return;
+                }
+                ev2.setText(preCompText);
+
+                // Set listener after the contents
+                registerTextListeners();
+            });
+        });
     }
 
     private void saveContents(boolean quitWhenSaved) {
