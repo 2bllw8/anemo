@@ -3,20 +3,32 @@
 [![Anemo CI](https://github.com/2bllw8/anemo/actions/workflows/main.yml/badge.svg)](https://github.com/2bllw8/anemo/actions/workflows/main.yml)
 [![Latest release](https://img.shields.io/github/v/release/2bllw8/anemo?color=red&label=download)](https://github.com/2bllw8/anemo/releases/latest)
 
-Anemo is a file utility application that provides private local storage, but instead of being a
-stand-alone file manager user interface, it hooks into various components of Android making
-it feel like a native part of the operative system.
-It also includes a simple text editor for editing text files on the device.
+Anemo is an utility application made of two components: a private local storage, and a text editor.
+Instead of being a stand-alone file manager user interface, it hooks into various components of
+Android making it feel like a native part of the operative system.
 Moreover it provides ways for the user to export contents from other apps and save them as files.
+The text editor can read and edit and create text files from the device or other apps.
 
 ## Features
 
-- Private file storage available in the default Files application (the _DocumentsProviderUI_)
+- Private file storage
+  - Create folders and organize files freely
+  - All files in the private storage won't appear in the other apps
+  - Access in the system Files application (the _DocumentsProviderUI_)
+  - Lock access to the private storage
+    - Quick tile
+    - Auto lock after 15 minutes
+    - Password for locking access to the files
+  - Import content using the share Android functionality
+    - Audio
+    - Images
+    - PDF files
+    - Videos
 - Text editor
   - Open, edit and create text files
   - Cursor and selection information
   - Undo actions
-  - Automatically close brackets and quotes: `'`, `"`, `(`, `[`, `{`
+  - Automatically close brackets and quotes: `' '`, `" "`, `( )`, `[ ]`, `{ }`
   - Commands
     - `/my text`: find next occurrence of _my text_ from the current cursor position
     - `d/my text`: delete all occurrences of _my text_
@@ -30,18 +42,6 @@ Moreover it provides ways for the user to export contents from other apps and sa
         - `size` [`large` | `medium` | `small`] : Change text size
         - `style` [`mono` | `sans` | `serif`] : Change text style
   - Open selected text from other apps as a new text file and save it on the device
-- Lock access to the private storage using a quick tile
-  - Auto lock after 15 minutes
-  - Password for locking access to the files
-- Import from the share Android functionality
-  - Audio
-  - Images
-  - PDF files
-  - Videos
-
-### Planned features
-
-- Improvements and more features to the text editor
 
 ## Download
 
