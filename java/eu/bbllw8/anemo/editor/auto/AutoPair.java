@@ -35,7 +35,7 @@ public final class AutoPair implements TextWatcher {
     public AutoPair(@NonNull Supplier<Editable> editableTextSupplier) {
         this.editableTextSupplier = editableTextSupplier;
         this.enabled = false;
-        this.trackChanges = false;
+        this.trackChanges = true;
     }
 
     @Override
@@ -44,17 +44,17 @@ public final class AutoPair implements TextWatcher {
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        if (enabled && !trackChanges) {
+        if (enabled && trackChanges) {
             if (count == 1) {
                 final int i = start + 1;
                 final char typed = s.subSequence(start, i).charAt(0);
                 final String closePair = PAIR_MAP.get(typed);
-                if (closePair != null) {
 
+                if (closePair != null) {
                     final Editable editable = editableTextSupplier.get();
-                    trackChanges = true;
-                    editable.insert(i, closePair);
                     trackChanges = false;
+                    editable.insert(i, closePair);
+                    trackChanges = true;
 
                     Selection.setSelection(editable, i);
                 }
