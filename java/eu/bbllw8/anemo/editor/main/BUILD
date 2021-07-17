@@ -13,6 +13,7 @@ android_library(
         "//:__pkg__"
     ],
     deps = [
+        "//java/eu/bbllw8/anemo/editor/auto",
         "//java/eu/bbllw8/anemo/editor/commands",
         "//java/eu/bbllw8/anemo/editor/config",
         "//java/eu/bbllw8/anemo/editor/history",

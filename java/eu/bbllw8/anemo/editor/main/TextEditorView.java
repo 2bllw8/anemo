@@ -5,6 +5,7 @@
 package eu.bbllw8.anemo.editor.main;
 
 import android.content.Context;
+import android.text.Editable;
 import android.text.Layout;
 import android.util.AttributeSet;
 import android.widget.EditText;
@@ -47,5 +48,10 @@ public final class TextEditorView extends EditText {
 
     public void setOnCursorChanged(@NonNull BiConsumer<Integer, Integer> onCursorChanged) {
         this.onCursorChanged = onCursorChanged;
+    }
+
+    public void typeAt(@NonNull String c, int index) {
+        getText().insert(index, c);
+        setSelection(getSelectionStart() - 1);
     }
 }

@@ -35,6 +35,7 @@ import androidx.annotation.Nullable;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 
+import eu.bbllw8.anemo.editor.auto.AutoPair;
 import eu.bbllw8.anemo.editor.commands.EditorCommand;
 import eu.bbllw8.anemo.editor.commands.EditorCommandParser;
 import eu.bbllw8.anemo.editor.commands.EditorCommandsExecutor;
@@ -79,6 +80,7 @@ public final class EditorActivity extends Activity implements
 
     private EditorConfig editorConfig;
     private EditorHistory editorHistory;
+    private AutoPair autoPair;
 
     private final EditorCommandParser editorCommandParser = new EditorCommandParser();
 
@@ -90,6 +92,7 @@ public final class EditorActivity extends Activity implements
     private MenuItem styleMonoMenuItem;
     private MenuItem styleSansMenuItem;
     private MenuItem styleSerifMenuItem;
+    private MenuItem autoPairMenuItem;
     private MenuItem showCommandBarMenuItem;
 
     @Override
@@ -109,6 +112,7 @@ public final class EditorActivity extends Activity implements
         editorConfig = new EditorConfig(this, this);
         editorHistory = new EditorHistory(textEditorView::getEditableText,
                 getResources().getInteger(R.integer.editor_history_buffer_size));
+        autoPair = new AutoPair(textEditorView::getEditableText);
 
         summaryView.setText(getString(R.string.editor_summary_info, 1, 1));
         textEditorView.setOnCursorChanged(this::updateSummary);
@@ -185,6 +189,7 @@ public final class EditorActivity extends Activity implements
             styleMonoMenuItem = menu.findItem(R.id.editorFontStyleMono);
             styleSansMenuItem = menu.findItem(R.id.editorFontStyleSans);
             styleSerifMenuItem = menu.findItem(R.id.editorFontStyleSerif);
+            autoPairMenuItem = menu.findItem(R.id.editorAutoPair);
             showCommandBarMenuItem = menu.findItem(R.id.editorShowCommandBar);
             final MenuItem showShellMenuItem = menu.findItem(R.id.editorShowShell);
 
@@ -210,6 +215,7 @@ public final class EditorActivity extends Activity implements
                     styleSerifMenuItem.setChecked(true);
                     break;
             }
+            autoPairMenuItem.setChecked(editorConfig.getAutoPairEnabled());
             showCommandBarMenuItem.setChecked(editorConfig.getShowCommandBar());
             showShellMenuItem.setChecked(EditorShell.isEnabled(this));
 
@@ -243,6 +249,9 @@ public final class EditorActivity extends Activity implements
             return true;
         } else if (id == R.id.editorFontStyleSerif) {
             editorConfig.setTextStyle(Config.Style.SERIF);
+            return true;
+        } else if (id == R.id.editorAutoPair) {
+            editorConfig.setAutoPairEnabled(!item.isChecked());
             return true;
         } else if (id == R.id.editorShowCommandBar) {
             editorConfig.setShowCommandBar(!item.isChecked());
@@ -463,6 +472,7 @@ public final class EditorActivity extends Activity implements
         textEditorView.post(() -> {
             textEditorView.addTextChangedListener(this);
             textEditorView.addTextChangedListener(editorHistory);
+            textEditorView.addTextChangedListener(autoPair);
         });
     }
 
@@ -492,6 +502,7 @@ public final class EditorActivity extends Activity implements
     private void loadConfig() {
         onTextSizeChanged(editorConfig.getTextSize());
         onTextStyleChanged(editorConfig.getTextStyle());
+        onAutoPairEnabledChanged(editorConfig.getAutoPairEnabled());
         onShowCommandBarChanged(editorConfig.getShowCommandBar());
         editorConfig.setReady();
     }
@@ -544,6 +555,14 @@ public final class EditorActivity extends Activity implements
         textEditorView.setTypeface(newTypeface);
         if (menuItem != null) {
             menuItem.setChecked(true);
+        }
+    }
+
+    @Override
+    public void onAutoPairEnabledChanged(boolean enabled) {
+        autoPair.setEnabled(enabled);
+        if (autoPairMenuItem != null) {
+            autoPairMenuItem.setChecked(enabled);
         }
     }
 

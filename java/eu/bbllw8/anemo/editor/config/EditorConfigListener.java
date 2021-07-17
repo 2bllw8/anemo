@@ -10,5 +10,7 @@ public interface EditorConfigListener {
 
     void onTextStyleChanged(@Config.Style int newStyle);
 
+    void onAutoPairEnabledChanged(boolean enabled);
+
     void onShowCommandBarChanged(boolean show);
 }

@@ -12,9 +12,11 @@ Moreover it provides ways for the user to export contents from other apps and sa
 ## Features
 
 - Private file storage available in the default Files application (the _DocumentsProviderUI_)
-- Simple text editor to open edit and save text files
+- Text editor
+  - Open, edit and create text files
   - Cursor and selection information
   - Undo actions
+  - Automatically close brackets and quotes: `'`, `"`, `(`, `[`, `{`
   - Commands
     - `/my text`: find next occurrence of _my text_ from the current cursor position
     - `d/my text/`: delete all occurrences of _my text_

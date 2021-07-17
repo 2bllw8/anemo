@@ -14,6 +14,7 @@ public final class EditorConfig {
     private static final String CONFIG_PREFERENCES = "editor_config";
     private static final String KEY_SIZE = "text_size";
     private static final String KEY_STYLE = "text_style";
+    private static final String KEY_AUTO_PAIR = "auto_pair";
     private static final String KEY_SHOW_COMMAND_BAR = "show_command_bar";
 
     @Nullable
@@ -59,6 +60,19 @@ public final class EditorConfig {
                 .apply();
         if (configListener != null && ready) {
             configListener.onTextStyleChanged(style);
+        }
+    }
+
+    public boolean getAutoPairEnabled() {
+        return preferences.getBoolean(KEY_AUTO_PAIR, Config.DEFAULT_AUTO_PAIR);
+    }
+
+    public void setAutoPairEnabled(boolean enabled) {
+        preferences.edit()
+                .putBoolean(KEY_AUTO_PAIR, enabled)
+                .apply();
+        if (configListener != null && ready) {
+            configListener.onAutoPairEnabledChanged(enabled);
         }
     }
 

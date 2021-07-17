@@ -22,6 +22,18 @@ android_app {
 // Editor
 
 android_library {
+    name: "anemo_editor_auto",
+    manifest: "java/eu/bbllw8/anemo/editor/auto/AndroidManifest.xml",
+    sdk_version: "30",
+    srcs: [
+        "java/eu/bbllw8/anemo/editor/auto/**/*.java",
+    ],
+    static_libs: [
+        "androidx.annotation_annotation",
+    ],
+}
+
+android_library {
     name: "anemo_editor_commands",
     manifest: "java/eu/bbllw8/anemo/editor/commands/AndroidManifest.xml",
     sdk_version: "30",
@@ -80,6 +92,7 @@ android_library {
         "java/eu/bbllw8/anemo/editor/main/**/*.java",
     ],
     static_libs: [
+        "anemo_editor_auto",
         "anemo_editor_commands",
         "anemo_editor_config",
         "anemo_editor_history",
