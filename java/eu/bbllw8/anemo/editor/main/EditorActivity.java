@@ -67,6 +67,7 @@ public final class EditorActivity extends Activity implements
     private static final int REQUEST_OPEN_FILE = 12;
 
     private boolean dirty = false;
+    private boolean alwaysAllowSave = false;
 
     @Nullable
     private EditorFile editorFile = null;
@@ -135,9 +136,19 @@ public final class EditorActivity extends Activity implements
         }
 
         final Intent intent = getIntent();
-        final Uri inputUri = intent.getData();
-        if (savedInstanceState == null && inputUri != null) {
-            loadFile(inputUri, intent.getType());
+        if (savedInstanceState == null) {
+            if (Intent.ACTION_PROCESS_TEXT.equals(intent.getAction())) {
+                final String textInput = intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT);
+                setTextContent(textInput);
+            } else {
+                final Uri inputUri = intent.getData();
+                if (inputUri == null) {
+                    registerTextListeners();
+                    loadConfig();
+                } else {
+                    loadFile(inputUri, intent.getType());
+                }
+            }
         } else {
             registerTextListeners();
             loadConfig();
@@ -218,6 +229,9 @@ public final class EditorActivity extends Activity implements
             autoPairMenuItem.setChecked(editorConfig.getAutoPairEnabled());
             showCommandBarMenuItem.setChecked(editorConfig.getShowCommandBar());
             showShellMenuItem.setChecked(EditorShell.isEnabled(this));
+
+            // If always dirty (snippet) always allow
+            saveMenuItem.setEnabled(alwaysAllowSave);
 
             return true;
         }
@@ -385,6 +399,12 @@ public final class EditorActivity extends Activity implements
 
     /* Content operations */
 
+    private void setTextContent(@NonNull String content) {
+        loadConfig();
+        setContentInView(content);
+        alwaysAllowSave = true;
+    }
+
     private void setContent(@NonNull EditorFile editorFile, @NonNull String content) {
         this.editorFile = editorFile;
 
@@ -394,7 +414,10 @@ public final class EditorActivity extends Activity implements
         textEditorView.setVisibility(View.VISIBLE);
 
         loadConfig();
+        setContentInView(content);
+    }
 
+    private void setContentInView(@NonNull String content) {
         final PrecomputedText.Params params = textEditorView.getTextMetricsParams();
         final Reference<TextEditorView> editorViewRef = new WeakReference<>(textEditorView);
         TaskExecutor.submit(() -> {
@@ -417,7 +440,7 @@ public final class EditorActivity extends Activity implements
     }
 
     private void saveContents(boolean quitWhenSaved) {
-        if (dirty) {
+        if (dirty || alwaysAllowSave) {
             if (editorFile == null) {
                 openFileSaver(quitWhenSaved);
             } else {
@@ -431,6 +454,10 @@ public final class EditorActivity extends Activity implements
         this.editorFile = editorFile;
         if (!quitWhenSaved) {
             updateTitle();
+
+            // We don't need save to be forcefully enabled anymore
+            alwaysAllowSave = false;
+            saveMenuItem.setEnabled(false);
         }
         writeContents(editorFile, quitWhenSaved);
     }
@@ -640,7 +667,7 @@ public final class EditorActivity extends Activity implements
         if (dirty) {
             dirty = false;
             undoMenuItem.setEnabled(false);
-            saveMenuItem.setEnabled(false);
+            saveMenuItem.setEnabled(alwaysAllowSave);
         }
     }
 
@@ -672,7 +699,7 @@ public final class EditorActivity extends Activity implements
     private void showQuitMessage() {
         final String fileName = editorFile == null
                 ? getString(R.string.editor_title_generic)
-                : editorFile.getName();
+                : '"' + editorFile.getName() + '"';
 
         new AlertDialog.Builder(this, R.style.DialogTheme)
                 .setTitle(fileName)

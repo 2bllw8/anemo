@@ -24,10 +24,10 @@ Moreover it provides ways for the user to export contents from other apps and sa
     - `s/my text/new text/`: substitute all occurrences of _my text_ with _new text_
     - `N s/my text/new text/`: substitute first N occurrences of _my text_ with _new text_
       (write the number instead of N)
+  - Open selected text from other apps as a new text file and save it on the device
 - Lock access to the private storage using a quick tile
   - Auto lock after 15 minutes
   - Password for locking access to the files
-- Saving text snippets from selected text as "Snippet" files
 - Import from the share Android functionality
   - Audio
   - Images

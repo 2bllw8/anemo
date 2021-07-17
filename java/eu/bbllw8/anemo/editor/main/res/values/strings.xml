@@ -22,7 +22,7 @@
     <string name="editor_summary_info">Ln %1$d, Col %2$d</string>
     <string name="editor_summary_select">Selected %1$d chars, Ln %2$d, Col %3$d</string>
 
-    <string name="editor_title_generic">Text file</string>
+    <string name="editor_title_generic">this text file</string>
 
     <string name="editor_menu_new">New file</string>
     <string name="editor_menu_open">Open file</string>
@@ -51,8 +51,10 @@
     <string name="editor_command_unknown">Error: unknown or badly–formatted command</string>
     <string name="editor_command_find_none">Find: no match</string>
 
-    <string name="editor_save_quit_ask">Quit without saving changes to \'%1$s\'?</string>
+    <string name="editor_save_quit_ask">Quit without saving changes to %1$s?</string>
     <string name="editor_save_in_progress">Saving \'%1$s\'…</string>
     <string name="editor_save_success">Saved</string>
     <string name="editor_save_failed">Failed to save \'%1$s\'</string>
+
+    <string name="editor_snippet_save">Save as file</string>
 </resources>

@@ -28,7 +28,6 @@ public final class HomeEnvironment {
     public static final String PICTURES = "Pictures";
     public static final String MOVIES = "Movies";
     public static final String MUSIC = "Music";
-    public static final String SNIPPETS = "Snippets";
 
     private final File baseDir;
     private final Map<String, File> defaultDirectories;
@@ -55,7 +54,6 @@ public final class HomeEnvironment {
         defaultDirectories.put(PICTURES, new File(baseDir, PICTURES));
         defaultDirectories.put(MOVIES, new File(baseDir, MOVIES));
         defaultDirectories.put(MUSIC, new File(baseDir, MUSIC));
-        defaultDirectories.put(SNIPPETS, new File(baseDir, SNIPPETS));
 
         prepare();
     }
