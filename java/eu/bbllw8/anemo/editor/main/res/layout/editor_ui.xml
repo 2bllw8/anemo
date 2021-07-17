@@ -47,7 +47,7 @@
                 android:layout_marginHorizontal="42dp"
                 android:hint="@string/editor_command_hint"
                 android:importantForAutofill="no"
-                android:inputType="textNoSuggestions"
+                android:inputType="textUri"
                 android:maxLines="1" />
 
             <ImageView

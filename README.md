@@ -24,6 +24,11 @@ Moreover it provides ways for the user to export contents from other apps and sa
     - `s/my text/new text/`: substitute all occurrences of _my text_ with _new text_
     - `N s/my text/new text/`: substitute first N occurrences of _my text_ with _new text_
       (write the number instead of N)
+    - `set/key/value`: set config option `key` to `value`
+        - `commands` [`on` | `off`] : Change commands field visibility
+        - `pair` [`on` | `off`] : Enable or disable auto–close brackets and quotes
+        - `size` [`large` | `medium` | `small`] : Change text size
+        - `style` [`mono` | `sans` | `serif`] : Change text style
   - Open selected text from other apps as a new text file and save it on the device
 - Lock access to the private storage using a quick tile
   - Auto lock after 15 minutes

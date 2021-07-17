@@ -14,6 +14,8 @@ public interface EditorCommandsExecutor {
 
     void runDeleteFirstCommand(@NonNull EditorCommand.DeleteFirst command);
 
+    void runSetCommand(@NonNull EditorCommand.Set command);
+
     void runSubstituteAllCommand(@NonNull EditorCommand.SubstituteAll command);
 
     void runSubstituteFirstCommand(@NonNull EditorCommand.SubstituteFirst command);
@@ -27,6 +29,9 @@ public interface EditorCommandsExecutor {
             return true;
         } else if (command instanceof EditorCommand.DeleteFirst) {
             runDeleteFirstCommand((EditorCommand.DeleteFirst) command);
+            return true;
+        } else if (command instanceof EditorCommand.Set) {
+            runSetCommand((EditorCommand.Set) command);
             return true;
         } else if (command instanceof EditorCommand.SubstituteAll) {
             runSubstituteAllCommand((EditorCommand.SubstituteAll) command);

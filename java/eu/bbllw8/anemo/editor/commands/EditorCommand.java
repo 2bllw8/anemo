@@ -60,6 +60,29 @@ public class EditorCommand {
         }
     }
 
+    public final static class Set extends EditorCommand {
+        @NonNull
+        private final String key;
+        @NonNull
+        private final String value;
+
+        public Set(@NonNull String key,
+                   @NonNull String value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        @NonNull
+        public String getKey() {
+            return key;
+        }
+
+        @NonNull
+        public String getValue() {
+            return value;
+        }
+    }
+
     public static class SubstituteAll extends EditorCommand {
         @NonNull
         private final String toFind;

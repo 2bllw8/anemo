@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -609,7 +610,8 @@ public final class EditorActivity extends Activity implements
                 .map(this::runCommand)
                 .orElse(false);
         if (!success) {
-            showTmpErrorMessage(getString(R.string.editor_command_unknown));
+            showTmpMessage(getString(R.string.editor_command_unknown),
+                    eu.bbllw8.anemo.tip.R.drawable.tip_ic_error);
         }
     }
 
@@ -625,7 +627,8 @@ public final class EditorActivity extends Activity implements
                     textEditorView.requestFocus();
                     textEditorView.setSelection(range.getLower(), range.getUpper());
                 },
-                () -> showTmpErrorMessage(getString(R.string.editor_command_find_none)));
+                () -> showTmpMessage(getString(R.string.editor_command_find_none),
+                        eu.bbllw8.anemo.tip.R.drawable.tip_ic_error));
     }
 
     @Override
@@ -642,6 +645,18 @@ public final class EditorActivity extends Activity implements
         TaskExecutor.runTask(new DeleteFirstCommandTask(command.getToDelete(),
                 content, command.getCount(), cursor),
                 textEditorView::setText);
+    }
+
+    @Override
+    public void runSetCommand(@NonNull EditorCommand.Set command) {
+        final boolean success = editorConfig.setByKeyVal(command.getKey(), command.getValue());
+        if (success) {
+            showTmpMessage(getString(R.string.editor_command_set_success),
+                    eu.bbllw8.anemo.tip.R.drawable.tip_ic_success);
+        } else {
+            showTmpMessage(getString(R.string.editor_command_unknown),
+                    eu.bbllw8.anemo.tip.R.drawable.tip_ic_error);
+        }
     }
 
     @Override
@@ -749,10 +764,11 @@ public final class EditorActivity extends Activity implements
                 .show();
     }
 
-    private void showTmpErrorMessage(@NonNull CharSequence message) {
+    private void showTmpMessage(@NonNull CharSequence message,
+                                @DrawableRes int icon) {
         final TipDialog dialog = new TipDialog.Builder(this)
                 .setMessage(message)
-                .setIcon(eu.bbllw8.anemo.tip.R.drawable.tip_ic_error)
+                .setIcon(icon)
                 .setDismissOnTouchOutside(true)
                 .show();
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
