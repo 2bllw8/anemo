@@ -19,10 +19,10 @@ Moreover it provides ways for the user to export contents from other apps and sa
   - Automatically close brackets and quotes: `'`, `"`, `(`, `[`, `{`
   - Commands
     - `/my text`: find next occurrence of _my text_ from the current cursor position
-    - `d/my text/`: delete all occurrences of _my text_
-    - `N d/my text/`: delete first N occurrences of _my text_ (write the number instead of N)
-    - `s/my text/new text/`: substitute all occurrences of _my text_ with _new text_
-    - `N s/my text/new text/`: substitute first N occurrences of _my text_ with _new text_
+    - `d/my text`: delete all occurrences of _my text_
+    - `N d/my text`: delete first N occurrences of _my text_ (write the number instead of N)
+    - `s/my text/new text`: substitute all occurrences of _my text_ with _new text_
+    - `N s/my text/new text`: substitute first N occurrences of _my text_ with _new text_
       (write the number instead of N)
     - `set/key/value`: set config option `key` to `value`
         - `commands` [`on` | `off`] : Change commands field visibility

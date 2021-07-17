@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import eu.bbllw8.anemo.editor.commands.EditorCommand;
 
 public final class DeleteFirstCommandParser implements CommandParser<EditorCommand.DeleteFirst> {
-    private static final Pattern DELETE_FIRST_PATTERN = Pattern.compile("^\\d+ d/.+/$");
+    private static final Pattern DELETE_FIRST_PATTERN = Pattern.compile("^\\d+ d/.+$");
 
     @Override
     public boolean matches(@NonNull String command) {
@@ -23,7 +23,7 @@ public final class DeleteFirstCommandParser implements CommandParser<EditorComma
     public EditorCommand.DeleteFirst parse(@NonNull String command) {
         final int countDivider = command.indexOf(' ');
         final int count = Integer.parseInt(command.substring(0, countDivider));
-        final String toDelete = command.substring(countDivider + 3, command.length() - 1);
+        final String toDelete = command.substring(countDivider + 3);
         return new EditorCommand.DeleteFirst(count, toDelete);
     }
 }

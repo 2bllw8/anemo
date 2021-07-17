@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import eu.bbllw8.anemo.editor.commands.EditorCommand;
 
 public final class FindCommandParser implements CommandParser<EditorCommand.Find> {
-    private static final Pattern FIND_PATTERN = Pattern.compile("^/.+/?$");
+    private static final Pattern FIND_PATTERN = Pattern.compile("^/.+$");
 
     @Override
     public boolean matches(@NonNull String command) {
@@ -21,8 +21,7 @@ public final class FindCommandParser implements CommandParser<EditorCommand.Find
     @NonNull
     @Override
     public EditorCommand.Find parse(@NonNull String command) {
-        final int endOffset = command.endsWith("/") ? 1 : 0;
-        final String toFind = command.substring(1, command.length() - endOffset);
+        final String toFind = command.substring(1);
         return new EditorCommand.Find(toFind);
     }
 }

@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import eu.bbllw8.anemo.editor.commands.EditorCommand;
 
 public final class SubstituteAllParser implements CommandParser<EditorCommand.SubstituteAll> {
-    private static final Pattern SUBSTITUTE_ALL_PATTERN = Pattern.compile("^s/.+/.+/$");
+    private static final Pattern SUBSTITUTE_ALL_PATTERN = Pattern.compile("^s/.+/.+$");
 
     @Override
     public boolean matches(@NonNull String command) {
@@ -21,10 +21,9 @@ public final class SubstituteAllParser implements CommandParser<EditorCommand.Su
     @NonNull
     @Override
     public EditorCommand.SubstituteAll parse(@NonNull String command) {
-        final int lastDivider = command.substring(0, command.length() - 1)
-                .lastIndexOf('/');
+        final int lastDivider = command.lastIndexOf('/');
         final String toFind = command.substring(2, lastDivider);
-        final String replaceWith = command.substring(lastDivider + 1, command.length() - 1);
+        final String replaceWith = command.substring(lastDivider + 1);
         return new EditorCommand.SubstituteAll(toFind, replaceWith);
     }
 }

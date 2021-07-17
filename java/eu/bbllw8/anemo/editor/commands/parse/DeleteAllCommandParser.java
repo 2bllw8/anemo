@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import eu.bbllw8.anemo.editor.commands.EditorCommand;
 
 public final class DeleteAllCommandParser implements CommandParser<EditorCommand.DeleteAll> {
-    private static final Pattern DELETE_PATTERN = Pattern.compile("^d/.+/$");
+    private static final Pattern DELETE_PATTERN = Pattern.compile("^d/.+$");
 
     @Override
     public boolean matches(@NonNull String command) {
@@ -21,7 +21,7 @@ public final class DeleteAllCommandParser implements CommandParser<EditorCommand
     @NonNull
     @Override
     public EditorCommand.DeleteAll parse(@NonNull String command) {
-        final String toDelete = command.substring(2, command.length() - 1);
+        final String toDelete = command.substring(2);
         return new EditorCommand.DeleteAll(toDelete);
     }
 }
