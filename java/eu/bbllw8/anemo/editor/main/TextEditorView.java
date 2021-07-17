@@ -49,9 +49,4 @@ public final class TextEditorView extends EditText {
     public void setOnCursorChanged(@NonNull BiConsumer<Integer, Integer> onCursorChanged) {
         this.onCursorChanged = onCursorChanged;
     }
-
-    public void typeAt(@NonNull String c, int index) {
-        getText().insert(index, c);
-        setSelection(getSelectionStart() - 1);
-    }
 }
