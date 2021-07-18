@@ -319,6 +319,33 @@ public final class EditorActivity extends Activity implements
     }
 
     @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (event.isCtrlPressed()) {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_Q:
+                    onBackPressed();
+                    return true;
+                case KeyEvent.KEYCODE_PLUS:
+                    editorConfig.increaseTextSize();
+                    return true;
+                case KeyEvent.KEYCODE_EQUALS:
+                    if (event.isShiftPressed()) {
+                        // US keyboard '+' is 'Shift ='
+                        editorConfig.increaseTextSize();
+                    }
+                    return true;
+                case KeyEvent.KEYCODE_MINUS:
+                    editorConfig.decreaseTextSize();
+                    return true;
+                default:
+                    return super.onKeyUp(keyCode, event);
+            }
+        } else {
+            return super.onKeyUp(keyCode, event);
+        }
+    }
+
+    @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
     }
 

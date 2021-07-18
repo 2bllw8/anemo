@@ -24,11 +24,15 @@
     <item
         android:id="@+id/editorNew"
         android:showAsAction="never"
+        android:alphabeticModifiers="CTRL"
+        android:alphabeticShortcut="n"
         android:title="@string/editor_menu_new" />
 
     <item
         android:id="@+id/editorOpen"
         android:showAsAction="never"
+        android:alphabeticModifiers="CTRL"
+        android:alphabeticShortcut="o"
         android:title="@string/editor_menu_open" />
 
     <item
@@ -86,6 +90,8 @@
                 android:id="@+id/editorShowCommandBar"
                 android:checkable="true"
                 android:showAsAction="never"
+                android:alphabeticModifiers="CTRL"
+                android:alphabeticShortcut="/"
                 android:title="@string/editor_menu_command" />
 
             <item

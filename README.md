@@ -36,12 +36,21 @@ The text editor can read and edit and create text files from the device or other
     - `s/my text/new text`: substitute all occurrences of _my text_ with _new text_
     - `N s/my text/new text`: substitute first N occurrences of _my text_ with _new text_
       (write the number instead of N)
-    - `set/key/value`: set config option `key` to `value`
+    - `set/key/value`: set config option _key_ to _value_
         - `commands` [`on` | `off`] : Change commands field visibility
         - `pair` [`on` | `off`] : Enable or disable auto–close brackets and quotes
         - `size` [`large` | `medium` | `small`] : Change text size
         - `style` [`mono` | `sans` | `serif`] : Change text style
   - Open selected text from other apps as a new text file and save it on the device
+  - Keyboard shortcuts
+    - `ctrl` + `N`: Create a new file
+    - `ctrl` + `O`: Open a file
+    - `ctrl` + `Q`: Quit
+    - `ctrl` + `S`: Save
+    - `ctrl` + `Z`: Undo
+    - `ctrl` + `+`: Increase text size
+    - `ctrl` + `-`: Decrease text size
+    - `ctrl` + `/`: Show (or hide) command field
 
 ## Download
 

@@ -107,6 +107,36 @@ public final class EditorConfig {
         }
     }
 
+    public void increaseTextSize() {
+        final int current = getTextSize();
+        switch (current) {
+            case Config.Size.SMALL:
+                setTextSize(Config.Size.MEDIUM);
+                break;
+            case Config.Size.MEDIUM:
+                setTextSize(Config.Size.LARGE);
+                break;
+            case Config.Size.LARGE:
+                // Do nothing
+                break;
+        }
+    }
+
+    public void decreaseTextSize() {
+        final int current = getTextSize();
+        switch (current) {
+            case Config.Size.SMALL:
+                // Do nothing
+                break;
+            case Config.Size.MEDIUM:
+                setTextSize(Config.Size.SMALL);
+                break;
+            case Config.Size.LARGE:
+                setTextSize(Config.Size.MEDIUM);
+                break;
+        }
+    }
+
     public boolean setByKeyVal(@NonNull String key,
                                @NonNull String value) {
         switch (key) {
