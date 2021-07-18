@@ -18,6 +18,8 @@ import android.os.Parcelable;
 import android.text.Editable;
 import android.text.PrecomputedText;
 import android.text.TextWatcher;
+import android.text.style.CharacterStyle;
+import android.text.style.MetricAffectingSpan;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -326,6 +328,11 @@ public final class EditorActivity extends Activity implements
 
     @Override
     public void afterTextChanged(Editable s) {
+        final CharacterStyle[] toRemove = s.getSpans(0, s.length(),
+                MetricAffectingSpan.class);
+        for (final CharacterStyle span : toRemove) {
+            s.removeSpan(span);
+        }
         setDirty();
     }
 
