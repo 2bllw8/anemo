@@ -2,15 +2,15 @@
 # SPDX-License-Identifier: GPL-3.0-only
 android_library(
     name = "provider",
-    manifest = "AndroidManifest.xml",
     srcs = glob([
         "**/*.java",
     ]),
+    manifest = "AndroidManifest.xml",
     resource_files = glob([
         "res/**",
     ]),
     visibility = [
-        "//:__pkg__"
+        "//:__pkg__",
     ],
     deps = [
         "//java/eu/bbllw8/anemo/documents/home",

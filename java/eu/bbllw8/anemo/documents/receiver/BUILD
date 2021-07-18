@@ -2,12 +2,12 @@
 # SPDX-License-Identifier: GPL-3.0-only
 android_library(
     name = "receiver",
-    manifest = "AndroidManifest.xml",
     srcs = glob([
         "**/*.java",
     ]),
+    manifest = "AndroidManifest.xml",
     resource_files = glob([
-        "res/**"
+        "res/**",
     ]),
     visibility = [
         "//:__pkg__",

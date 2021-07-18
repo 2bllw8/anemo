@@ -7,12 +7,12 @@ android_library(
         "res/**",
     ]),
     visibility = [
-        "//java/eu/bbllw8/anemo/editor/main:__pkg__",
         "//java/eu/bbllw8/anemo/documents/file:__pkg__",
         "//java/eu/bbllw8/anemo/documents/password:__pkg__",
         "//java/eu/bbllw8/anemo/documents/provider:__pkg__",
         "//java/eu/bbllw8/anemo/documents/receiver:__pkg__",
         "//java/eu/bbllw8/anemo/documents/snippet:__pkg__",
+        "//java/eu/bbllw8/anemo/editor/main:__pkg__",
     ],
     deps = [
     ],

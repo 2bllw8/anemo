@@ -4,10 +4,14 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 # Android
 ANDROID_API_LEVEL = 30
+
 ANDROID_BUILD_TOOLS = "30.0.3"
+
 # Rules
 RULES_JVM_EXTERNAL_TAG = "4.0"
+
 RULES_JVM_EXTERNAL_SHA = "31701ad93dbfe544d597dbe62c9a1fdd76d81d8a9150c2bf1ecf928ecdf97169"
+
 # Maven
 ANNOTATION_VERSION = "1.1.0"
 
