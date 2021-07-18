@@ -65,7 +65,6 @@ public final class EditorActivity extends Activity implements
     private static final String TYPE_PLAIN_TEXT = "text/plain";
     private static final int REQUEST_CREATE_FILE_AND_QUIT = 10;
     private static final int REQUEST_CREATE_FILE = 11;
-    private static final int REQUEST_OPEN_FILE = 12;
 
     private boolean dirty = false;
     private boolean alwaysAllowSave = false;
@@ -314,9 +313,6 @@ public final class EditorActivity extends Activity implements
             case REQUEST_CREATE_FILE_AND_QUIT:
                 loadNewSaveFile(data.getData(), data.getType(), true);
                 break;
-            case REQUEST_OPEN_FILE:
-                openInNewWindow(data.getData(), data.getType());
-                break;
         }
     }
 
@@ -366,10 +362,7 @@ public final class EditorActivity extends Activity implements
     }
 
     private void openFileSelector() {
-        final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT)
-                .addCategory(Intent.CATEGORY_OPENABLE)
-                .setType("text/*");
-        startActivityForResult(intent, REQUEST_OPEN_FILE);
+        startActivity(new Intent(this, OpenFileActivity.class));
     }
 
     private void openFileSaver(boolean quitWhenSaved) {
@@ -386,16 +379,6 @@ public final class EditorActivity extends Activity implements
         startActivityForResult(intent, quitWhenSaved
                 ? REQUEST_CREATE_FILE_AND_QUIT
                 : REQUEST_CREATE_FILE);
-    }
-
-    private void openInNewWindow(@NonNull Uri uri,
-                                 @Nullable String type) {
-        final Intent intent = new Intent(this, EditorActivity.class)
-                .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
-                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                        | Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
-                .setDataAndType(uri, type == null ? TYPE_PLAIN_TEXT : type);
-        startActivity(intent);
     }
 
     /* Content operations */

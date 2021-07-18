@@ -59,4 +59,8 @@
     <string name="editor_save_failed">Failed to save \'%1$s\'</string>
 
     <string name="editor_snippet_save">Save as file</string>
+
+    <string name="editor_shortcut_open_short">Open file</string>
+    <string name="editor_shortcut_open_long">Open a file</string>
+    <string name="editor_shortcut_open_disabled">Can\'t create open files</string>
 </resources>
