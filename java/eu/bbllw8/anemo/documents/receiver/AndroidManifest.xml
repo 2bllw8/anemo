@@ -11,7 +11,7 @@
 
     <application>
         <activity
-            android:name="eu.bbllw8.anemo.documents.receiver.ReceiverActivity"
+            android:name=".ReceiverActivity"
             android:label="@string/receiver_label"
             android:theme="@style/TransparentTheme"
             android:excludeFromRecents="true">

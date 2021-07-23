@@ -11,7 +11,7 @@
 
     <application>
         <activity
-            android:name="eu.bbllw8.anemo.documents.password.PasswordActivity"
+            android:name=".PasswordActivity"
             android:label="@string/password_label"
             android:theme="@style/DialogTheme"
             android:excludeFromRecents="true">

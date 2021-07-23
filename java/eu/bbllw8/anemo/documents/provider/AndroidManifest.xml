@@ -12,7 +12,7 @@
     <application>
 
         <provider
-            android:name="eu.bbllw8.anemo.documents.provider.AnemoDocumentProvider"
+            android:name=".AnemoDocumentProvider"
             android:authorities="eu.bbllw8.anemo.documents"
             android:exported="true"
             android:grantUriPermissions="true"

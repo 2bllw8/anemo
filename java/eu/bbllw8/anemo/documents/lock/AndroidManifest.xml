@@ -14,12 +14,12 @@
     <application>
 
         <service
-            android:name="eu.bbllw8.anemo.documents.lock.AutoLockJobService"
+            android:name=".AutoLockJobService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <service
-            android:name="eu.bbllw8.anemo.documents.lock.LockTileService"
+            android:name=".LockTileService"
             android:exported="true"
             android:icon="@drawable/ic_key_tile"
             android:label="@string/tile_title"
@@ -29,5 +29,4 @@
             </intent-filter>
         </service>
     </application>
-
 </manifest>
