@@ -16,6 +16,7 @@ android_binary(
         "//java/eu/bbllw8/anemo/documents/password",
         "//java/eu/bbllw8/anemo/documents/provider",
         "//java/eu/bbllw8/anemo/documents/receiver",
+        "//java/eu/bbllw8/anemo/editor/help",
         "//java/eu/bbllw8/anemo/editor/main",
     ],
 )
@@ -31,6 +32,7 @@ android_binary(
         "//java/eu/bbllw8/anemo/documents/password",
         "//java/eu/bbllw8/anemo/documents/provider",
         "//java/eu/bbllw8/anemo/documents/receiver",
+        "//java/eu/bbllw8/anemo/editor/help",
         "//java/eu/bbllw8/anemo/editor/main",
     ],
 )

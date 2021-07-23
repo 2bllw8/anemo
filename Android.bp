@@ -11,6 +11,7 @@ android_app {
         ],
     },
     static_libs: [
+        "anemo_editor_help",
         "anemo_editor_main",
         "anemo_documents_password",
         "anemo_documents_provider",
@@ -51,6 +52,21 @@ android_library {
     sdk_version: "30",
     srcs: [
         "java/eu/bbllw8/anemo/editor/config/**/*.java",
+    ],
+    static_libs: [
+        "androidx.annotation_annotation",
+    ],
+}
+
+android_library {
+    name: "anemo_editor_help",
+    manifest: "java/eu/bbllw8/anemo/editor/help/AndroidManifest.xml",
+    sdk_version: "30",
+    resource_dirs: [
+        "java/eu/bbllw8/anemo/editor/help/res",
+    ],
+    srcs: [
+        "java/eu/bbllw8/anemo/editor/help/**/*.java",
     ],
     static_libs: [
         "androidx.annotation_annotation",

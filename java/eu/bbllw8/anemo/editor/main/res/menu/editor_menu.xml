@@ -101,4 +101,10 @@
                 android:title="@string/editor_menu_show_shell" />
         </menu>
     </item>
+
+    <item
+        android:id="@+id/editorHelp"
+        android:showAsAction="never"
+        android:visible="false"
+        android:title="@string/editor_menu_help" />
 </menu>

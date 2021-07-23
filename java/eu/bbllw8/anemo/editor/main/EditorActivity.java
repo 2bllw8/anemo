@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -62,6 +63,7 @@ public final class EditorActivity extends Activity implements
         EditorConfigListener,
         EditorCommandsExecutor,
         TextWatcher {
+    private static final String ACTION_HELP = "eu.bbllw8.anemo.action.EDITOR_HELP";
     private static final String KEY_EDITOR_FILE = "editor_file";
     private static final String KEY_HISTORY_STATE = "editor_history";
     private static final String TYPE_PLAIN_TEXT = "text/plain";
@@ -205,6 +207,7 @@ public final class EditorActivity extends Activity implements
             autoPairMenuItem = menu.findItem(R.id.editorAutoPair);
             showCommandBarMenuItem = menu.findItem(R.id.editorShowCommandBar);
             final MenuItem showShellMenuItem = menu.findItem(R.id.editorShowShell);
+            final MenuItem helpMenuItem = menu.findItem(R.id.editorHelp);
 
             switch (editorConfig.getTextSize()) {
                 case Config.Size.LARGE:
@@ -231,6 +234,10 @@ public final class EditorActivity extends Activity implements
             autoPairMenuItem.setChecked(editorConfig.getAutoPairEnabled());
             showCommandBarMenuItem.setChecked(editorConfig.getShowCommandBar());
             showShellMenuItem.setChecked(EditorShell.isEnabled(this));
+
+            final boolean hasHelpActivity = getPackageManager().resolveActivity(
+                    new Intent(ACTION_HELP), PackageManager.MATCH_DEFAULT_ONLY) != null;
+            helpMenuItem.setVisible(hasHelpActivity);
 
             // If always dirty (snippet) always allow
             saveMenuItem.setEnabled(alwaysAllowSave);
@@ -281,6 +288,9 @@ public final class EditorActivity extends Activity implements
         } else if (id == R.id.editorShowShell) {
             EditorShell.setEnabled(this, !item.isChecked());
             item.setChecked(!item.isChecked());
+            return true;
+        } else if (id == R.id.editorHelp) {
+            startActivity(new Intent(ACTION_HELP));
             return true;
         } else if (id == android.R.id.home) {
             onBackPressed();

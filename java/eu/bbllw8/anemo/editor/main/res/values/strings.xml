@@ -38,6 +38,7 @@
     <string name="editor_menu_auto_pair">Auto pair</string>
     <string name="editor_menu_command">Command field</string>
     <string name="editor_menu_show_shell">Show app icon</string>
+    <string name="editor_menu_help">Help</string>
 
     <string name="editor_command_help">Type commands in the command field to operate on the text:\n
         • /my text : find next occurrence of \"my text\"\n
