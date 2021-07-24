@@ -42,4 +42,5 @@ public final class Config {
     public static final int DEFAULT_STYLE = Style.MONO;
     public static final boolean DEFAULT_AUTO_PAIR = true;
     public static final boolean DEFAULT_SHOW_COMMAND_BAR = false;
+    public static final boolean DEFAULT_SHOW_SUGGESTIONS = true;
 }
