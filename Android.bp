@@ -68,7 +68,12 @@ android_library {
     srcs: [
         "java/eu/bbllw8/anemo/editor/help/**/*.java",
     ],
+    asset_dirs = [
+        "java/eu/bbllw8/anemo/editor/help/assets"
+    ],
     static_libs: [
+        "anemo_editor_markdown",
+        "anemo_task",
         "androidx.annotation_annotation",
     ],
 }

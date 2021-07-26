@@ -4,4 +4,6 @@
   -->
 <resources>
     <string name="editor_help_label">Help</string>
+
+    <string name="editor_help_error">Could not load help text</string>
 </resources>

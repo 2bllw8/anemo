@@ -9,11 +9,17 @@ android_library(
     resource_files = glob([
         "res/**",
     ]),
+    assets_dir = "assets",
+    assets = glob([
+        "assets/**/*.md",
+    ]),
     visibility = [
         "//:__pkg__",
     ],
     deps = [
+        "//java/eu/bbllw8/anemo/editor/markdown",
         "//java/eu/bbllw8/anemo/shell",
+        "//java/eu/bbllw8/anemo/task",
         "@maven//:androidx_annotation_annotation",
     ],
 )
