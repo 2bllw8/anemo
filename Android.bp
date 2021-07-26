@@ -120,6 +120,18 @@ android_library {
     ],
 }
 
+android_library {
+    name: "anemo_editor_markdown",
+    manifest: "java/eu/bbllw8/anemo/editor/markdown/AndroidManifest.xml",
+    sdk_version: "30",
+    srcs: [
+        "java/eu/bbllw8/anemo/editor/markdown/**/*.java",
+    ],
+    static_libs: [
+        "androidx.annotation_annotation",
+    ],
+}
+
 // Documents
 
 android_library {
