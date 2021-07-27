@@ -7,6 +7,8 @@ package eu.bbllw8.anemo.editor.markdown;
 import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.style.BulletSpan;
+import android.text.style.ImageSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
@@ -29,8 +31,14 @@ public final class MarkdownFormatter {
         while (i < n) {
             final char c = text.charAt(i++);
             if (wasLastLine) {
+                final boolean softNewLine = sb.length() > 0 && sb.charAt(sb.length() - 1) == ' ';
+
                 switch (c) {
                     case '#': {
+                        if (softNewLine) {
+                            sb.append('\n');
+                        }
+
                         final int j = nextEol(text, n, i);
                         if (peek(text, n, i) == '#') {
                             if (peek(text, n, i + 1) == '#') {
@@ -67,23 +75,59 @@ public final class MarkdownFormatter {
                         continue;
                     }
                     case '>': {
+                        if (softNewLine) {
+                            sb.append('\n');
+                        }
+
                         final int j = nextEol(text, n, i);
                         final CharSequence quotedText = text.subSequence(i, j)
                                 .toString()
                                 .trim();
                         sb.append(quotedText,
                                 new TypefaceSpan(Typeface.SERIF),
-                                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-                        sb.append('\n');
+                                Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
+                                .append('\n');
                         i = j;
                         continue;
+                    }
+                    case '-': {
+                        if (softNewLine) {
+                            sb.append('\n');
+                        }
+                        sb.append(" ",
+                                new BulletSpan(),
+                                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                        wasLastLine = false;
+                        continue;
+                    }
+                    case ' ': {
+                        final int listBegin = nextMatch(text, '-', n, i);
+                        if (listBegin < n) {
+                            if (softNewLine) {
+                                sb.append('\n');
+                            }
+                            for (int space = 0; space < (listBegin - i); space += 2) {
+                                sb.append(' ');
+                            }
+                            sb.append(" ",
+                                    new BulletSpan(),
+                                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                            i = listBegin - 1;
+                            wasLastLine = false;
+                            continue;
+                        }
                     }
                 }
             }
 
             if (c == '\n') {
                 wasLastLine = true;
-                sb.append('\n');
+                if (peek(text, n, i) == '\n') {
+                    i++;
+                    sb.append('\n');
+                } else {
+                    sb.append(' ');
+                }
             } else {
                 wasLastLine = false;
                 switch (c) {
@@ -139,7 +183,7 @@ public final class MarkdownFormatter {
     }
 
     private static char peek(@NonNull CharSequence s, int max, int index) {
-        return index < max ? s.charAt(index) : 0;
+        return index < max && index >= 0 ? s.charAt(index) : 0;
     }
 
     private static int nextEol(@NonNull CharSequence s, int max, int from) {
