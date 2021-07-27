@@ -15,21 +15,13 @@ import android.text.style.TypefaceSpan;
 import androidx.annotation.NonNull;
 
 public final class MarkdownFormatter {
-    private static final RelativeSizeSpan SPAN_H1 = new RelativeSizeSpan(1.75f);
-    private static final RelativeSizeSpan SPAN_H2 = new RelativeSizeSpan(1.5f);
-    private static final RelativeSizeSpan SPAN_H3 = new RelativeSizeSpan(1.25f);
-    private static final StyleSpan SPAN_BOLD = new StyleSpan(Typeface.BOLD);
-    private static final StyleSpan SPAN_ITALICS = new StyleSpan(Typeface.ITALIC);
-    private static final StrikethroughSpan SPAN_STRIKE = new StrikethroughSpan();
-    private static final TypefaceSpan SPAN_MONO = new TypefaceSpan(Typeface.MONOSPACE);
-    private static final TypefaceSpan SPAN_SERIF = new TypefaceSpan(Typeface.SERIF);
 
     private MarkdownFormatter() {
     }
 
     @NonNull
     public static CharSequence format(@NonNull CharSequence text) {
-        final SpannableStringBuilder sb = new SpannableStringBuilder(text);
+        final SpannableStringBuilder sb = new SpannableStringBuilder();
         final int n = text.length();
         int i = 0;
         boolean wasLastLine = true;
@@ -42,19 +34,47 @@ public final class MarkdownFormatter {
                         final int j = nextEol(text, n, i);
                         if (peek(text, n, i) == '#') {
                             if (peek(text, n, i + 1) == '#') {
-                                sb.setSpan(SPAN_H3, i - 1, j, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                                if (i + 2 < n) {
+                                    final CharSequence h3Text = text.subSequence(i + 2, j)
+                                            .toString()
+                                            .trim();
+                                    sb.append(h3Text,
+                                            new RelativeSizeSpan(1.25f),
+                                            Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                                }
                             } else {
-                                sb.setSpan(SPAN_H2, i - 1, j, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                                if (i + 1 < n) {
+                                    final CharSequence h2Text = text.subSequence(i + 1, j)
+                                            .toString()
+                                            .trim();
+                                    sb.append(h2Text,
+                                            new RelativeSizeSpan(1.5f),
+                                            Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                                }
                             }
                         } else {
-                            sb.setSpan(SPAN_H1, i - 1, j, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                            if (i < n) {
+                                final CharSequence h1Text = text.subSequence(i, j)
+                                        .toString()
+                                        .trim();
+                                sb.append(h1Text,
+                                        new RelativeSizeSpan(1.75f),
+                                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                            }
                         }
+                        sb.append('\n');
                         i = j;
                         continue;
                     }
                     case '>': {
                         final int j = nextEol(text, n, i);
-                        sb.setSpan(SPAN_SERIF, i - 1, j, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                        final CharSequence quotedText = text.subSequence(i, j)
+                                .toString()
+                                .trim();
+                        sb.append(quotedText,
+                                new TypefaceSpan(Typeface.SERIF),
+                                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                        sb.append('\n');
                         i = j;
                         continue;
                     }
@@ -63,6 +83,7 @@ public final class MarkdownFormatter {
 
             if (c == '\n') {
                 wasLastLine = true;
+                sb.append('\n');
             } else {
                 wasLastLine = false;
                 switch (c) {
@@ -71,30 +92,45 @@ public final class MarkdownFormatter {
                         if (peek(text, n, i) == c) {
                             final int j = nextMatch(text, c, n, i + 1);
                             if (peek(text, n, j) == c) {
-                                sb.setSpan(SPAN_BOLD, i - 1, j + 1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                                if (i + 1 < n) {
+                                    sb.append(text.subSequence(i + 1, j - 1),
+                                            new StyleSpan(Typeface.BOLD),
+                                            Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                                }
+                                i = j + 1;
                             } else {
-                                sb.setSpan(SPAN_ITALICS, i + 1, j + 1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                                sb.append(c);
                             }
-                            i = j + 1;
                         } else {
                             final int j = nextMatch(text, c, n, i);
-                            sb.setSpan(SPAN_ITALICS, i - 1, j, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                            if (i < n) {
+                                sb.append(text.subSequence(i, j - 1),
+                                        new StyleSpan(Typeface.ITALIC),
+                                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                            }
                             i = j;
                         }
                     }
                     break;
                     case '`': {
                         final int j = nextMatch(text, '`', n, i);
-                        sb.setSpan(SPAN_MONO, i - 1, j, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                        sb.append(text.subSequence(i, j - 1),
+                                new TypefaceSpan(Typeface.MONOSPACE),
+                                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                         i = j;
                     }
                     break;
                     case '~': {
-                        final int j = nextMatch(text, '`', n, i);
-                        sb.setSpan(SPAN_STRIKE, i - 1, j, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                        final int j = nextMatch(text, '~', n, i);
+                        sb.append(text.subSequence(i, j - 1),
+                                new StrikethroughSpan(),
+                                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                         i = j;
                     }
                     break;
+                    default: {
+                        sb.append(c);
+                    }
                 }
             }
         }
