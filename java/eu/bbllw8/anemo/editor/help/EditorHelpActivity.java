@@ -28,7 +28,7 @@ public final class EditorHelpActivity extends Activity {
 
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        TaskExecutor.runTask(new LoadHelpContentTextTask(getAssets()),
+        TaskExecutor.runTask(new LoadHelpContentTextTask(getResources()),
                 contentView::setText,
                 () -> contentView.setText(R.string.editor_help_error));
     }

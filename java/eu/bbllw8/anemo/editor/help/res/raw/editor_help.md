@@ -25,6 +25,7 @@ Running `d/quick`, assuming the cursor is at the beginning of the line, transfor
 
 >"A fox jumps over the lazy dog. The fox is brown"
 
+
 ### First occurrences
 
 To delete a number of occurrences of a certain string (from the current cursor position),
@@ -35,6 +36,7 @@ _text to delete_ with whatever you want to delete).
 Run `1 d/quick` assuming the cursor is at the beginning of the line, transforms the text to
 
 >"A fox jumps over the lazy dog. The fox is quick"
+
 
 ## Substitute
 
@@ -48,6 +50,7 @@ Running `s/fox/cat`, assuming the cursor is at the beginning of the line, transf
 
 >"A quick cat jumps over the lazy dog. The cat is brown"
 
+
 ### First occurrences
 
 To substitute a number of occurrences of a certain string with another one (from the
@@ -60,21 +63,30 @@ Run `1 s/quick/hungry` assuming the cursor is at the beginning of the line, tran
 
 >"A hungry fox jumps over the lazy dog. The fox is quick"
 
+
 ## Configuration
 
 Configure the application options with the `set` command:
 
 - `commands`: Change commands field visibility
-  - [`on` | `off`]
+  - `on`
+  - `off`
 - `pair`: Enable or disable auto–close brackets and quotes
-  - [`on` | `off`]
+  - `on`
+  - `off`
 - `size`: Change text size
-  - [`large` | `medium` | `small`]
+  - `large`
+  - `medium`
+  - `small`
 - `style`: Change text style
-  - [`mono` | `sans` | `serif`]
+  - `mono`
+  - `sans`
+  - `serif`
+
 
 To configure an option with the set command type: `set/name/value` (replacing _name_ with
 the name of the option to be configured and _value_ with the desired configuration value).
+For example `set/style/mono` sets the text style to monospace.
 
 
 # Keyboard shortcuts

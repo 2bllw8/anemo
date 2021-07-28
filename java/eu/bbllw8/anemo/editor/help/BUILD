@@ -9,10 +9,6 @@ android_library(
     resource_files = glob([
         "res/**",
     ]),
-    assets_dir = "assets",
-    assets = glob([
-        "assets/**/*.md",
-    ]),
     visibility = [
         "//:__pkg__",
     ],

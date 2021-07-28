@@ -4,8 +4,10 @@
  */
 package eu.bbllw8.anemo.editor.help;
 
-import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,18 +17,18 @@ import java.util.concurrent.Callable;
 import eu.bbllw8.anemo.editor.markdown.MarkdownFormatter;
 
 final class LoadHelpContentTextTask implements Callable<Optional<CharSequence>>  {
-    private static final String HELP_DOCUMENT = "editor_help.md";
     private static final String TAG = "LoadHelpTextTask";
-    private final AssetManager am;
+    @NonNull
+    private final Resources resources;
 
-    public LoadHelpContentTextTask(AssetManager am) {
-        this.am = am;
+    public LoadHelpContentTextTask(@NonNull Resources resources) {
+        this.resources = resources;
     }
 
     @Override
     public Optional<CharSequence> call() {
         final StringBuilder sb = new StringBuilder();
-        try (InputStream reader = am.open(HELP_DOCUMENT)) {
+        try (InputStream reader = resources.openRawResource(R.raw.editor_help)) {
             final byte[] buffer = new byte[4096];
             int read = reader.read(buffer, 0, 4096);
             while (read > 0) {
