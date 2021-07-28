@@ -112,7 +112,6 @@ public final class EditorActivity extends Activity implements
         textEditorView = findViewById(R.id.editorContent);
         commandBar = findViewById(R.id.editorCommandBar);
         commandField = findViewById(R.id.editorCommandField);
-        final ImageView commandHelpButton = findViewById(R.id.editorCommandHelp);
         final ImageView commandRunButton = findViewById(R.id.editorCommandRun);
 
         editorConfig = new EditorConfig(this, this);
@@ -131,7 +130,6 @@ public final class EditorActivity extends Activity implements
             }
         });
 
-        commandHelpButton.setOnClickListener(v -> showCommandHelpMessage());
         commandRunButton.setOnClickListener(v -> runCurrentCommand());
 
         if (actionBar != null) {
@@ -768,15 +766,6 @@ public final class EditorActivity extends Activity implements
                             finish();
                         })
                 .setNeutralButton(android.R.string.cancel,
-                        (d, which) -> d.dismiss())
-                .show();
-    }
-
-    private void showCommandHelpMessage() {
-        new AlertDialog.Builder(this, R.style.DialogTheme)
-                .setTitle(R.string.editor_menu_command)
-                .setMessage(R.string.editor_command_help)
-                .setPositiveButton(R.string.editor_action_dismiss,
                         (d, which) -> d.dismiss())
                 .show();
     }

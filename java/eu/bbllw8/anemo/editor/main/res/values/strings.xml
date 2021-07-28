@@ -41,14 +41,6 @@
     <string name="editor_menu_show_shell">Show app icon</string>
     <string name="editor_menu_help">Help</string>
 
-    <string name="editor_command_help">Type commands in the command field to operate on the text:\n
-        • /my text : find next occurrence of \"my text\"\n
-        • d/my text : delete all occurrences of \"my text\"\n
-        • 1 d/my text : delete first next occurrence of \"my text\"\n
-        • s/my text/new text : substitute all occurrences of \"my text\" with \"new text\"\n
-        • 1 s/my text/new text : substitute first next occurrence of \"my text\" with \"new text\"\n
-        • set/key/value : set the configuration option \"key\" to \"value\"\n
-    </string>
     <string name="editor_command_hint">Type a command…</string>
     <string name="editor_command_not_implemented">Error: command not implemented</string>
     <string name="editor_command_unknown">Error: unknown or badly–formatted command</string>
