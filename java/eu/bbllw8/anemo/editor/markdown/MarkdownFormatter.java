@@ -4,10 +4,13 @@
  */
 package eu.bbllw8.anemo.editor.markdown;
 
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.style.BackgroundColorSpan;
 import android.text.style.BulletSpan;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
@@ -16,6 +19,8 @@ import android.text.style.TypefaceSpan;
 import androidx.annotation.NonNull;
 
 public final class MarkdownFormatter {
+    private static final int COLOR_CODE = Color.argb(50, 200, 81, 37);
+    private static final int COLOR_QUOTE = Color.argb(255, 131, 145, 69);
 
     private MarkdownFormatter() {
     }
@@ -82,10 +87,18 @@ public final class MarkdownFormatter {
                         final CharSequence quotedText = text.subSequence(i, j)
                                 .toString()
                                 .trim();
-                        sb.append(quotedText,
-                                new TypefaceSpan(Typeface.SERIF),
-                                Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
-                                .append('\n');
+                        final int start = sb.length();
+                        sb.append(quotedText);
+                        final int end = sb.length();
+                        sb.setSpan(new TypefaceSpan(Typeface.SERIF),
+                                start,
+                                end,
+                                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                        sb.setSpan(new ForegroundColorSpan(COLOR_QUOTE),
+                                start,
+                                end,
+                                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                        sb.append('\n');
                         i = j;
                         continue;
                     }
@@ -157,8 +170,17 @@ public final class MarkdownFormatter {
                     break;
                     case '`': {
                         final int j = nextMatch(text, '`', n, i);
-                        sb.append(text.subSequence(i, j - 1),
-                                new TypefaceSpan(Typeface.MONOSPACE),
+                        final CharSequence codeText = text.subSequence(i, j - 1);
+                        final int start = sb.length();
+                        sb.append(codeText);
+                        final int end = sb.length();
+                        sb.setSpan(new TypefaceSpan(Typeface.MONOSPACE),
+                                start,
+                                end,
+                                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                        sb.setSpan(new BackgroundColorSpan(COLOR_CODE),
+                                start,
+                                end,
                                 Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                         i = j;
                     }
