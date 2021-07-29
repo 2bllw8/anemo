@@ -428,14 +428,16 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
 
                 // Additional features for user-created directories
                 if (!homeEnvironment.isDefaultDirectory(path)) {
-                    flags |= Document.FLAG_SUPPORTS_RENAME
-                            | Document.FLAG_SUPPORTS_DELETE
-                            | Document.FLAG_SUPPORTS_MOVE;
+                    flags |= Document.FLAG_SUPPORTS_DELETE
+                            | Document.FLAG_SUPPORTS_MOVE
+                            | Document.FLAG_SUPPORTS_RENAME;
                 }
             }
         } else if (Files.isWritable(path)) {
-            flags |= Document.FLAG_SUPPORTS_WRITE
-                    | Document.FLAG_SUPPORTS_DELETE;
+            flags |= Document.FLAG_SUPPORTS_DELETE
+                    | Document.FLAG_SUPPORTS_MOVE
+                    | Document.FLAG_SUPPORTS_RENAME
+                    | Document.FLAG_SUPPORTS_WRITE;
         }
 
         final String fileName = path.getFileName().toString();
