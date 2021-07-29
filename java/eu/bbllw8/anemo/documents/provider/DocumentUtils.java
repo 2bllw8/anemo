@@ -108,8 +108,7 @@ final class DocumentUtils {
                 }
 
                 @Override
-                public FileVisitResult visitFile(Path file,
-                                                 BasicFileAttributes attrs) {
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                     if (query.contains(file.getFileName().toString())) {
                         list.add(file);
                     }
@@ -119,14 +118,12 @@ final class DocumentUtils {
                 }
 
                 @Override
-                public FileVisitResult visitFileFailed(Path file,
-                                                       IOException exc) {
+                public FileVisitResult visitFileFailed(Path file, IOException exc) {
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
-                public FileVisitResult postVisitDirectory(Path dir,
-                                                          IOException exc) {
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
                     return FileVisitResult.CONTINUE;
                 }
             });

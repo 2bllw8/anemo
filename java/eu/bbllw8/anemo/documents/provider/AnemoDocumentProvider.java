@@ -215,11 +215,11 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
 
     @NonNull
     @Override
-    public String createDocument(@NonNull String documentId,
+    public String createDocument(@NonNull String parentDocumentId,
                                  @NonNull String mimeType,
                                  @NonNull String displayName)
             throws FileNotFoundException {
-        final Path parent = getPathForId(documentId);
+        final Path parent = getPathForId(parentDocumentId);
         final Path target = parent.resolve(displayName);
 
         try {
@@ -231,12 +231,11 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
 
             Files.setPosixFilePermissions(target, HomeEnvironment.ATTR_DEFAULT_POSIX);
 
-            documentId = getDocIdForPath(target);
-            notifyChange(documentId);
-            return documentId;
+            notifyChildChange(parentDocumentId);
+            return getDocIdForPath(target);
         } catch (IOException e) {
             throw new FileNotFoundException("Failed to create document with name "
-                    + displayName + " and documentId " + documentId);
+                    + displayName + " and in " + parentDocumentId);
         }
     }
 
@@ -248,7 +247,14 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
         } catch (IOException e) {
             throw new FileNotFoundException("Failed to delete document with id " + documentId);
         }
-        notifyChange(documentId);
+
+        notifyChildChange(getDocIdForPath(path.getParent()));
+    }
+
+    @Override
+    public void removeDocument(@NonNull String documentId,
+                               @NonNull String parentDocumentId) throws FileNotFoundException {
+        deleteDocument(documentId);
     }
 
     @NonNull
@@ -269,7 +275,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                     + " to " + targetParentDocumentId + ": " + e.getMessage());
         }
 
-        notifyChange(targetParentDocumentId);
+        notifyChildChange(targetParentDocumentId);
         return getDocIdForPath(target);
     }
 
@@ -293,8 +299,8 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                     + " to " + targetParentDocumentId + ": " + e.getMessage());
         }
 
-        notifyChange(sourceParentDocumentId);
-        notifyChange(targetParentDocumentId);
+        notifyChildChange(sourceParentDocumentId);
+        notifyChildChange(targetParentDocumentId);
         return getDocIdForPath(target);
     }
 
@@ -314,7 +320,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                     + " to " + displayName);
         }
 
-        notifyChange(getDocIdForPath(parent));
+        notifyChildChange(getDocIdForPath(parent));
         return getDocIdForPath(target);
     }
 
@@ -498,8 +504,8 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
         cr.notifyChange(DocumentsContract.buildRootsUri(HomeEnvironment.AUTHORITY), null);
     }
 
-    private void notifyChange(@NonNull String documentId) {
-        cr.notifyChange(DocumentsContract.buildDocumentUri(HomeEnvironment.AUTHORITY, documentId),
-                null);
+    private void notifyChildChange(@NonNull String parentId) {
+        cr.notifyChange(DocumentsContract.buildChildDocumentsUri(
+                HomeEnvironment.AUTHORITY, parentId), null);
     }
 }
