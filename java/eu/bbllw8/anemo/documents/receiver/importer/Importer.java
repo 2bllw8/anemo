@@ -14,11 +14,11 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -59,20 +59,20 @@ public abstract class Importer {
         final String fileName = getFileName(uri)
                 .orElseGet(this::getDefaultName);
 
-        final Optional<File> destinationFolderOpt = getDestinationFolder();
+        final Optional<Path> destinationFolderOpt = getDestinationFolder();
         if (!destinationFolderOpt.isPresent()) {
             Log.e(TAG, "Missing destination folder");
             onImportFail.accept(fileName);
             return;
         }
 
-        final File destinationFolder = destinationFolderOpt.get();
-        final File destinationFile = new File(destinationFolder, fileName);
+        final Path destinationFolder = destinationFolderOpt.get();
+        final Path destination = destinationFolder.resolve(fileName);
 
         onStartImport.accept(fileName);
         TaskExecutor.runTask(() -> {
             try (final InputStream inputStream = contentResolver.openInputStream(uri)) {
-                writeStream(inputStream, destinationFile);
+                writeStream(inputStream, destination);
                 return true;
             } catch (IOException e) {
                 Log.e(TAG, "Failed to import", e);
@@ -80,7 +80,7 @@ public abstract class Importer {
             }
         }, success -> {
             if (success) {
-                onImportSuccess.accept(destinationFolder.getName(), fileName);
+                onImportSuccess.accept(destinationFolder.getFileName().toString(), fileName);
             } else {
                 onImportFail.accept(fileName);
             }
@@ -88,8 +88,8 @@ public abstract class Importer {
     }
 
     private void writeStream(@NonNull InputStream inputStream,
-                             @NonNull File destination) throws IOException {
-        try (final OutputStream oStream = new FileOutputStream(destination)) {
+                             @NonNull Path destination) throws IOException {
+        try (final OutputStream oStream = Files.newOutputStream(destination)) {
             final byte[] buffer = new byte[4096];
             int read = inputStream.read(buffer);
             while (read > 0) {
@@ -115,7 +115,7 @@ public abstract class Importer {
     protected abstract String getTypePrefix();
 
     @NonNull
-    protected abstract Optional<File> getDestinationFolder();
+    protected abstract Optional<Path> getDestinationFolder();
 
     @NonNull
     protected abstract String getDefaultName();

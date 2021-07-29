@@ -9,15 +9,20 @@ import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 
-import java.io.File;
-import java.util.ArrayDeque;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 final class DocumentUtils {
     private static final String MIME_TYPE_GENERIC = "application/octet-stream";
@@ -26,72 +31,116 @@ final class DocumentUtils {
     }
 
     @NonNull
-    public static List<File> getLastModifiedFiles(@NonNull File parent,
+    public static List<Path> getLastModifiedFiles(@NonNull Path parent,
                                                   int atMost) {
-        if (!parent.isDirectory()) {
+        if (!Files.isDirectory(parent)) {
             return Collections.emptyList();
         }
 
-        final Queue<File> lastModifiedFiles = new PriorityQueue<>(atMost,
-                (i, j) -> Long.compare(i.lastModified(), j.lastModified()));
-
-        final Queue<File> toVisit = new ArrayDeque<>();
-        toVisit.add(parent);
-        while (!toVisit.isEmpty()) {
-            final File visiting = toVisit.remove();
-            if (visiting.isDirectory()) {
-                final File[] children = visiting.listFiles();
-                if (children != null) {
-                    Collections.addAll(toVisit, children);
-                }
-            } else {
-                lastModifiedFiles.add(visiting);
+        final Queue<Path> lastModifiedFiles = new PriorityQueue<>((a, b) -> {
+            try {
+                final long timeA = Files.getLastModifiedTime(a).toMillis();
+                final long timeB = Files.getLastModifiedTime(b).toMillis();
+                return Long.compare(timeA, timeB);
+            } catch (IOException e) {
+                return 1;
             }
+        });
+
+        try {
+            Files.walkFileTree(parent, new FileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir,
+                                                         BasicFileAttributes attrs) {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    lastModifiedFiles.add(file);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException ignored) {
+            // Terminate search early
         }
 
-        final List<File> list = new ArrayList<>(atMost);
+        final List<Path> list = new ArrayList<>(atMost);
         int numAdded = 0;
         while (!lastModifiedFiles.isEmpty() && numAdded < atMost) {
-            final File file = lastModifiedFiles.remove();
+            final Path file = lastModifiedFiles.remove();
             list.add(numAdded++, file);
         }
         return list;
     }
 
     @NonNull
-    public static List<File> queryFiles(@NonNull File parent,
+    public static List<Path> queryFiles(@NonNull Path parent,
                                         @NonNull String query,
                                         int atMost) {
-        if (!parent.isDirectory()) {
+        if (!Files.isDirectory(parent)) {
             return Collections.emptyList();
         }
 
-        final Queue<File> toVisit = new ArrayDeque<>();
-        toVisit.add(parent);
+        final List<Path> list = new ArrayList<>();
 
-        final List<File> list = new ArrayList<>(atMost);
-        int numAdded = 0;
-        while (!toVisit.isEmpty() && numAdded < atMost) {
-            final File visiting = toVisit.remove();
-            if (visiting.isDirectory()) {
-                final File[] children = visiting.listFiles();
-                if (children != null) {
-                    Collections.addAll(toVisit, children);
+        try {
+            Files.walkFileTree(parent, new FileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir,
+                                                         BasicFileAttributes attrs) {
+                    if (query.contains(dir.getFileName().toString())) {
+                        list.add(dir);
+                    }
+                    return list.size() < atMost
+                            ? FileVisitResult.CONTINUE
+                            : FileVisitResult.TERMINATE;
                 }
-            } else {
-                if (visiting.getName().toLowerCase().contains(query)) {
-                    list.add(numAdded++, visiting);
+
+                @Override
+                public FileVisitResult visitFile(Path file,
+                                                 BasicFileAttributes attrs) {
+                    if (query.contains(file.getFileName().toString())) {
+                        list.add(file);
+                    }
+                    return list.size() < atMost
+                            ? FileVisitResult.CONTINUE
+                            : FileVisitResult.TERMINATE;
                 }
-            }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file,
+                                                       IOException exc) {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir,
+                                                          IOException exc) {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException ignored) {
+            // Terminate search early
         }
         return list;
     }
 
     @NonNull
-    public static String getTypeForFile(File file) {
-        return file.isDirectory()
+    public static String getTypeForPath(Path path) {
+        return Files.isDirectory(path)
                 ? DocumentsContract.Document.MIME_TYPE_DIR
-                : getTypeForName(file.getName());
+                : getTypeForName(path.getFileName().toString());
     }
 
     @NonNull
@@ -110,15 +159,15 @@ final class DocumentUtils {
     }
 
     @NonNull
-    public static String getChildMimeTypes(@NonNull File parent) {
-        final Set<String> mimeTypes = new HashSet<>();
-        final File[] children = parent.listFiles();
-        if (children != null) {
-            for (final File file : children) {
-                mimeTypes.add(getTypeForFile(file));
-            }
+    public static String getChildMimeTypes(@NonNull Path parent) {
+        try {
+            final Set<String> mimeTypes = Files.list(parent)
+                    .filter(Objects::nonNull)
+                    .map(DocumentUtils::getTypeForPath)
+                    .collect(Collectors.toSet());
+            return String.join("\n", mimeTypes);
+        } catch (IOException e) {
+            return "";
         }
-
-        return String.join("\n", mimeTypes);
     }
 }

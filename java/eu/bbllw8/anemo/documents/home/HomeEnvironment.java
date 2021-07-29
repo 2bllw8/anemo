@@ -9,16 +9,19 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public final class HomeEnvironment {
     public static final String AUTHORITY = "eu.bbllw8.anemo.documents";
@@ -29,8 +32,11 @@ public final class HomeEnvironment {
     public static final String MOVIES = "Movies";
     public static final String MUSIC = "Music";
 
-    private final File baseDir;
-    private final Map<String, File> defaultDirectories;
+    public static final Set<PosixFilePermission> ATTR_DEFAULT_POSIX
+            = PosixFilePermissions.fromString("rwxr--r--");
+
+    private final Path baseDir;
+    private final Map<String, Path> defaultDirectories;
 
     private static volatile HomeEnvironment instance;
 
@@ -47,36 +53,38 @@ public final class HomeEnvironment {
     }
 
     private HomeEnvironment(@NonNull Context context) throws IOException {
-        baseDir = new File(context.getFilesDir(), ROOT);
+        baseDir = context.getFilesDir()
+                .toPath()
+                .resolve(ROOT);
 
         defaultDirectories = new HashMap<>();
-        defaultDirectories.put(DOCUMENTS, new File(baseDir, DOCUMENTS));
-        defaultDirectories.put(PICTURES, new File(baseDir, PICTURES));
-        defaultDirectories.put(MOVIES, new File(baseDir, MOVIES));
-        defaultDirectories.put(MUSIC, new File(baseDir, MUSIC));
+        defaultDirectories.put(DOCUMENTS, baseDir.resolve(DOCUMENTS));
+        defaultDirectories.put(PICTURES, baseDir.resolve(PICTURES));
+        defaultDirectories.put(MOVIES, baseDir.resolve(MOVIES));
+        defaultDirectories.put(MUSIC, baseDir.resolve(MUSIC));
 
         prepare();
     }
 
     @NonNull
-    public File getBaseDir() {
+    public Path getBaseDir() {
         return baseDir;
     }
 
     @NonNull
-    public Optional<File> getDefaultDirectory(@NonNull String name) {
+    public Optional<Path> getDefaultDirectory(@NonNull String name) {
         return defaultDirectories.containsKey(name)
                 ? Optional.ofNullable(defaultDirectories.get(name))
                 : Optional.empty();
     }
 
-    public boolean isDefaultDirectory(@NonNull File file) {
-        if (baseDir.equals(file)) {
+    public boolean isDefaultDirectory(@NonNull Path path) {
+        if (baseDir.equals(path)) {
             return true;
         }
 
-        for (final File dir : defaultDirectories.values()) {
-            if (dir.equals(file)) {
+        for (final Path dir : defaultDirectories.values()) {
+            if (dir.equals(path)) {
                 return true;
             }
         }
@@ -84,7 +92,7 @@ public final class HomeEnvironment {
     }
 
     public void wipe() throws IOException {
-        Files.walkFileTree(baseDir.toPath(),
+        Files.walkFileTree(baseDir,
                 new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult visitFile(@NonNull Path file,
@@ -106,13 +114,17 @@ public final class HomeEnvironment {
     }
 
     private void prepare() throws IOException {
-        if (!baseDir.exists() && !baseDir.mkdir()) {
-            throw new IOException("Failed to prepare root directory");
+        if (!Files.exists(baseDir)) {
+            Files.createDirectory(baseDir);
+        } else if (!Files.isDirectory(baseDir)) {
+            throw new IOException(baseDir + " is not a directory");
         }
 
-        for (final File d : defaultDirectories.values()) {
-            if (!d.exists() && !d.mkdir()) {
-                throw new IOException("Failed to prepare " + d.getName() + " directory");
+        for (final Path path : defaultDirectories.values()) {
+            if (!Files.exists(path)) {
+                Files.createDirectory(path);
+            } else if (!Files.isDirectory(path)) {
+                throw new IOException(path + " is not a directory");
             }
         }
     }

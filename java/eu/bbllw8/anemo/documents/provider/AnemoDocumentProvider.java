@@ -23,13 +23,13 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 
@@ -107,7 +107,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
         }
 
         final MatrixCursor.RowBuilder row = result.newRow();
-        final File baseDir = homeEnvironment.getBaseDir();
+        final Path baseDir = homeEnvironment.getBaseDir();
 
         int flags = Root.FLAG_SUPPORTS_CREATE
                 | Root.FLAG_SUPPORTS_RECENTS
@@ -118,8 +118,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
         }
 
         row.add(Root.COLUMN_ROOT_ID, HomeEnvironment.ROOT);
-        row.add(Root.COLUMN_DOCUMENT_ID, getDocIdForFile(baseDir));
-        row.add(Root.COLUMN_AVAILABLE_BYTES, baseDir.getFreeSpace());
+        row.add(Root.COLUMN_DOCUMENT_ID, getDocIdForPath(baseDir));
         row.add(Root.COLUMN_FLAGS, flags);
         row.add(Root.COLUMN_ICON, R.drawable.ic_storage);
         row.add(Root.COLUMN_MIME_TYPES, DocumentUtils.getChildMimeTypes(baseDir));
@@ -145,12 +144,12 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                                       @Nullable String sortOrder)
             throws FileNotFoundException {
         final MatrixCursor result = new MatrixCursor(documentProjection(projection));
-        final File parent = getFileForId(parentDocumentId);
-        final File[] children = parent.listFiles();
-        if (children != null) {
-            for (final File file : children) {
-                includeFile(result, file);
-            }
+        final Path parent = getPathForId(parentDocumentId);
+
+        try {
+            Files.list(parent).forEach(path -> includeFile(result, path));
+        } catch (IOException ignored) {
+            // Include less items
         }
 
         if (parent.equals(homeEnvironment.getBaseDir()) && showInfo) {
@@ -171,7 +170,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                                        @NonNull String[] projection)
             throws FileNotFoundException {
         final MatrixCursor result = new MatrixCursor(documentProjection(projection));
-        DocumentUtils.getLastModifiedFiles(getFileForId(rootId), MAX_LAST_MODIFIED)
+        DocumentUtils.getLastModifiedFiles(getPathForId(rootId), MAX_LAST_MODIFIED)
                 .forEach(file -> includeFile(result, file));
         return result;
     }
@@ -183,7 +182,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                                        @Nullable String[] projection)
             throws FileNotFoundException {
         final MatrixCursor result = new MatrixCursor(documentProjection(projection));
-        DocumentUtils.queryFiles(getFileForId(rootId), query, MAX_SEARCH_RESULTS)
+        DocumentUtils.queryFiles(getPathForId(rootId), query, MAX_SEARCH_RESULTS)
                 .forEach(file -> includeFile(result, file));
         return result;
     }
@@ -196,7 +195,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                                              @NonNull String mode,
                                              @Nullable CancellationSignal signal)
             throws FileNotFoundException {
-        return ParcelFileDescriptor.open(getFileForId(documentId),
+        return ParcelFileDescriptor.open(getPathForId(documentId).toFile(),
                 ParcelFileDescriptor.parseMode(mode));
     }
 
@@ -206,44 +205,47 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                                                      @Nullable Point sizeHint,
                                                      @Nullable CancellationSignal signal)
             throws FileNotFoundException {
-        final ParcelFileDescriptor pfd = ParcelFileDescriptor.open(getFileForId(documentId),
+        final ParcelFileDescriptor pfd = ParcelFileDescriptor.open(
+                getPathForId(documentId).toFile(),
                 ParcelFileDescriptor.MODE_READ_ONLY);
         return new AssetFileDescriptor(pfd, 0, pfd.getStatSize());
     }
 
     /* Manage */
 
-    @Nullable
+    @NonNull
     @Override
     public String createDocument(@NonNull String documentId,
                                  @NonNull String mimeType,
                                  @NonNull String displayName)
             throws FileNotFoundException {
-        final File parent = getFileForId(documentId);
-        final File file = new File(parent.getPath(), displayName);
+        final Path parent = getPathForId(documentId);
+        final Path target = parent.resolve(displayName);
 
         try {
-            final boolean createFileSuccess = Document.MIME_TYPE_DIR.equals(mimeType)
-                    ? file.mkdir()
-                    : file.createNewFile();
-            if (createFileSuccess
-                    && file.setWritable(true)
-                    && file.setReadable(true)) {
-                documentId = getDocIdForFile(file);
-                notifyChange(documentId);
-                return documentId;
+            if (Document.MIME_TYPE_DIR.equals(mimeType)) {
+                Files.createDirectory(target);
+            } else {
+                Files.createFile(target);
             }
+
+            Files.setPosixFilePermissions(target, HomeEnvironment.ATTR_DEFAULT_POSIX);
+
+            documentId = getDocIdForPath(target);
+            notifyChange(documentId);
+            return documentId;
         } catch (IOException e) {
             throw new FileNotFoundException("Failed to create document with name "
                     + displayName + " and documentId " + documentId);
         }
-        return null;
     }
 
     @Override
     public void deleteDocument(@NonNull String documentId) throws FileNotFoundException {
-        final File file = getFileForId(documentId);
-        if (!file.delete()) {
+        final Path path = getPathForId(documentId);
+        try {
+            Files.delete(path);
+        } catch (IOException e) {
             throw new FileNotFoundException("Failed to delete document with id " + documentId);
         }
         notifyChange(documentId);
@@ -254,13 +256,13 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     public String copyDocument(@NonNull String sourceDocumentId,
                                @NonNull String targetParentDocumentId)
             throws FileNotFoundException {
-        final File source = getFileForId(sourceDocumentId);
-        final File targetParent = getFileForId(targetParentDocumentId);
-        final File target = new File(targetParent, source.getName());
+        final Path source = getPathForId(sourceDocumentId);
+        final Path targetParent = getPathForId(targetParentDocumentId);
+        final Path target = targetParent.resolve(source.getFileName().toString());
 
         try {
-            Files.copy(source.toPath(),
-                    target.toPath(),
+            Files.copy(source,
+                    target,
                     StandardCopyOption.COPY_ATTRIBUTES);
         } catch (IOException e) {
             throw new FileNotFoundException("Failed to copy " + sourceDocumentId
@@ -268,7 +270,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
         }
 
         notifyChange(targetParentDocumentId);
-        return getDocIdForFile(target);
+        return getDocIdForPath(target);
     }
 
     @NonNull
@@ -277,23 +279,23 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                                @NonNull String sourceParentDocumentId,
                                @NonNull String targetParentDocumentId)
             throws FileNotFoundException {
-        final File source = getFileForId(sourceDocumentId);
-        final File targetParent = getFileForId(targetParentDocumentId);
-        final File target = new File(targetParent, source.getName());
+        final Path source = getPathForId(sourceDocumentId);
+        final Path targetParent = getPathForId(targetParentDocumentId);
+        final Path target = targetParent.resolve(source.getFileName().toString());
 
         try {
-            Files.move(source.toPath(),
-                    target.toPath(),
+            Files.move(source,
+                    target,
                     StandardCopyOption.COPY_ATTRIBUTES,
                     StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             throw new FileNotFoundException("Failed to move " + sourceDocumentId
-                + " to " + targetParentDocumentId + ": " + e.getMessage());
+                    + " to " + targetParentDocumentId + ": " + e.getMessage());
         }
 
         notifyChange(sourceParentDocumentId);
         notifyChange(targetParentDocumentId);
-        return getDocIdForFile(target);
+        return getDocIdForPath(target);
     }
 
     @NonNull
@@ -301,41 +303,39 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     public String renameDocument(@NonNull String documentId,
                                  @NonNull String displayName)
             throws FileNotFoundException {
-        final File file = getFileForId(documentId);
-        final File parent = file.getParentFile();
-        final File target = new File(parent, displayName);
+        final Path path = getPathForId(documentId);
+        final Path parent = path.getParent();
+        final Path target = parent.resolve(displayName);
 
         try {
-            Files.move(file.toPath(), target.toPath());
+            Files.move(path, target);
         } catch (IOException e) {
             throw new FileNotFoundException("Couldn't rename " + documentId
                     + " to " + displayName);
         }
 
-        if (parent != null) {
-            notifyChange(getDocIdForFile(parent));
-        }
-        return getDocIdForFile(target);
+        notifyChange(getDocIdForPath(parent));
+        return getDocIdForPath(target);
     }
 
     @NonNull
     @Override
     public String getDocumentType(@NonNull String documentId) throws FileNotFoundException {
-        return DocumentUtils.getTypeForFile(getFileForId(documentId));
+        return DocumentUtils.getTypeForPath(getPathForId(documentId));
     }
 
     @Nullable
     @Override
     public Bundle getDocumentMetadata(@NonNull String documentId) throws FileNotFoundException {
-        final File file = getFileForId(documentId);
+        final Path path = getPathForId(documentId);
         Bundle bundle = null;
-        if (file.exists()) {
-            if (file.isDirectory()) {
+        if (Files.exists(path)) {
+            if (Files.isDirectory(path)) {
                 final Int64Ref treeCount = new Int64Ref(0);
                 final Int64Ref treeSize = new Int64Ref(0);
 
                 try {
-                    Files.walkFileTree(file.toPath(), new FileVisitor<Path>() {
+                    Files.walkFileTree(path, new FileVisitor<Path>() {
                         @Override
                         public FileVisitResult preVisitDirectory(Path dir,
                                                                  BasicFileAttributes attrs) {
@@ -369,9 +369,13 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                 } catch (IOException e) {
                     Log.e(TAG, "Failed to retrieve metadata", e);
                 }
-            } else if (file.isFile() && file.canRead()) {
+            } else if (Files.isRegularFile(path) && Files.isReadable(path)) {
                 bundle = new Bundle();
-                bundle.putLong(DocumentsContract.METADATA_TREE_SIZE, file.length());
+                try {
+                    bundle.putLong(DocumentsContract.METADATA_TREE_SIZE, Files.size(path));
+                } catch (IOException ignored) {
+                    // Skip this column
+                }
             }
         }
 
@@ -406,36 +410,36 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     private void includeFile(@NonNull MatrixCursor result,
                              @NonNull String docId)
             throws FileNotFoundException {
-        includeFile(result, docId, getFileForId(docId));
+        includeFile(result, docId, getPathForId(docId));
     }
 
     private void includeFile(@NonNull MatrixCursor result,
-                             @NonNull File file) {
-        includeFile(result, getDocIdForFile(file), file);
+                             @NonNull Path path) {
+        includeFile(result, getDocIdForPath(path), path);
     }
 
     private void includeFile(@NonNull MatrixCursor result,
                              @NonNull String docId,
-                             @NonNull File file) {
+                             @NonNull Path path) {
         int flags = 0;
-        if (file.isDirectory()) {
-            if (file.canWrite()) {
+        if (Files.isDirectory(path)) {
+            if (Files.isWritable(path)) {
                 flags |= Document.FLAG_DIR_SUPPORTS_CREATE;
 
                 // Additional features for user-created directories
-                if (!homeEnvironment.isDefaultDirectory(file)) {
+                if (!homeEnvironment.isDefaultDirectory(path)) {
                     flags |= Document.FLAG_SUPPORTS_RENAME
                             | Document.FLAG_SUPPORTS_DELETE
                             | Document.FLAG_SUPPORTS_MOVE;
                 }
             }
-        } else if (file.canWrite()) {
+        } else if (Files.isWritable(path)) {
             flags |= Document.FLAG_SUPPORTS_WRITE
                     | Document.FLAG_SUPPORTS_DELETE;
         }
 
-        final String fileName = file.getName();
-        final String mimeType = DocumentUtils.getTypeForFile(file);
+        final String fileName = path.getFileName().toString();
+        final String mimeType = DocumentUtils.getTypeForPath(path);
 
         if (mimeType.startsWith("image/")) {
             flags |= Document.FLAG_SUPPORTS_THUMBNAIL;
@@ -444,32 +448,31 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
         final MatrixCursor.RowBuilder row = result.newRow();
         row.add(Document.COLUMN_DOCUMENT_ID, docId);
         row.add(Document.COLUMN_DISPLAY_NAME, fileName);
-        row.add(Document.COLUMN_SIZE, file.length());
         row.add(Document.COLUMN_MIME_TYPE, mimeType);
-        row.add(Document.COLUMN_LAST_MODIFIED, file.lastModified());
         row.add(Document.COLUMN_FLAGS, flags);
+
+        try {
+            row.add(Document.COLUMN_SIZE, Files.size(path));
+            row.add(Document.COLUMN_LAST_MODIFIED, Files.getLastModifiedTime(path).toMillis());
+        } catch (IOException ignored) {
+            // Skip these columns
+        }
     }
 
     /* Document ids */
 
     @NonNull
-    private String getDocIdForFile(@NonNull File file) {
-        String path = file.getAbsolutePath();
-        final String rootPath = homeEnvironment.getBaseDir().getPath();
-        if (rootPath.equals(path)) {
-            path = "";
-        } else if (rootPath.endsWith("/")) {
-            path = path.substring(rootPath.length());
-        } else {
-            path = path.substring(rootPath.length() + 1);
-        }
-
-        return HomeEnvironment.ROOT + ':' + path;
+    private String getDocIdForPath(@NonNull Path path) {
+        final Path rootPath = homeEnvironment.getBaseDir();
+        final String id = rootPath.equals(path)
+                ? ""
+                : path.toString().replaceFirst(rootPath.toString(), "");
+        return HomeEnvironment.ROOT + ':' + id;
     }
 
     @NonNull
-    private File getFileForId(@NonNull String documentId) throws FileNotFoundException {
-        final File baseDir = homeEnvironment.getBaseDir();
+    private Path getPathForId(@NonNull String documentId) throws FileNotFoundException {
+        final Path baseDir = homeEnvironment.getBaseDir();
         if (documentId.equals(HomeEnvironment.ROOT)) {
             return baseDir;
         }
@@ -480,9 +483,9 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
         }
 
         final String targetPath = documentId.substring(splitIndex + 1);
-        final File target = new File(baseDir, targetPath);
-        if (!target.exists()) {
-            throw new FileNotFoundException("No file for " + documentId + " at " + target);
+        final Path target = Paths.get(baseDir.toString(), targetPath);
+        if (!Files.exists(target)) {
+            throw new FileNotFoundException("No path for " + documentId + " at " + target);
         }
         return target;
     }

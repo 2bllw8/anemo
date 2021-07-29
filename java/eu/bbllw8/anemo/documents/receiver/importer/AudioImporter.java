@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -31,7 +32,7 @@ public final class AudioImporter extends Importer {
 
     @NonNull
     @Override
-    protected Optional<File> getDestinationFolder() {
+    protected Optional<Path> getDestinationFolder() {
         return homeEnvironment.getDefaultDirectory(HomeEnvironment.MUSIC);
     }
 
