@@ -5,7 +5,6 @@
 package eu.bbllw8.anemo.editor.main;
 
 import android.content.Context;
-import android.text.Editable;
 import android.text.Layout;
 import android.util.AttributeSet;
 import android.widget.EditText;

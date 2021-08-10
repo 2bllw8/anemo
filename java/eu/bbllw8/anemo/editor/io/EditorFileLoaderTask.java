@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.provider.OpenableColumns;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.util.Optional;
 import java.util.concurrent.Callable;
@@ -20,22 +19,16 @@ public final class EditorFileLoaderTask implements Callable<Optional<EditorFile>
             OpenableColumns.DISPLAY_NAME,
             OpenableColumns.SIZE
     };
-    private static final String DEFAULT_TYPE = "text/plain";
 
     @NonNull
     private final ContentResolver cr;
     @NonNull
     private final Uri uri;
-    @NonNull
-    private final String type;
-
 
     public EditorFileLoaderTask(@NonNull ContentResolver cr,
-                                @NonNull Uri uri,
-                                @Nullable String type) {
+                                @NonNull Uri uri) {
         this.cr = cr;
         this.uri = uri;
-        this.type = type == null ? DEFAULT_TYPE : type;
     }
 
     @NonNull
@@ -45,7 +38,7 @@ public final class EditorFileLoaderTask implements Callable<Optional<EditorFile>
             if (infoCursor.moveToFirst()) {
                 final String name = infoCursor.getString(0);
                 final long size = infoCursor.getLong(1);
-                return Optional.of(new EditorFile(uri, name, type, size));
+                return Optional.of(new EditorFile(uri, name, size));
             } else {
                 return Optional.empty();
             }

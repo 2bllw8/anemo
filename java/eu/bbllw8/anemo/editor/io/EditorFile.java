@@ -15,17 +15,13 @@ public final class EditorFile implements Parcelable {
     private final Uri uri;
     @NonNull
     private final String name;
-    @NonNull
-    private final String mimeType;
     private final long size;
 
     public EditorFile(@NonNull Uri uri,
                       @NonNull String name,
-                      @NonNull String mimeType,
                       long size) {
         this.uri = uri;
         this.name = name;
-        this.mimeType = mimeType;
         this.size = size;
     }
 
@@ -39,11 +35,6 @@ public final class EditorFile implements Parcelable {
         return name;
     }
 
-    @NonNull
-    public String getMimeType() {
-        return mimeType;
-    }
-
     public long getSize() {
         return size;
     }
@@ -53,7 +44,6 @@ public final class EditorFile implements Parcelable {
     protected EditorFile(@NonNull Parcel in) {
         uri = in.readParcelable(Uri.class.getClassLoader());
         name = in.readString();
-        mimeType = in.readString();
         size = in.readLong();
     }
 
@@ -66,7 +56,6 @@ public final class EditorFile implements Parcelable {
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeParcelable(uri, flags);
         dest.writeString(name);
-        dest.writeString(mimeType);
         dest.writeLong(size);
     }
 

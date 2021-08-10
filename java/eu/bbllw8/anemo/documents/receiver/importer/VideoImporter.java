@@ -8,7 +8,6 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;

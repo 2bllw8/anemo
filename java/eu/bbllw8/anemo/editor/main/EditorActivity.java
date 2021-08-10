@@ -147,7 +147,7 @@ public final class EditorActivity extends Activity implements
                     registerTextListeners();
                     loadConfig();
                 } else {
-                    loadFile(inputUri, intent.getType());
+                    loadFile(inputUri);
                 }
             }
         } else {
@@ -317,10 +317,10 @@ public final class EditorActivity extends Activity implements
 
         switch (requestCode) {
             case REQUEST_CREATE_FILE:
-                loadNewSaveFile(data.getData(), data.getType(), false);
+                loadNewSaveFile(data.getData(), false);
                 break;
             case REQUEST_CREATE_FILE_AND_QUIT:
-                loadNewSaveFile(data.getData(), data.getType(), true);
+                loadNewSaveFile(data.getData(), true);
                 break;
         }
     }
@@ -372,11 +372,11 @@ public final class EditorActivity extends Activity implements
 
     /* File loading */
 
-    private void loadFile(@NonNull Uri uri, @Nullable String type) {
+    private void loadFile(@NonNull Uri uri) {
         summaryView.setText(R.string.editor_summary_loading);
         loadView.setVisibility(View.VISIBLE);
 
-        TaskExecutor.runTask(new EditorFileLoaderTask(getContentResolver(), uri, type),
+        TaskExecutor.runTask(new EditorFileLoaderTask(getContentResolver(), uri),
                 this::readFile,
                 this::showOpenErrorMessage);
     }
@@ -389,9 +389,8 @@ public final class EditorActivity extends Activity implements
     }
 
     private void loadNewSaveFile(@NonNull Uri uri,
-                                 @Nullable String type,
                                  boolean quitWhenSaved) {
-        TaskExecutor.runTask(new EditorFileLoaderTask(getContentResolver(), uri, type),
+        TaskExecutor.runTask(new EditorFileLoaderTask(getContentResolver(), uri),
                 editorFile -> saveNewFile(editorFile, quitWhenSaved),
                 this::showOpenErrorMessage);
     }
