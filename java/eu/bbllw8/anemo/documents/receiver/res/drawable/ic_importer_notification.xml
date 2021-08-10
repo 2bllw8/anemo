@@ -1,0 +1,31 @@
+<!--
+  ~ Copyright (c) 2021 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:fillColor="#00000000"
+      android:pathData="m7.171,4c0.412,-1.165 1.523,-2 2.829,-2 1.657,0 3,1.343 3,3s-1.343,3 -3,3h-9"
+      android:strokeWidth="2"
+      android:strokeColor="#000"
+      android:strokeLineCap="round"
+      android:strokeLineJoin="round" />
+  <path
+      android:fillColor="#00000000"
+      android:pathData="m17.171,8c0.412,-1.165 1.523,-2 2.829,-2 1.657,0 3,1.343 3,3s-1.343,3 -3,3h-19"
+      android:strokeWidth="2"
+      android:strokeColor="#000"
+      android:strokeLineCap="round"
+      android:strokeLineJoin="round" />
+  <path
+      android:fillColor="#00000000"
+      android:pathData="m15.171,20c0.412,1.165 1.523,2 2.829,2 1.657,0 3,-1.343 3,-3s-1.343,-3 -3,-3h-17"
+      android:strokeWidth="2"
+      android:strokeColor="#000"
+      android:strokeLineCap="round"
+      android:strokeLineJoin="round" />
+</vector>

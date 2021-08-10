@@ -36,5 +36,9 @@
                 <data android:mimeType="video/*" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".ReceiverService"
+            android:foregroundServiceType="dataSync" />
     </application>
 </manifest>
