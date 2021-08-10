@@ -13,8 +13,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.Parcelable;
 import android.text.Editable;
 import android.text.InputType;
@@ -32,10 +30,11 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
@@ -58,7 +57,6 @@ import eu.bbllw8.anemo.editor.io.EditorFileLoaderTask;
 import eu.bbllw8.anemo.editor.io.EditorFileReaderTask;
 import eu.bbllw8.anemo.editor.io.EditorFileWriterTask;
 import eu.bbllw8.anemo.task.TaskExecutor;
-import eu.bbllw8.anemo.tip.TipDialog;
 
 public final class EditorActivity extends Activity implements
         EditorConfigListener,
@@ -491,10 +489,9 @@ public final class EditorActivity extends Activity implements
 
     private void writeContents(@NonNull EditorFile editorFile,
                                boolean quitWhenSaved) {
-        final TipDialog savingDialog = new TipDialog.Builder(this)
+        final AlertDialog savingDialog = new AlertDialog.Builder(this)
                 .setCancelable(false)
-                .setDismissOnTouchOutside(false)
-                .setProgress()
+                .setTitle(R.string.editor_action_save)
                 .setMessage(getString(R.string.editor_save_in_progress, editorFile.getName()))
                 .show();
 
@@ -646,8 +643,7 @@ public final class EditorActivity extends Activity implements
                 .map(this::runCommand)
                 .orElse(false);
         if (!success) {
-            showTmpMessage(getString(R.string.editor_command_unknown),
-                    eu.bbllw8.anemo.tip.R.drawable.tip_ic_error);
+            showTmpMessage(R.string.editor_command_unknown);
         }
     }
 
@@ -663,8 +659,7 @@ public final class EditorActivity extends Activity implements
                     textEditorView.requestFocus();
                     textEditorView.setSelection(range.getLower(), range.getUpper());
                 },
-                () -> showTmpMessage(getString(R.string.editor_command_find_none),
-                        eu.bbllw8.anemo.tip.R.drawable.tip_ic_error));
+                () -> showTmpMessage(R.string.editor_command_find_none));
     }
 
     @Override
@@ -687,11 +682,9 @@ public final class EditorActivity extends Activity implements
     public void runSetCommand(@NonNull EditorCommand.Set command) {
         final boolean success = editorConfig.setByKeyVal(command.getKey(), command.getValue());
         if (success) {
-            showTmpMessage(getString(R.string.editor_command_set_success),
-                    eu.bbllw8.anemo.tip.R.drawable.tip_ic_success);
+            showTmpMessage(R.string.editor_command_set_success);
         } else {
-            showTmpMessage(getString(R.string.editor_command_unknown),
-                    eu.bbllw8.anemo.tip.R.drawable.tip_ic_error);
+            showTmpMessage(R.string.editor_command_unknown);
         }
     }
 
@@ -732,19 +725,11 @@ public final class EditorActivity extends Activity implements
 
     /* Dialogs */
 
-    private void showSavedMessage(boolean finishOnDismiss) {
-        final TipDialog dialog = new TipDialog.Builder(this)
-                .setIcon(eu.bbllw8.anemo.tip.R.drawable.tip_ic_success)
-                .setMessage(getString(R.string.editor_save_success))
-                .setCancelable(false)
-                .setOnDismissListener(() -> {
-                    if (finishOnDismiss) {
-                        finish();
-                    }
-                })
-                .show();
-
-        new Handler(Looper.getMainLooper()).postDelayed(dialog::dismiss, 1500L);
+    private void showSavedMessage(boolean finishOnShown) {
+        Toast.makeText(this, R.string.editor_save_success, Toast.LENGTH_LONG).show();
+        if (finishOnShown) {
+            finish();
+        }
     }
 
     private void showQuitMessage() {
@@ -783,25 +768,14 @@ public final class EditorActivity extends Activity implements
     }
 
     private void showFatalErrorMessage(@NonNull CharSequence message) {
-        new TipDialog.Builder(this)
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.editor_error_title)
                 .setMessage(message)
-                .setIcon(eu.bbllw8.anemo.tip.R.drawable.tip_ic_error)
-                .setDismissOnTouchOutside(true)
-                .setOnDismissListener(this::finish)
+                .setOnDismissListener(d -> finish())
                 .show();
     }
 
-    private void showTmpMessage(@NonNull CharSequence message,
-                                @DrawableRes int icon) {
-        final TipDialog dialog = new TipDialog.Builder(this)
-                .setMessage(message)
-                .setIcon(icon)
-                .setDismissOnTouchOutside(true)
-                .show();
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            if (dialog.isShowing()) {
-                dialog.dismiss();
-            }
-        }, 1000L);
+    private void showTmpMessage(@StringRes int message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }
