@@ -117,7 +117,6 @@ android_library {
         "anemo_editor_io",
         "anemo_shell",
         "anemo_task",
-        "anemo_tip",
         "androidx.annotation_annotation",
     ],
 }
@@ -213,7 +212,6 @@ android_library {
         "anemo_documents_home",
         "anemo_shell",
         "anemo_task",
-        "anemo_tip",
         "androidx.annotation_annotation",
     ],
 }
@@ -238,21 +236,6 @@ android_library {
     sdk_version: "30",
     srcs: [
         "java/eu/bbllw8/anemo/task/**/*.java",
-    ],
-    static_libs: [
-        "androidx.annotation_annotation",
-    ],
-}
-
-android_library {
-    name: "anemo_tip",
-    manifest: "java/eu/bbllw8/anemo/tip/AndroidManifest.xml",
-    sdk_version: "30",
-    resource_dirs: [
-        "java/eu/bbllw8/anemo/tip/res",
-    ],
-    srcs: [
-        "java/eu/bbllw8/anemo/tip/**/*.java",
     ],
     static_libs: [
         "androidx.annotation_annotation",
