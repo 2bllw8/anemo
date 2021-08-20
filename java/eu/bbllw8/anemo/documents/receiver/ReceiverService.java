@@ -9,7 +9,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -18,12 +17,9 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
-import eu.bbllw8.anemo.documents.receiver.importer.AudioImporter;
-import eu.bbllw8.anemo.documents.receiver.importer.ImageImporter;
-import eu.bbllw8.anemo.documents.receiver.importer.Importer;
-import eu.bbllw8.anemo.documents.receiver.importer.PdfImporter;
-import eu.bbllw8.anemo.documents.receiver.importer.VideoImporter;
+import eu.bbllw8.anemo.documents.home.HomeEnvironment;
 
 public final class ReceiverService extends Service {
     private static final String CHANNEL_ID = "notifications_receiver";
@@ -39,21 +35,16 @@ public final class ReceiverService extends Service {
 
         notificationManager = getSystemService(NotificationManager.class);
         try {
-            importers = new Importer[]{
-                    new AudioImporter(this),
-                    new ImageImporter(this),
-                    new PdfImporter(this),
-                    new VideoImporter(this),
-            };
+            importers = getImporters();
         } catch (IOException e) {
-            Log.e(TAG, "Failed to load home", e);
+            Log.e(TAG, "Failed to load importers", e);
             stopSelf();
         }
     }
 
     @Nullable
     @Override
-    public IBinder onBind(Intent intent) {
+    public IBinder onBind(@Nullable Intent intent) {
         return null;
     }
 
@@ -76,12 +67,43 @@ public final class ReceiverService extends Service {
         return START_NOT_STICKY;
     }
 
+    @NonNull
+    private Importer[] getImporters() throws IOException {
+        final HomeEnvironment homeEnvironment = HomeEnvironment.getInstance(this);
+        final Path fallbackDir = homeEnvironment.getBaseDir();
+        return new Importer[]{
+                // Audio
+                new Importer(this,
+                        homeEnvironment.getDefaultDirectory(HomeEnvironment.MUSIC)
+                                .orElse(fallbackDir),
+                        "audio/",
+                        R.string.receiver_audio_default_name),
+                // Images
+                new Importer(this,
+                        homeEnvironment.getDefaultDirectory(HomeEnvironment.PICTURES)
+                                .orElse(fallbackDir),
+                        "image/",
+                        R.string.receiver_image_default_name),
+                // PDF
+                new Importer(this,
+                        homeEnvironment.getDefaultDirectory(HomeEnvironment.DOCUMENTS)
+                                .orElse(fallbackDir),
+                        "application/pdf",
+                        R.string.receiver_pdf_default_name),
+                // Video
+                new Importer(this,
+                        homeEnvironment.getDefaultDirectory(HomeEnvironment.MOVIES)
+                                .orElse(fallbackDir),
+                        "video/",
+                        R.string.receiver_video_default_name),
+        };
+    }
+
     private void runImporter(@NonNull Importer importer,
                              @NonNull Intent intent) {
         startForeground(NOTIFICATION_ID,
                 buildNotification(true, R.string.receiver_importing_prepare));
-        final Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-        importer.execute(uri,
+        importer.execute(intent.getParcelableExtra(Intent.EXTRA_STREAM),
                 fileName -> notificationManager.notify(NOTIFICATION_ID,
                         buildNotification(true, R.string.receiver_importing_message, fileName)),
                 (destination, fileName) -> {
@@ -107,8 +129,7 @@ public final class ReceiverService extends Service {
         final Notification.Builder builder = new Notification.Builder(this, CHANNEL_ID)
                 .setContentTitle(getString(R.string.receiver_label))
                 .setContentText(getString(message, args))
-                .setSmallIcon(R.drawable.ic_importer_notification)
-                .setColor(getColor(R.color.anemoColor));
+                .setSmallIcon(R.drawable.ic_importer_notification);
         if (inProgress) {
             builder.setProgress(100, 50, true);
         }

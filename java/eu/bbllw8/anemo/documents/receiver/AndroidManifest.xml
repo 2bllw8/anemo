@@ -13,7 +13,7 @@
         <activity
             android:name=".ReceiverActivity"
             android:label="@string/receiver_label"
-            android:theme="@style/TransparentTheme"
+            android:theme="@android:style/Theme.NoDisplay"
             android:excludeFromRecents="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />

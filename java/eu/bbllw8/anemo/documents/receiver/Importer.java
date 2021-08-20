@@ -2,23 +2,24 @@
  * Copyright (c) 2021 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package eu.bbllw8.anemo.documents.receiver.importer;
+package eu.bbllw8.anemo.documents.receiver;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -27,7 +28,7 @@ import java.util.function.Consumer;
 import eu.bbllw8.anemo.documents.home.HomeEnvironment;
 import eu.bbllw8.anemo.task.TaskExecutor;
 
-public abstract class Importer {
+public final class Importer {
     private static final String TAG = "Importer";
     private static final String[] NAME_PROJECTION = {OpenableColumns.DISPLAY_NAME};
     private static final String TIME_FORMAT = "yyyy-MM-dd HH:mm";
@@ -35,38 +36,39 @@ public abstract class Importer {
     @NonNull
     protected final HomeEnvironment homeEnvironment;
     @NonNull
+    private final ContentResolver contentResolver;
+    @NonNull
+    private final Path destinationFolder;
+    @NonNull
+    private final String typePrefix;
+    @NonNull
     protected DateTimeFormatter dateTimeFormatter;
     @NonNull
-    protected final Resources resources;
-    @NonNull
-    private final ContentResolver contentResolver;
+    private final String defaultNameBase;
 
-    public Importer(@NonNull Context context) throws IOException {
+    public Importer(@NonNull Context context,
+                    @NonNull Path destinationFolder,
+                    @NonNull String typePrefix,
+                    @StringRes int defaultNameRes) throws IOException {
         this.homeEnvironment = HomeEnvironment.getInstance(context);
-        this.dateTimeFormatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
-        this.resources = context.getResources();
+        this.destinationFolder = destinationFolder;
+        this.typePrefix = typePrefix;
         this.contentResolver = context.getContentResolver();
+        this.dateTimeFormatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
+        this.defaultNameBase = context.getString(defaultNameRes);
     }
 
-    public final boolean typeMatch(@NonNull String string) {
-        return string.startsWith(getTypePrefix());
+    public boolean typeMatch(@NonNull String string) {
+        return string.startsWith(typePrefix);
     }
 
-    public final void execute(@NonNull Uri uri,
-                              @NonNull Consumer<String> onStartImport,
-                              @NonNull BiConsumer<String, String> onImportSuccess,
-                              @NonNull Consumer<String> onImportFail) {
+    public void execute(@NonNull Uri uri,
+                        @NonNull Consumer<String> onStartImport,
+                        @NonNull BiConsumer<String, String> onImportSuccess,
+                        @NonNull Consumer<String> onImportFail) {
         final String fileName = getFileName(uri)
                 .orElseGet(this::getDefaultName);
 
-        final Optional<Path> destinationFolderOpt = getDestinationFolder();
-        if (!destinationFolderOpt.isPresent()) {
-            Log.e(TAG, "Missing destination folder");
-            onImportFail.accept(fileName);
-            return;
-        }
-
-        final Path destinationFolder = destinationFolderOpt.get();
         final Path destination = destinationFolder.resolve(fileName);
 
         onStartImport.accept(fileName);
@@ -112,11 +114,7 @@ public abstract class Importer {
     }
 
     @NonNull
-    protected abstract String getTypePrefix();
-
-    @NonNull
-    protected abstract Optional<Path> getDestinationFolder();
-
-    @NonNull
-    protected abstract String getDefaultName();
+    private String getDefaultName() {
+        return String.format(defaultNameBase, dateTimeFormatter.format(Instant.now()));
+    }
 }
