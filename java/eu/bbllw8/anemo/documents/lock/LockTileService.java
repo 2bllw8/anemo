@@ -16,7 +16,9 @@ public final class LockTileService extends TileService {
     private static final String ACTION_ANEMO_UNLOCK = "eu.bbllw8.anemo.action.UNLOCK";
 
     @NonNull
-    private final Intent unlockIntent = new Intent();
+    private final Intent unlockIntent = new Intent()
+            .setAction(ACTION_ANEMO_UNLOCK)
+            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     private boolean hasUnlockActivity;
 
     private LockStore lockStore;
@@ -26,8 +28,6 @@ public final class LockTileService extends TileService {
     public IBinder onBind(Intent intent) {
         lockStore = LockStore.getInstance(this);
 
-        unlockIntent.setAction(ACTION_ANEMO_UNLOCK);
-        unlockIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         hasUnlockActivity = !getPackageManager()
                 .queryIntentActivities(unlockIntent, 0)
                 .isEmpty();
@@ -39,6 +39,7 @@ public final class LockTileService extends TileService {
     public void onStartListening() {
         super.onStartListening();
 
+        initializeTile();
         updateTile(lockStore.isLocked());
         listenerToken = lockStore.addListener(this::updateTile);
     }
@@ -68,16 +69,22 @@ public final class LockTileService extends TileService {
         }
     }
 
-    private void updateTile(boolean isLocked) {
+    private void initializeTile() {
         final Tile tile = getQsTile();
         tile.setIcon(Icon.createWithResource(this, R.drawable.ic_key_tile));
-        tile.setLabel(getString(isLocked
-                ? R.string.tile_unlock
-                : R.string.tile_lock));
-        tile.setSubtitle(getString(isLocked
-                ? R.string.tile_status_locked
-                : R.string.tile_status_unlocked));
-        tile.setState(isLocked ? Tile.STATE_INACTIVE : Tile.STATE_ACTIVE);
+    }
+
+    private void updateTile(boolean isLocked) {
+        final Tile tile = getQsTile();
+        if (isLocked) {
+            tile.setLabel(getString(R.string.tile_unlock));
+            tile.setStateDescription(getString(R.string.tile_status_locked));
+            tile.setState(Tile.STATE_INACTIVE);
+        } else {
+            tile.setLabel(getString(R.string.tile_lock));
+            tile.setStateDescription(getString(R.string.tile_status_unlocked));
+            tile.setState(Tile.STATE_ACTIVE);
+        }
         tile.updateTile();
     }
 }

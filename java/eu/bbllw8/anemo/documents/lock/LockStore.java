@@ -56,7 +56,7 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
         if (instance == null) {
             synchronized (LockStore.class) {
                 if (instance == null) {
-                    instance = new LockStore(context);
+                    instance = new LockStore(context.getApplicationContext());
                 }
             }
         }
@@ -77,7 +77,7 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
     @Override
     protected void finalize() throws Throwable {
         preferences.unregisterOnSharedPreferenceChangeListener(this);
-        jobScheduler.cancel(AUTO_LOCK_JOB_ID);
+        cancelAutoLock();
         super.finalize();
     }
 
@@ -85,12 +85,7 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
     public void onSharedPreferenceChanged(@NonNull SharedPreferences sharedPreferences,
                                           @Nullable String key) {
         if (KEY_LOCK.equals(key)) {
-            final boolean newValue = sharedPreferences.getBoolean(KEY_LOCK, DEFAULT_LOCK_VALUE);
-
-            isLocked.set(newValue);
-            for (int i = 0; i < listeners.size(); i++) {
-                listeners.valueAt(i).accept(newValue);
-            }
+            onLockChanged();
         }
     }
 
@@ -99,47 +94,34 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
     }
 
     public synchronized void lock() {
-        jobScheduler.cancel(AUTO_LOCK_JOB_ID);
         preferences.edit()
                 .putBoolean(KEY_LOCK, true)
                 .apply();
+        cancelAutoLock();
     }
 
     public synchronized void unlock() {
-        final JobInfo jobInfo = new JobInfo.Builder(AUTO_LOCK_JOB_ID, autoLockComponent)
-                .setMinimumLatency(AUTO_LOCK_DELAY)
-                .build();
-        jobScheduler.schedule(jobInfo);
-
         preferences.edit()
                 .putBoolean(KEY_LOCK, false)
                 .apply();
+        scheduleAutoLock();
     }
 
-    public boolean setPassword(@NonNull String password) {
-        final Optional<String> hashOpt = hashString(password);
-        if (hashOpt.isPresent()) {
-            synchronized (this) {
-                preferences.edit()
-                        .putString(KEY_PASSWORD, hashOpt.get())
-                        .apply();
-            }
-            return true;
-        } else {
-            return false;
-        }
+    public synchronized boolean setPassword(@NonNull String password) {
+        return hashString(password)
+                .map(hashedPwd -> {
+                    preferences.edit()
+                            .putString(KEY_PASSWORD, hashedPwd)
+                            .apply();
+                    return hashedPwd;
+                })
+                .isPresent();
     }
 
     public synchronized boolean passwordMatch(@NonNull String password) {
-        final Optional<String> hashOpt = hashString(password);
-        if (hashOpt.isPresent()) {
-            synchronized (this) {
-                final String stored = preferences.getString(KEY_PASSWORD, null);
-                return hashOpt.get().equals(stored);
-            }
-        } else {
-            return false;
-        }
+        return hashString(password)
+                .map(hashedPwd -> hashedPwd.equals(preferences.getString(KEY_PASSWORD, null)))
+                .orElse(false);
     }
 
     public synchronized boolean hasPassword() {
@@ -164,6 +146,25 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
         synchronized (listeners) {
             listeners.removeAt(key);
         }
+    }
+
+    private void onLockChanged() {
+        final boolean newValue = preferences.getBoolean(KEY_LOCK, DEFAULT_LOCK_VALUE);
+
+        isLocked.set(newValue);
+        for (int i = 0; i < listeners.size(); i++) {
+            listeners.valueAt(i).accept(newValue);
+        }
+    }
+
+    private void scheduleAutoLock() {
+        jobScheduler.schedule(new JobInfo.Builder(AUTO_LOCK_JOB_ID, autoLockComponent)
+                .setMinimumLatency(AUTO_LOCK_DELAY)
+                .build());
+    }
+
+    private void cancelAutoLock() {
+        jobScheduler.cancel(AUTO_LOCK_JOB_ID);
     }
 
     @NonNull
