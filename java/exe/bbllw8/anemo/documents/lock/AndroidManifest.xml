@@ -1,0 +1,32 @@
+<!--
+  ~ Copyright (c) 2021 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="exe.bbllw8.anemo.documents.lock">
+
+    <uses-sdk
+        android:minSdkVersion="26"
+        android:targetSdkVersion="30" />
+
+    <permission android:name="exe.bbllw8.anemo.documents.lock.ACCESS_SERVICE" />
+
+    <application>
+
+        <service
+            android:name=".AutoLockJobService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <service
+            android:name=".LockTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_key_tile"
+            android:label="@string/tile_title"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+    </application>
+</manifest>

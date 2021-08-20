@@ -26,10 +26,10 @@ jobs:
           chmod +x '${GITHUB_WORKSPACE}/bin/bazel'
       - name: Build
         run: |
-          '${GITHUB_WORKSPACE}/bin/bazel' build //...
+          '${GITHUB_WORKSPACE}/bin/bazel' build //:app
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: bazel-bin*/app.apk
+          path: bazel-bin*/app.apk
           draft: true
           token: ${{ secrets.GITHUB_TOKEN }}

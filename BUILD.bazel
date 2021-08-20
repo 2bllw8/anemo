@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 android_binary(
     name = "app",
-    custom_package = "eu.bbllw8.anemo",
+    custom_package = "exe.bbllw8.anemo",
     manifest = "AppManifest.xml",
     proguard_generate_mapping = True,
     proguard_specs = [
@@ -13,26 +13,26 @@ android_binary(
         "//visibility:public",
     ],
     deps = [
-        "//java/eu/bbllw8/anemo/documents/password",
-        "//java/eu/bbllw8/anemo/documents/provider",
-        "//java/eu/bbllw8/anemo/documents/receiver",
-        "//java/eu/bbllw8/anemo/editor/help",
-        "//java/eu/bbllw8/anemo/editor/main",
+        "//java/exe/bbllw8/anemo/documents/password",
+        "//java/exe/bbllw8/anemo/documents/provider",
+        "//java/exe/bbllw8/anemo/documents/receiver",
+        "//java/exe/bbllw8/anemo/editor/help",
+        "//java/exe/bbllw8/anemo/editor/main",
     ],
 )
 
 android_binary(
     name = "app_debug",
-    custom_package = "eu.bbllw8.anemo",
+    custom_package = "exe.bbllw8.anemo",
     manifest = "AppManifest.xml",
     visibility = [
         "//visibility:public",
     ],
     deps = [
-        "//java/eu/bbllw8/anemo/documents/password",
-        "//java/eu/bbllw8/anemo/documents/provider",
-        "//java/eu/bbllw8/anemo/documents/receiver",
-        "//java/eu/bbllw8/anemo/editor/help",
-        "//java/eu/bbllw8/anemo/editor/main",
+        "//java/exe/bbllw8/anemo/documents/password",
+        "//java/exe/bbllw8/anemo/documents/provider",
+        "//java/exe/bbllw8/anemo/documents/receiver",
+        "//java/exe/bbllw8/anemo/editor/help",
+        "//java/exe/bbllw8/anemo/editor/main",
     ],
 )
