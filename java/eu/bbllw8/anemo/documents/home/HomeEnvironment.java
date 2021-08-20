@@ -44,7 +44,7 @@ public final class HomeEnvironment {
         if (instance == null) {
             synchronized (HomeEnvironment.class) {
                 if (instance == null) {
-                    instance = new HomeEnvironment(context);
+                    instance = new HomeEnvironment(context.getApplicationContext());
                 }
             }
         }
@@ -56,7 +56,7 @@ public final class HomeEnvironment {
                 .toPath()
                 .resolve(ROOT);
 
-        defaultDirectories = new HashMap<>();
+        defaultDirectories = new HashMap<>(4);
         defaultDirectories.put(DOCUMENTS, baseDir.resolve(DOCUMENTS));
         defaultDirectories.put(PICTURES, baseDir.resolve(PICTURES));
         defaultDirectories.put(MOVIES, baseDir.resolve(MOVIES));
@@ -78,53 +78,42 @@ public final class HomeEnvironment {
     }
 
     public boolean isDefaultDirectory(@NonNull Path path) {
-        if (baseDir.equals(path)) {
-            return true;
-        }
-
-        for (final Path dir : defaultDirectories.values()) {
-            if (dir.equals(path)) {
-                return true;
-            }
-        }
-        return false;
+        return baseDir.equals(path) || defaultDirectories.containsValue(path);
     }
 
     public void wipe() throws IOException {
-        Files.walkFileTree(baseDir,
-                new SimpleFileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult visitFile(@NonNull Path file,
-                                                     @NonNull BasicFileAttributes attrs)
-                            throws IOException {
-                        Files.delete(file);
-                        return FileVisitResult.CONTINUE;
-                    }
+        Files.walkFileTree(baseDir, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(@NonNull Path file,
+                                             @NonNull BasicFileAttributes attrs)
+                    throws IOException {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
 
-                    @Override
-                    public FileVisitResult postVisitDirectory(@NonNull Path dir,
-                                                              @Nullable IOException exc)
-                            throws IOException {
-                        Files.delete(dir);
-                        return FileVisitResult.CONTINUE;
-                    }
-                });
+            @Override
+            public FileVisitResult postVisitDirectory(@NonNull Path dir,
+                                                      @Nullable IOException exc)
+                    throws IOException {
+                Files.delete(dir);
+                return FileVisitResult.CONTINUE;
+            }
+        });
         prepare();
     }
 
     private void prepare() throws IOException {
-        if (!Files.exists(baseDir)) {
-            Files.createDirectory(baseDir);
-        } else if (!Files.isDirectory(baseDir)) {
-            throw new IOException(baseDir + " is not a directory");
+        ensureExists(baseDir);
+        for (final Path dir : defaultDirectories.values()) {
+            ensureExists(dir);
         }
+    }
 
-        for (final Path path : defaultDirectories.values()) {
-            if (!Files.exists(path)) {
-                Files.createDirectory(path);
-            } else if (!Files.isDirectory(path)) {
-                throw new IOException(path + " is not a directory");
-            }
+    private void ensureExists(@NonNull Path dir) throws IOException {
+        if (!Files.exists(dir)) {
+            Files.createDirectory(dir);
+        } else if (!Files.isDirectory(dir)) {
+            throw new IOException(dir + " is not a directory");
         }
     }
 }
