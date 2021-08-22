@@ -30,6 +30,6 @@ jobs:
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
-          path: bazel-bin*/app.apk
+          artifacts: bazel-bin*/app.apk
           draft: true
           token: ${{ secrets.GITHUB_TOKEN }}
