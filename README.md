@@ -58,9 +58,9 @@ Download the apk from [latest](https://github.com/2bllw8/anemo/releases/latest) 
 
 ## Build
 
-With Bazel:
-- `bazel build //:app`
-- `bazel build //:app_debug`
+With Gradle:
+- `./gradlew :app:assembleRelease`
+- `./gradlew :app:assembleDebug`
 
 With AOSP / LineageOS:
 - `mka anemo`

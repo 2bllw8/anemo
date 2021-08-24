@@ -9,6 +9,10 @@
 /.ijwb
 /bazel-*
 
+# Gradle
+.gradle
+/local.properties
+
 # VSCode
 */.classpath
 */.project
