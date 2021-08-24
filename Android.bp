@@ -3,7 +3,7 @@
 
 android_app {
     name: "anemo",
-    manifest: "AppManifest.xml",
+    manifest: "app/src/main/AndroidManifest.xml",
     sdk_version: "30",
     optimize: {
         proguard_flags_files: [
@@ -11,231 +11,60 @@ android_app {
         ],
     },
     static_libs: [
-        "anemo_editor_help",
-        "anemo_editor_main",
-        "anemo_documents_password",
-        "anemo_documents_provider",
-        "anemo_documents_receiver",
-        "anemo_documents_snippet",
+        "anemo_documents",
+        "anemo_editor",
     ],
 }
 
-// Editor
-
 android_library {
-    name: "anemo_editor_auto",
-    manifest: "java/eu/bbllw8/anemo/editor/auto/AndroidManifest.xml",
+    name: "anemo_documents",
+    manifest: "documents/src/main/AndroidManifest.xml",
     sdk_version: "30",
     srcs: [
-        "java/eu/bbllw8/anemo/editor/auto/**/*.java",
+        "documents/src/main/java/exe/bbllw8/anemo/documents/**/*.java",
     ],
-    static_libs: [
-        "androidx.annotation_annotation",
-    ],
-}
-
-android_library {
-    name: "anemo_editor_commands",
-    manifest: "java/eu/bbllw8/anemo/editor/commands/AndroidManifest.xml",
-    sdk_version: "30",
-    srcs: [
-        "java/eu/bbllw8/anemo/editor/commands/**/*.java",
-    ],
-    static_libs: [
-        "androidx.annotation_annotation",
-    ],
-}
-
-android_library {
-    name: "anemo_editor_config",
-    manifest: "java/eu/bbllw8/anemo/editor/config/AndroidManifest.xml",
-    sdk_version: "30",
-    srcs: [
-        "java/eu/bbllw8/anemo/editor/config/**/*.java",
-    ],
-    static_libs: [
-        "androidx.annotation_annotation",
-    ],
-}
-
-android_library {
-    name: "anemo_editor_help",
-    manifest: "java/eu/bbllw8/anemo/editor/help/AndroidManifest.xml",
-    sdk_version: "30",
     resource_dirs: [
-        "java/eu/bbllw8/anemo/editor/help/res",
-    ],
-    srcs: [
-        "java/eu/bbllw8/anemo/editor/help/**/*.java",
-    ],
-    static_libs: [
-        "anemo_editor_markdown",
-        "anemo_task",
-        "androidx.annotation_annotation",
-    ],
-}
-
-android_library {
-    name: "anemo_editor_history",
-    manifest: "java/eu/bbllw8/anemo/editor/history/AndroidManifest.xml",
-    sdk_version: "30",
-    srcs: [
-        "java/eu/bbllw8/anemo/editor/history/**/*.java",
+        "documents/src/main/res",
     ],
     static_libs: [
         "androidx.annotation_annotation",
-    ],
-}
-
-android_library {
-    name: "anemo_editor_io",
-    manifest: "java/eu/bbllw8/anemo/editor/io/AndroidManifest.xml",
-    sdk_version: "30",
-    srcs: [
-        "java/eu/bbllw8/anemo/editor/io/**/*.java",
-    ],
-    static_libs: [
-        "androidx.annotation_annotation",
-    ],
-}
-
-android_library {
-    name: "anemo_editor_main",
-    manifest: "java/eu/bbllw8/anemo/editor/main/AndroidManifest.xml",
-    sdk_version: "30",
-    resource_dirs: [
-        "java/eu/bbllw8/anemo/editor/main/res",
-    ],
-    srcs: [
-        "java/eu/bbllw8/anemo/editor/main/**/*.java",
-    ],
-    static_libs: [
-        "anemo_editor_auto",
-        "anemo_editor_commands",
-        "anemo_editor_config",
-        "anemo_editor_history",
-        "anemo_editor_io",
         "anemo_shell",
         "anemo_task",
-        "androidx.annotation_annotation",
     ],
 }
 
 android_library {
-    name: "anemo_editor_markdown",
-    manifest: "java/eu/bbllw8/anemo/editor/markdown/AndroidManifest.xml",
+    name: "anemo_editor",
+    manifest: "editor/src/main/AndroidManifest.xml",
     sdk_version: "30",
     srcs: [
-        "java/eu/bbllw8/anemo/editor/markdown/**/*.java",
+        "editor/src/main/java/exe/bbllw8/anemo/editor/**/*.java",
     ],
-    static_libs: [
-        "androidx.annotation_annotation",
-    ],
-}
-
-// Documents
-
-android_library {
-    name: "anemo_documents_home",
-    manifest: "java/eu/bbllw8/anemo/documents/home/AndroidManifest.xml",
-    sdk_version: "30",
-    srcs: [
-        "java/eu/bbllw8/anemo/documents/home/**/*.java",
-    ],
-    static_libs: [
-        "androidx.annotation_annotation",
-    ],
-}
-
-android_library {
-    name: "anemo_documents_lock",
-    manifest: "java/eu/bbllw8/anemo/documents/lock/AndroidManifest.xml",
-    sdk_version: "30",
     resource_dirs: [
-        "java/eu/bbllw8/anemo/documents/lock/res",
-    ],
-    srcs: [
-        "java/eu/bbllw8/anemo/documents/lock/**/*.java",
+        "editor/src/main/res",
     ],
     static_libs: [
         "androidx.annotation_annotation",
-    ],
-}
-
-android_library {
-    name: "anemo_documents_password",
-    manifest: "java/eu/bbllw8/anemo/documents/password/AndroidManifest.xml",
-    sdk_version: "30",
-    resource_dirs: [
-        "java/eu/bbllw8/anemo/documents/password/res",
-    ],
-    srcs: [
-        "java/eu/bbllw8/anemo/documents/password/**/*.java",
-    ],
-    static_libs: [
-        "anemo_documents_home",
-        "anemo_documents_lock",
-        "anemo_shell",
-        "androidx.annotation_annotation",
-    ],
-}
-
-android_library {
-    name: "anemo_documents_provider",
-    manifest: "java/eu/bbllw8/anemo/documents/provider/AndroidManifest.xml",
-    sdk_version: "30",
-    resource_dirs: [
-        "java/eu/bbllw8/anemo/documents/provider/res",
-    ],
-    srcs: [
-        "java/eu/bbllw8/anemo/documents/provider/**/*.java",
-    ],
-    static_libs: [
-        "anemo_documents_home",
-        "anemo_documents_lock",
-        "anemo_shell",
-        "androidx.annotation_annotation",
-    ],
-}
-
-android_library {
-    name: "anemo_documents_receiver",
-    manifest: "java/eu/bbllw8/anemo/documents/receiver/AndroidManifest.xml",
-    sdk_version: "30",
-    resource_dirs: [
-        "java/eu/bbllw8/anemo/documents/receiver/res",
-    ],
-    srcs: [
-        "java/eu/bbllw8/anemo/documents/receiver/**/*.java",
-    ],
-    static_libs: [
-        "anemo_documents_home",
         "anemo_shell",
         "anemo_task",
-        "androidx.annotation_annotation",
     ],
 }
-
-// Common
 
 android_library {
     name: "anemo_shell",
-    manifest: "java/eu/bbllw8/anemo/shell/AndroidManifest.xml",
+    manifest: "shell/src/main/AndroidManifest.xml",
     sdk_version: "30",
     resource_dirs: [
-        "java/eu/bbllw8/anemo/shell/res",
-    ],
-    static_libs: [
-        "androidx.annotation_annotation",
+        "shell/src/main/res",
     ],
 }
 
 android_library {
     name: "anemo_task",
-    manifest: "java/eu/bbllw8/anemo/task/AndroidManifest.xml",
+    manifest: "task/src/main/AndroidManifest.xml",
     sdk_version: "30",
     srcs: [
-        "java/eu/bbllw8/anemo/task/**/*.java",
+        "task/src/main/java/exe/bbllw8/anemo/task/**/*.java",
     ],
     static_libs: [
         "androidx.annotation_annotation",
