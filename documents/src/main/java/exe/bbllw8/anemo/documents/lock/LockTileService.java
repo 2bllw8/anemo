@@ -27,7 +27,7 @@ public final class LockTileService extends TileService {
 
         final int status = getPackageManager().getComponentEnabledSetting(
                 new ComponentName(this, PasswordActivity.class));
-        hasUnlockActivity = PackageManager.COMPONENT_ENABLED_STATE_ENABLED == status;
+        hasUnlockActivity = PackageManager.COMPONENT_ENABLED_STATE_DISABLED != status;
 
         return super.onBind(intent);
     }
@@ -57,7 +57,9 @@ public final class LockTileService extends TileService {
 
         if (lockStore.isLocked()) {
             if (hasUnlockActivity) {
-                startActivityAndCollapse(new Intent(this, PasswordActivity.class));
+                final Intent intent = new Intent(this, PasswordActivity.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivityAndCollapse(intent);
             } else {
                 lockStore.unlock();
             }

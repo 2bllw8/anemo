@@ -130,7 +130,8 @@ public final class ReceiverService extends Service {
         final Notification.Builder builder = new Notification.Builder(this, CHANNEL_ID)
                 .setContentTitle(getString(R.string.receiver_label))
                 .setContentText(getString(message, args))
-                .setSmallIcon(R.drawable.ic_importer_notification);
+                .setSmallIcon(R.drawable.ic_importer_notification)
+                .setColor(getColor(exe.bbllw8.anemo.shell.R.color.anemoColor));
         if (inProgress) {
             builder.setProgress(100, 50, true);
         }
