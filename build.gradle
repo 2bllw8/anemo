@@ -26,8 +26,8 @@ ext {
     versionCode = 6
     versionName = '1.5'
 
-    sourceCompatibilityVersion = JavaVersion.VERSION_1_8
-    targetCompatibilityVersion = JavaVersion.VERSION_1_8
+    sourceCompatibilityVersion = JavaVersion.VERSION_11
+    targetCompatibilityVersion = JavaVersion.VERSION_11
 
     androidxAnnotation = 'androidx.annotation:annotation:1.2.0'
 }
