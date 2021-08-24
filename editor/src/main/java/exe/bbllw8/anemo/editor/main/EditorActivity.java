@@ -9,9 +9,9 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Editable;
@@ -52,6 +52,7 @@ import exe.bbllw8.anemo.editor.commands.task.SubstituteFirstCommandTask;
 import exe.bbllw8.anemo.editor.config.Config;
 import exe.bbllw8.anemo.editor.config.EditorConfig;
 import exe.bbllw8.anemo.editor.config.EditorConfigListener;
+import exe.bbllw8.anemo.editor.help.EditorHelpActivity;
 import exe.bbllw8.anemo.editor.history.EditorHistory;
 import exe.bbllw8.anemo.editor.io.EditorFile;
 import exe.bbllw8.anemo.editor.io.EditorFileLoaderTask;
@@ -63,7 +64,6 @@ public final class EditorActivity extends Activity implements
         EditorConfigListener,
         EditorCommandsExecutor,
         TextWatcher {
-    private static final String ACTION_HELP = "exe.bbllw8.anemo.action.EDITOR_HELP";
     private static final String KEY_EDITOR_FILE = "editor_file";
     private static final String KEY_HISTORY_STATE = "editor_history";
     private static final String TYPE_PLAIN_TEXT = "text/plain";
@@ -205,7 +205,6 @@ public final class EditorActivity extends Activity implements
             autoPairMenuItem = menu.findItem(R.id.editorAutoPair);
             showCommandBarMenuItem = menu.findItem(R.id.editorShowCommandBar);
             final MenuItem showShellMenuItem = menu.findItem(R.id.editorShowShell);
-            final MenuItem helpMenuItem = menu.findItem(R.id.editorHelp);
 
             switch (editorConfig.getTextSize()) {
                 case Config.Size.LARGE:
@@ -232,10 +231,6 @@ public final class EditorActivity extends Activity implements
             autoPairMenuItem.setChecked(editorConfig.getAutoPairEnabled());
             showCommandBarMenuItem.setChecked(editorConfig.getShowCommandBar());
             showShellMenuItem.setChecked(EditorShell.isEnabled(this));
-
-            final boolean hasHelpActivity = getPackageManager().resolveActivity(
-                    new Intent(ACTION_HELP), PackageManager.MATCH_DEFAULT_ONLY) != null;
-            helpMenuItem.setVisible(hasHelpActivity);
 
             // If always dirty (snippet) always allow
             saveMenuItem.setEnabled(alwaysAllowSave);
@@ -288,7 +283,7 @@ public final class EditorActivity extends Activity implements
             item.setChecked(!item.isChecked());
             return true;
         } else if (id == R.id.editorHelp) {
-            startActivity(new Intent(ACTION_HELP));
+            startActivity(new Intent(this, EditorHelpActivity.class));
             return true;
         } else if (id == android.R.id.home) {
             onBackPressed();
@@ -443,25 +438,30 @@ public final class EditorActivity extends Activity implements
     }
 
     private void setContentInView(@NonNull String content) {
-        final PrecomputedText.Params params = textEditorView.getTextMetricsParams();
-        final Reference<TextEditorView> editorViewRef = new WeakReference<>(textEditorView);
-        TaskExecutor.submit(() -> {
-            final TextEditorView ev = editorViewRef.get();
-            if (ev == null) {
-                return;
-            }
-            final PrecomputedText preCompText = PrecomputedText.create(content, params);
-            ev.post(() -> {
-                final TextEditorView ev2 = editorViewRef.get();
-                if (ev2 == null) {
+        if (Build.VERSION.SDK_INT >= 28) {
+            final PrecomputedText.Params params = textEditorView.getTextMetricsParams();
+            final Reference<TextEditorView> editorViewRef = new WeakReference<>(textEditorView);
+            TaskExecutor.submit(() -> {
+                final TextEditorView ev = editorViewRef.get();
+                if (ev == null) {
                     return;
                 }
-                ev2.setText(preCompText);
+                final PrecomputedText preCompText = PrecomputedText.create(content, params);
+                ev.post(() -> {
+                    final TextEditorView ev2 = editorViewRef.get();
+                    if (ev2 == null) {
+                        return;
+                    }
+                    ev2.setText(preCompText);
 
-                // Set listener after the contents
-                registerTextListeners();
+                    // Set listener after the contents
+                    registerTextListeners();
+                });
             });
-        });
+        } else {
+            textEditorView.setText(content);
+            registerTextListeners();
+        }
     }
 
     private void saveContents(boolean quitWhenSaved) {

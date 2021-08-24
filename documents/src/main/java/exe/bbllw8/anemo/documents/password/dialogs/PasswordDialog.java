@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 
 import exe.bbllw8.anemo.documents.lock.LockStore;
-import exe.bbllw8.anemo.documents.R;
 
 public abstract class PasswordDialog {
     protected static final int MIN_PASSWORD_LENGTH = 4;

@@ -111,7 +111,6 @@
     <item
         android:id="@+id/editorHelp"
         android:showAsAction="never"
-        android:visible="false"
         android:alphabeticModifiers="FUNCTION"
         android:alphabeticShortcut="1"
         android:title="@string/editor_menu_help" />
