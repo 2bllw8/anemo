@@ -10,8 +10,8 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 
-import exe.bbllw8.anemo.documents.lock.LockStore;
 import exe.bbllw8.anemo.documents.R;
+import exe.bbllw8.anemo.documents.lock.LockStore;
 import exe.bbllw8.anemo.documents.password.TextListener;
 
 public final class ChangePasswordDialog extends PasswordDialog {

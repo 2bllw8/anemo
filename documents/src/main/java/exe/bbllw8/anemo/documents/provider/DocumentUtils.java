@@ -11,9 +11,9 @@ import androidx.annotation.NonNull;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,26 +48,10 @@ final class DocumentUtils {
         });
 
         try {
-            Files.walkFileTree(parent, new FileVisitor<Path>() {
-                @Override
-                public FileVisitResult preVisitDirectory(Path dir,
-                                                         BasicFileAttributes attrs) {
-                    return FileVisitResult.CONTINUE;
-                }
-
+            Files.walkFileTree(parent, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                     lastModifiedFiles.add(file);
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) {
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
                     return FileVisitResult.CONTINUE;
                 }
             });
@@ -95,7 +79,7 @@ final class DocumentUtils {
         final List<Path> list = new ArrayList<>();
 
         try {
-            Files.walkFileTree(parent, new FileVisitor<Path>() {
+            Files.walkFileTree(parent, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir,
                                                          BasicFileAttributes attrs) {
@@ -115,16 +99,6 @@ final class DocumentUtils {
                     return list.size() < atMost
                             ? FileVisitResult.CONTINUE
                             : FileVisitResult.TERMINATE;
-                }
-
-                @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) {
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
-                    return FileVisitResult.CONTINUE;
                 }
             });
         } catch (IOException ignored) {

@@ -10,6 +10,7 @@ import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.os.ParcelFileDescriptor;
@@ -26,10 +27,10 @@ import androidx.annotation.Nullable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 
@@ -336,52 +337,36 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     public Bundle getDocumentMetadata(@NonNull String documentId) throws FileNotFoundException {
         final Path path = getPathForId(documentId);
         Bundle bundle = null;
-        if (Files.exists(path)) {
-            if (Files.isDirectory(path)) {
-                final Int64Ref treeCount = new Int64Ref(0);
-                final Int64Ref treeSize = new Int64Ref(0);
+        if (Build.VERSION.SDK_INT >= 29) {
+            if (Files.exists(path)) {
+                if (Files.isDirectory(path)) {
+                    final Int64Ref treeCount = new Int64Ref(0);
+                    final Int64Ref treeSize = new Int64Ref(0);
 
-                try {
-                    Files.walkFileTree(path, new FileVisitor<Path>() {
-                        @Override
-                        public FileVisitResult preVisitDirectory(Path dir,
-                                                                 BasicFileAttributes attrs) {
-                            return FileVisitResult.CONTINUE;
-                        }
+                    try {
+                        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+                            @Override
+                            public FileVisitResult visitFile(Path file,
+                                                             BasicFileAttributes attrs) {
+                                treeCount.value += 1;
+                                treeSize.value += attrs.size();
+                                return FileVisitResult.CONTINUE;
+                            }
+                        });
 
-                        @Override
-                        public FileVisitResult visitFile(Path file,
-                                                         BasicFileAttributes attrs) {
-                            treeCount.value += 1;
-                            treeSize.value += attrs.size();
-                            return FileVisitResult.CONTINUE;
-                        }
-
-                        @Override
-                        public FileVisitResult visitFileFailed(Path file,
-                                                               IOException exc) {
-                            return FileVisitResult.CONTINUE;
-                        }
-
-                        @Override
-                        public FileVisitResult postVisitDirectory(Path dir,
-                                                                  IOException exc) {
-                            return FileVisitResult.CONTINUE;
-                        }
-                    });
-
+                        bundle = new Bundle();
+                        bundle.putLong(DocumentsContract.METADATA_TREE_COUNT, treeCount.value);
+                        bundle.putLong(DocumentsContract.METADATA_TREE_SIZE, treeSize.value);
+                    } catch (IOException e) {
+                        Log.e(TAG, "Failed to retrieve metadata", e);
+                    }
+                } else if (Files.isRegularFile(path) && Files.isReadable(path)) {
                     bundle = new Bundle();
-                    bundle.putLong(DocumentsContract.METADATA_TREE_COUNT, treeCount.value);
-                    bundle.putLong(DocumentsContract.METADATA_TREE_SIZE, treeSize.value);
-                } catch (IOException e) {
-                    Log.e(TAG, "Failed to retrieve metadata", e);
-                }
-            } else if (Files.isRegularFile(path) && Files.isReadable(path)) {
-                bundle = new Bundle();
-                try {
-                    bundle.putLong(DocumentsContract.METADATA_TREE_SIZE, Files.size(path));
-                } catch (IOException ignored) {
-                    // Skip this column
+                    try {
+                        bundle.putLong(DocumentsContract.METADATA_TREE_SIZE, Files.size(path));
+                    } catch (IOException ignored) {
+                        // Skip this column
+                    }
                 }
             }
         }
