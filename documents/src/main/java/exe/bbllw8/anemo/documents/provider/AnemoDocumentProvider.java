@@ -108,7 +108,6 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
             return result;
         }
 
-        final MatrixCursor.RowBuilder row = result.newRow();
         final Path baseDir = homeEnvironment.getBaseDir();
 
         int flags = Root.FLAG_SUPPORTS_CREATE
@@ -119,13 +118,14 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
             flags |= Root.FLAG_SUPPORTS_EJECT;
         }
 
-        row.add(Root.COLUMN_ROOT_ID, HomeEnvironment.ROOT);
-        row.add(Root.COLUMN_DOCUMENT_ID, getDocIdForPath(baseDir));
-        row.add(Root.COLUMN_FLAGS, flags);
-        row.add(Root.COLUMN_ICON, R.drawable.ic_storage);
-        row.add(Root.COLUMN_MIME_TYPES, DocumentUtils.getChildMimeTypes(baseDir));
-        row.add(Root.COLUMN_TITLE, context.getString(exe.bbllw8.anemo.shell.R.string.app_name));
-        row.add(Root.COLUMN_SUMMARY, context.getString(R.string.anemo_description));
+        result.newRow()
+                .add(Root.COLUMN_ROOT_ID, HomeEnvironment.ROOT)
+                .add(Root.COLUMN_DOCUMENT_ID, getDocIdForPath(baseDir))
+                .add(Root.COLUMN_FLAGS, flags)
+                .add(Root.COLUMN_ICON, R.drawable.ic_storage)
+                .add(Root.COLUMN_MIME_TYPES, DocumentUtils.getChildMimeTypes(baseDir))
+                .add(Root.COLUMN_TITLE, context.getString(exe.bbllw8.anemo.shell.R.string.app_name))
+                .add(Root.COLUMN_SUMMARY, context.getString(R.string.anemo_description));
         return result;
     }
 
@@ -439,15 +439,14 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
             flags |= Document.FLAG_SUPPORTS_THUMBNAIL;
         }
 
-        final MatrixCursor.RowBuilder row = result.newRow();
-        row.add(Document.COLUMN_DOCUMENT_ID, docId);
-        row.add(Document.COLUMN_DISPLAY_NAME, fileName);
-        row.add(Document.COLUMN_MIME_TYPE, mimeType);
-        row.add(Document.COLUMN_FLAGS, flags);
-
         try {
-            row.add(Document.COLUMN_SIZE, Files.size(path));
-            row.add(Document.COLUMN_LAST_MODIFIED, Files.getLastModifiedTime(path).toMillis());
+            result.newRow()
+                    .add(Document.COLUMN_DOCUMENT_ID, docId)
+                    .add(Document.COLUMN_DISPLAY_NAME, fileName)
+                    .add(Document.COLUMN_MIME_TYPE, mimeType)
+                    .add(Document.COLUMN_FLAGS, flags)
+                    .add(Document.COLUMN_LAST_MODIFIED, Files.getLastModifiedTime(path).toMillis())
+                    .add(Document.COLUMN_SIZE, Files.size(path));
         } catch (IOException ignored) {
             // Skip these columns
         }
