@@ -15,7 +15,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.PrecomputedText;
 import android.text.TextWatcher;
 import android.text.style.CharacterStyle;
@@ -554,7 +553,6 @@ public final class EditorActivity extends Activity implements
         onTextSizeChanged(editorConfig.getTextSize());
         onTextStyleChanged(editorConfig.getTextStyle());
         onAutoPairEnabledChanged(editorConfig.getAutoPairEnabled());
-        onShowSuggestionChanged(editorConfig.getShowSuggestions());
         onShowCommandBarChanged(editorConfig.getShowCommandBar());
         editorConfig.setReady();
     }
@@ -624,15 +622,6 @@ public final class EditorActivity extends Activity implements
         if (showCommandBarMenuItem != null) {
             showCommandBarMenuItem.setChecked(show);
         }
-    }
-
-    @Override
-    public void onShowSuggestionChanged(boolean show) {
-        final int currentInputType = textEditorView.getInputType();
-        final int newInputType = show
-                ? currentInputType | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
-                : currentInputType & ~InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS;
-        textEditorView.setInputType(newInputType);
     }
 
     /* Commands */

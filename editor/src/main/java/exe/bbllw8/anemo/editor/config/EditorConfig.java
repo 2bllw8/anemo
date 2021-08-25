@@ -19,11 +19,9 @@ public final class EditorConfig {
     private static final String KEY_STYLE = "text_style";
     private static final String KEY_AUTO_PAIR = "auto_pair";
     private static final String KEY_SHOW_COMMAND_BAR = "show_command_bar";
-    private static final String KEY_SHOW_SUGGESTIONS = "show_suggestions";
 
     private static final String CMD_KEY_AUTO_PAIR = "pair";
     private static final String CMD_KEY_SHOW_CMD_BAR = "commands";
-    private static final String CMD_KEY_SHOW_SUGGESTIONS = "suggestions";
     private static final String CMD_KEY_TEXT_SIZE = "size";
     private static final String CMD_KEY_TEXT_STYLE = "style";
 
@@ -109,19 +107,6 @@ public final class EditorConfig {
         }
     }
 
-    public boolean getShowSuggestions() {
-        return preferences.getBoolean(KEY_SHOW_SUGGESTIONS, Config.DEFAULT_SHOW_SUGGESTIONS);
-    }
-
-    public void setShowSuggestions(boolean show) {
-        preferences.edit()
-                .putBoolean(KEY_SHOW_SUGGESTIONS, show)
-                .apply();
-        if (configListener != null && ready) {
-            configListener.onShowSuggestionChanged(show);
-        }
-    }
-
     public void increaseTextSize() {
         final int current = getTextSize();
         switch (current) {
@@ -161,9 +146,6 @@ public final class EditorConfig {
             case CMD_KEY_SHOW_CMD_BAR:
                 return applyBooleanCommand(this::setShowCommandBar,
                         value, Config.DEFAULT_SHOW_COMMAND_BAR);
-            case CMD_KEY_SHOW_SUGGESTIONS:
-                return applyBooleanCommand(this::setShowSuggestions,
-                        value, Config.DEFAULT_SHOW_SUGGESTIONS);
             case CMD_KEY_TEXT_SIZE:
                 return applyTextSizeCommand(value);
             case CMD_KEY_TEXT_STYLE:

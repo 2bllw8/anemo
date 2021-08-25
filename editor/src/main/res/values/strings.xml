@@ -36,7 +36,6 @@
     <string name="editor_menu_font_serif">Serif</string>
     <string name="editor_menu_options">Options</string>
     <string name="editor_menu_auto_pair">Auto pair</string>
-    <string name="editor_menu_suggestions">Input suggestions</string>
     <string name="editor_menu_command">Command field</string>
     <string name="editor_menu_show_shell">Show app icon</string>
     <string name="editor_menu_help">Help</string>

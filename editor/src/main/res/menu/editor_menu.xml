@@ -87,12 +87,6 @@
                 android:title="@string/editor_menu_auto_pair" />
 
             <item
-                android:id="@+id/editorShowSuggestions"
-                android:checkable="true"
-                android:showAsAction="never"
-                android:title="@string/editor_menu_suggestions" />
-
-            <item
                 android:id="@+id/editorShowCommandBar"
                 android:checkable="true"
                 android:showAsAction="never"
