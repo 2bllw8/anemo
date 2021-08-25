@@ -8,11 +8,13 @@ on:
       - '**.md'
       - '.gitignore'
       - 'Android.bp'
+      - '/metadata'
   pull_request:
     paths-ignore:
       - '**.md'
       - '.gitignore'
       - 'Android.bp'
+      - '/metadata'
 
 jobs:
   build:
