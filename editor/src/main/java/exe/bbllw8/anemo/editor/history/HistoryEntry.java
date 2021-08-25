@@ -57,7 +57,7 @@ public final class HistoryEntry implements Parcelable {
         return 0;
     }
 
-    public static final Creator<HistoryEntry> CREATOR = new Creator<HistoryEntry>() {
+    public static final Creator<HistoryEntry> CREATOR = new Creator<>() {
         @NonNull
         @Override
         public HistoryEntry createFromParcel(@NonNull Parcel in) {

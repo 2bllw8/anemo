@@ -32,7 +32,7 @@ public final class TaskExecutor {
     public static <T> void runTask(@NonNull @WorkerThread Callable<T> callable,
                                    @NonNull Consumer<T> consumer) {
         final Handler handler = new Handler(Looper.getMainLooper());
-        final FutureTask<T> future = new FutureTask<T>(callable) {
+        final FutureTask<T> future = new FutureTask<>(callable) {
             @Override
             protected void done() {
                 try {

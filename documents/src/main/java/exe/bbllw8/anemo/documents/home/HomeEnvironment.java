@@ -82,7 +82,7 @@ public final class HomeEnvironment {
     }
 
     public void wipe() throws IOException {
-        Files.walkFileTree(baseDir, new SimpleFileVisitor<Path>() {
+        Files.walkFileTree(baseDir, new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult visitFile(@NonNull Path file,
                                              @NonNull BasicFileAttributes attrs)

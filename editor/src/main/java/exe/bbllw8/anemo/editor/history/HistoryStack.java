@@ -78,7 +78,7 @@ public final class HistoryStack implements Parcelable {
         return 0;
     }
 
-    public static final Creator<HistoryStack> CREATOR = new Creator<HistoryStack>() {
+    public static final Creator<HistoryStack> CREATOR = new Creator<>() {
         @Override
         public HistoryStack createFromParcel(Parcel in) {
             return new HistoryStack(in);

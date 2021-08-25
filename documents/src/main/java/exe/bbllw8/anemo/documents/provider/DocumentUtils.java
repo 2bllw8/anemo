@@ -48,7 +48,7 @@ final class DocumentUtils {
         });
 
         try {
-            Files.walkFileTree(parent, new SimpleFileVisitor<Path>() {
+            Files.walkFileTree(parent, new SimpleFileVisitor<>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                     lastModifiedFiles.add(file);
@@ -79,7 +79,7 @@ final class DocumentUtils {
         final List<Path> list = new ArrayList<>();
 
         try {
-            Files.walkFileTree(parent, new SimpleFileVisitor<Path>() {
+            Files.walkFileTree(parent, new SimpleFileVisitor<>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir,
                                                          BasicFileAttributes attrs) {

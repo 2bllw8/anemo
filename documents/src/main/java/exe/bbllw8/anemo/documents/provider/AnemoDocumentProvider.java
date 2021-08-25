@@ -344,7 +344,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                     final Int64Ref treeSize = new Int64Ref(0);
 
                     try {
-                        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+                        Files.walkFileTree(path, new SimpleFileVisitor<>() {
                             @Override
                             public FileVisitResult visitFile(Path file,
                                                              BasicFileAttributes attrs) {

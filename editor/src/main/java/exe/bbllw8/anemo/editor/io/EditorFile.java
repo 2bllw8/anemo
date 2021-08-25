@@ -59,7 +59,7 @@ public final class EditorFile implements Parcelable {
         dest.writeLong(size);
     }
 
-    public static final Creator<EditorFile> CREATOR = new Creator<EditorFile>() {
+    public static final Creator<EditorFile> CREATOR = new Creator<>() {
         @NonNull
         @Override
         public EditorFile createFromParcel(@NonNull Parcel in) {
