@@ -13,6 +13,9 @@
 .gradle
 /local.properties
 
+# Sign key
+*.jks
+
 # VSCode
 */.classpath
 */.project

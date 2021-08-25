@@ -44,6 +44,14 @@ jobs:
           key: gradle-builds-core-${{ github.sha }}
           restore-keys: |
             gradle-builds
+      - name: Signing key
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          echo 'androidStorePassword=${{ secrets.KEY_STORE_PASSWORD }}' >> local.properties
+          echo 'androidKeyAlias=${{ secrets.ALIAS }}' >> local.properties
+          echo 'androidKeyPassword=${{ secrets.KEY_PASSWORD }}' >> local.properties
+          echo 'androidStoreFile=sign_key.jks' >> local.properties
+          echo '${{ secrets.KEY_STORE }}' | base64 --decode > sign_key.jks
       - name: Build
         id: build
         run: |

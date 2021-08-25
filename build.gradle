@@ -34,4 +34,16 @@ ext {
     targetCompatibilityVersion = JavaVersion.VERSION_11
 
     androidxAnnotation = 'androidx.annotation:annotation:1.2.0'
+
+
+    Properties localProps = new Properties()
+    if (file('local.properties').exists()) {
+        localProps.load(file('local.properties').newDataInputStream())
+    }
+
+
+    keyStoreFile = file(localProps.getProperty('androidStoreFile'))
+    keyStorePassword = localProps.getProperty('androidStorePassword')
+    keyAlias = localProps.getProperty('androidKeyAlias')
+    keyPassword = localProps.getProperty('androidKeyPassword')
 }

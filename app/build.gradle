@@ -20,13 +20,6 @@ android {
         buildConfig = false
     }
 
-    buildTypes {
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-
     compileOptions {
         sourceCompatibility rootProject.ext.sourceCompatibilityVersion
         targetCompatibility rootProject.ext.targetCompatibilityVersion
@@ -34,6 +27,33 @@ android {
 
     dependenciesInfo {
         includeInApk false
+    }
+
+    signingConfigs {
+        if (rootProject.ext.keyStoreFile.exists()) {
+            anemo {
+                storeFile rootProject.ext.keyStoreFile
+                storePassword rootProject.ext.keyStorePassword
+                keyAlias rootProject.ext.keyAlias
+                keyPassword rootProject.ext.keyPassword
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            if (rootProject.ext.keyStoreFile.exists()) {
+                signingConfig = signingConfigs.named('anemo').get()
+            }
+        }
+        debug {
+            if (rootProject.ext.keyStoreFile.exists()) {
+                signingConfig = signingConfigs.named('anemo').get()
+            }
+        }
     }
 }
 
