@@ -7,7 +7,7 @@ android_app {
     sdk_version: "30",
     optimize: {
         proguard_flags_files: [
-            "proguard-rules.pro",
+            "app/proguard-rules.pro",
         ],
     },
     static_libs: [
