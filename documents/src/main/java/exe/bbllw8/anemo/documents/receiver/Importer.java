@@ -25,7 +25,6 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import exe.bbllw8.anemo.documents.home.HomeEnvironment;
 import exe.bbllw8.anemo.task.TaskExecutor;
 
 public final class Importer {
@@ -34,23 +33,20 @@ public final class Importer {
     private static final String TIME_FORMAT = "yyyy-MM-dd HH:mm";
 
     @NonNull
-    protected final HomeEnvironment homeEnvironment;
-    @NonNull
     private final ContentResolver contentResolver;
     @NonNull
     private final Path destinationFolder;
     @NonNull
     private final String typePrefix;
     @NonNull
-    protected DateTimeFormatter dateTimeFormatter;
+    private final DateTimeFormatter dateTimeFormatter;
     @NonNull
     private final String defaultNameBase;
 
     public Importer(@NonNull Context context,
                     @NonNull Path destinationFolder,
                     @NonNull String typePrefix,
-                    @StringRes int defaultNameRes) throws IOException {
-        this.homeEnvironment = HomeEnvironment.getInstance(context);
+                    @StringRes int defaultNameRes) {
         this.destinationFolder = destinationFolder;
         this.typePrefix = typePrefix;
         this.contentResolver = context.getContentResolver();
