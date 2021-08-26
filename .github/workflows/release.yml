@@ -50,12 +50,6 @@ jobs:
           echo 'org.gradle.vfs.watch=true' >> gradle.properties
           echo 'org.gradle.jvmargs=-Xmx2048m' >> gradle.properties
           ./gradlew :app:assembleRelease
-      - name: Upload release
-        uses: actions/upload-artifact@v2
-        with:
-          name: app.apk
-          path: "app/build/outputs/apk/release/app-release-unsigned.apk"
-          retention-days: 14
       - name: Upload mappings
         if: ${{ github.event_name == 'push' }}
         uses: actions/upload-artifact@v2
@@ -65,6 +59,6 @@ jobs:
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "app/build/outputs/apk/release/app-release-unsigned.apk"
+          artifacts: "app/build/outputs/apk/release/app-release.apk"
           draft: true
           token: ${{ secrets.GITHUB_TOKEN }}
