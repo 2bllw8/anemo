@@ -6,6 +6,7 @@ package exe.bbllw8.anemo.editor.markdown;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.BackgroundColorSpan;
@@ -19,7 +20,7 @@ import android.text.style.TypefaceSpan;
 import androidx.annotation.NonNull;
 
 public final class MarkdownFormatter {
-    private static final int COLOR_CODE = Color.argb(50, 200, 81, 37);
+    private static final int COLOR_CODE = Color.argb(50, 140, 140, 140);
     private static final int COLOR_QUOTE = Color.argb(255, 131, 145, 69);
 
     private MarkdownFormatter() {
@@ -90,10 +91,12 @@ public final class MarkdownFormatter {
                         final int start = sb.length();
                         sb.append(quotedText);
                         final int end = sb.length();
-                        sb.setSpan(new TypefaceSpan(Typeface.SERIF),
-                                start,
-                                end,
-                                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                        if (Build.VERSION.SDK_INT >= 28) {
+                            sb.setSpan(new TypefaceSpan(Typeface.SERIF),
+                                    start,
+                                    end,
+                                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                        }
                         sb.setSpan(new ForegroundColorSpan(COLOR_QUOTE),
                                 start,
                                 end,
@@ -174,10 +177,12 @@ public final class MarkdownFormatter {
                         final int start = sb.length();
                         sb.append(codeText);
                         final int end = sb.length();
-                        sb.setSpan(new TypefaceSpan(Typeface.MONOSPACE),
-                                start,
-                                end,
-                                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                        if (Build.VERSION.SDK_INT >= 28) {
+                            sb.setSpan(new TypefaceSpan(Typeface.MONOSPACE),
+                                    start,
+                                    end,
+                                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                        }
                         sb.setSpan(new BackgroundColorSpan(COLOR_CODE),
                                 start,
                                 end,
