@@ -5,6 +5,8 @@
 package exe.bbllw8.anemo.documents.password.dialogs;
 
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -25,13 +27,14 @@ public final class SetPasswordDialog extends PasswordDialog {
     protected void build() {
         final EditText passwordField = dialog.findViewById(R.id.passwordFieldView);
         final EditText repeatField = dialog.findViewById(R.id.repeatFieldView);
-        final Button positiveBtn = dialog.findViewById(R.id.setBtnPositive);
-        final Button negativeBtn = dialog.findViewById(R.id.setBtnNegative);
+        final Button positiveBtn = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
 
         final TextListener validator = buildValidator(passwordField, repeatField, positiveBtn);
         passwordField.addTextChangedListener(validator);
         repeatField.addTextChangedListener(validator);
 
+        positiveBtn.setVisibility(View.VISIBLE);
+        positiveBtn.setText(R.string.password_set_action);
         positiveBtn.setEnabled(false);
         positiveBtn.setOnClickListener(v -> {
             final String passwordValue = passwordField.getText().toString();
@@ -40,8 +43,6 @@ public final class SetPasswordDialog extends PasswordDialog {
                 dismiss();
             }
         });
-
-        negativeBtn.setOnClickListener(v -> dismiss());
     }
 
     @NonNull

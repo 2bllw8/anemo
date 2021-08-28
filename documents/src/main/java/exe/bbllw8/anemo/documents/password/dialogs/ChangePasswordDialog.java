@@ -5,6 +5,8 @@
 package exe.bbllw8.anemo.documents.password.dialogs;
 
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -31,14 +33,15 @@ public final class ChangePasswordDialog extends PasswordDialog {
         final EditText currentField = dialog.findViewById(R.id.currentFieldView);
         final EditText passwordField = dialog.findViewById(R.id.passwordFieldView);
         final EditText repeatField = dialog.findViewById(R.id.repeatFieldView);
-        final Button positiveBtn = dialog.findViewById(R.id.changeBtnPositive);
-        final Button neutralBtn = dialog.findViewById(R.id.changeBtnNeutral);
-        final Button negativeBtn = dialog.findViewById(R.id.changeBtnNegative);
+        final Button positiveBtn = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        final Button neutralBtn = dialog.getButton(DialogInterface.BUTTON_NEUTRAL);
 
         final TextListener validator = buildTextListener(passwordField, repeatField, positiveBtn);
         passwordField.addTextChangedListener(validator);
         repeatField.addTextChangedListener(validator);
 
+        positiveBtn.setVisibility(View.VISIBLE);
+        positiveBtn.setText(R.string.password_change_action);
         positiveBtn.setEnabled(false);
         positiveBtn.setOnClickListener(v -> {
             final String currentPassword = currentField.getText().toString();
@@ -53,7 +56,9 @@ public final class ChangePasswordDialog extends PasswordDialog {
                 currentField.setError(res.getString(R.string.password_error_wrong));
             }
         });
-        negativeBtn.setOnClickListener(v -> dismiss());
+
+        neutralBtn.setVisibility(View.VISIBLE);
+        neutralBtn.setText(R.string.password_change_forgot);
         neutralBtn.setOnClickListener(v -> {
             dialog.dismiss();
             resetPassword.run();

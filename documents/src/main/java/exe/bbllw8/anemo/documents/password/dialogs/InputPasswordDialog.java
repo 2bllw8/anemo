@@ -5,6 +5,8 @@
 package exe.bbllw8.anemo.documents.password.dialogs;
 
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -29,13 +31,14 @@ public final class InputPasswordDialog extends PasswordDialog {
     @Override
     protected void build() {
         final EditText passwordField = dialog.findViewById(R.id.passwordFieldView);
-        final Button positiveBtn = dialog.findViewById(R.id.inputBtnPositive);
-        final Button neutralBtn = dialog.findViewById(R.id.inputBtnNeutral);
-        final Button negativeBtn = dialog.findViewById(R.id.inputBtnNegative);
+        final Button positiveBtn = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        final Button neutralBtn = dialog.getButton(DialogInterface.BUTTON_NEUTRAL);
 
         final TextListener validator = buildInputValidator(passwordField, positiveBtn);
         passwordField.addTextChangedListener(validator);
 
+        positiveBtn.setVisibility(View.VISIBLE);
+        positiveBtn.setText(R.string.password_input_action);
         positiveBtn.setEnabled(false);
         positiveBtn.setOnClickListener(v -> {
             final String value = passwordField.getText().toString();
@@ -46,11 +49,13 @@ public final class InputPasswordDialog extends PasswordDialog {
                 passwordField.setError(res.getString(R.string.password_error_wrong));
             }
         });
+
+        neutralBtn.setVisibility(View.VISIBLE);
+        neutralBtn.setText(R.string.password_input_change);
         neutralBtn.setOnClickListener(v -> {
             dialog.dismiss();
             changePassword.run();
         });
-        negativeBtn.setOnClickListener(v -> dismiss());
     }
 
     @NonNull

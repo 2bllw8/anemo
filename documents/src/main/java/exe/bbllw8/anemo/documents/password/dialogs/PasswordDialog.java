@@ -37,6 +37,7 @@ public abstract class PasswordDialog {
                 .setTitle(title)
                 .setView(layout)
                 .setCancelable(false)
+                .setNegativeButton(android.R.string.cancel, (d, which) -> dismiss())
                 .create();
     }
 

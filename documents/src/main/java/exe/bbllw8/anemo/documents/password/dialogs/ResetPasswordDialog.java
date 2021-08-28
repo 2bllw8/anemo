@@ -5,7 +5,9 @@
 package exe.bbllw8.anemo.documents.password.dialogs;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -40,8 +42,7 @@ public final class ResetPasswordDialog extends PasswordDialog {
     protected void build() {
         final TextView messageView = dialog.findViewById(R.id.resetMessageView);
         final EditText codeField = dialog.findViewById(R.id.resetFieldView);
-        final Button positiveBtn = dialog.findViewById(R.id.resetBtnPositive);
-        final Button negativeBtn = dialog.findViewById(R.id.resetBtnNegative);
+        final Button positiveBtn = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
 
         final String resetCode = res.getString(R.string.password_reset_code);
 
@@ -51,6 +52,8 @@ public final class ResetPasswordDialog extends PasswordDialog {
         final TextListener validator = buildValidator(positiveBtn, resetCode);
         codeField.addTextChangedListener(validator);
 
+        positiveBtn.setVisibility(View.VISIBLE);
+        positiveBtn.setText(R.string.password_reset_action);
         positiveBtn.setEnabled(false);
         positiveBtn.setOnClickListener(v -> {
             try {
@@ -62,7 +65,6 @@ public final class ResetPasswordDialog extends PasswordDialog {
                 Log.e(TAG, "Couldn't wipe home environment", e);
             }
         });
-        negativeBtn.setOnClickListener(v -> dismiss());
     }
 
     @NonNull
