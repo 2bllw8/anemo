@@ -18,6 +18,8 @@ import exe.bbllw8.anemo.task.TaskExecutor;
 
 public final class EditorHelpActivity extends Activity {
 
+    private final TaskExecutor taskExecutor = new TaskExecutor();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,9 +31,15 @@ public final class EditorHelpActivity extends Activity {
 
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        TaskExecutor.runTask(new LoadHelpContentTextTask(getResources()),
+        taskExecutor.runTask(new LoadHelpContentTextTask(getResources()),
                 contentView::setText,
                 () -> contentView.setText(R.string.editor_help_error));
+    }
+
+    @Override
+    protected void onDestroy() {
+        taskExecutor.terminate();
+        super.onDestroy();
     }
 
     @Override

@@ -86,6 +86,7 @@ public final class EditorActivity extends Activity implements
     private EditorHistory editorHistory;
     private AutoPair autoPair;
 
+    private final TaskExecutor taskExecutor = new TaskExecutor();
     private final EditorCommandParser editorCommandParser = new EditorCommandParser();
 
     private MenuItem undoMenuItem;
@@ -154,6 +155,12 @@ public final class EditorActivity extends Activity implements
             registerTextListeners();
             loadConfig();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        taskExecutor.terminate();
+        super.onDestroy();
     }
 
     @Override
@@ -371,21 +378,21 @@ public final class EditorActivity extends Activity implements
         summaryView.setText(R.string.editor_summary_loading);
         loadView.setVisibility(View.VISIBLE);
 
-        TaskExecutor.runTask(new EditorFileLoaderTask(getContentResolver(), uri),
+        taskExecutor.runTask(new EditorFileLoaderTask(getContentResolver(), uri),
                 this::readFile,
                 this::showOpenErrorMessage);
     }
 
     private void readFile(@NonNull EditorFile editorFile) {
         final int maxSize = getResources().getInteger(R.integer.editor_max_file_size);
-        TaskExecutor.runTask(new EditorFileReaderTask(getContentResolver(), editorFile, maxSize),
+        taskExecutor.runTask(new EditorFileReaderTask(getContentResolver(), editorFile, maxSize),
                 content -> setContent(editorFile, content),
                 () -> showReadErrorMessage(editorFile));
     }
 
     private void loadNewSaveFile(@NonNull Uri uri,
                                  boolean quitWhenSaved) {
-        TaskExecutor.runTask(new EditorFileLoaderTask(getContentResolver(), uri),
+        taskExecutor.runTask(new EditorFileLoaderTask(getContentResolver(), uri),
                 editorFile -> saveNewFile(editorFile, quitWhenSaved),
                 this::showOpenErrorMessage);
     }
@@ -440,7 +447,7 @@ public final class EditorActivity extends Activity implements
         if (Build.VERSION.SDK_INT >= 28) {
             final PrecomputedText.Params params = textEditorView.getTextMetricsParams();
             final Reference<TextEditorView> editorViewRef = new WeakReference<>(textEditorView);
-            TaskExecutor.submit(() -> {
+            taskExecutor.submit(() -> {
                 final TextEditorView ev = editorViewRef.get();
                 if (ev == null) {
                     return;
@@ -495,7 +502,7 @@ public final class EditorActivity extends Activity implements
                 .show();
 
         final String contents = textEditorView.getText().toString();
-        TaskExecutor.runTask(new EditorFileWriterTask(getContentResolver(), editorFile, contents),
+        taskExecutor.runTask(new EditorFileWriterTask(getContentResolver(), editorFile, contents),
                 success -> {
                     if (success) {
                         // Change only the variable, still allow undo
@@ -536,7 +543,7 @@ public final class EditorActivity extends Activity implements
 
     private void updateSummary(int cursorStart, int cursorEnd) {
         final String content = textEditorView.getText().toString();
-        TaskExecutor.runTask(new GetCursorCoordinatesTask(content, cursorStart),
+        taskExecutor.runTask(new GetCursorCoordinatesTask(content, cursorStart),
                 point -> {
                     final String summary = cursorStart == cursorEnd
                             ? getString(R.string.editor_summary_info,
@@ -643,7 +650,7 @@ public final class EditorActivity extends Activity implements
         final int cursor = selectionEnd == -1
                 ? textEditorView.getSelectionStart()
                 : selectionEnd;
-        TaskExecutor.runTask(new FindCommandTask(command.getToFind(), content, cursor),
+        taskExecutor.runTask(new FindCommandTask(command.getToFind(), content, cursor),
                 range -> {
                     textEditorView.requestFocus();
                     textEditorView.setSelection(range.getLower(), range.getUpper());
@@ -654,7 +661,7 @@ public final class EditorActivity extends Activity implements
     @Override
     public void runDeleteAllCommand(@NonNull EditorCommand.DeleteAll command) {
         final String content = textEditorView.getText().toString();
-        TaskExecutor.runTask(new DeleteAllCommandTask(command.getToDelete(), content),
+        taskExecutor.runTask(new DeleteAllCommandTask(command.getToDelete(), content),
                 textEditorView::setText);
     }
 
@@ -662,7 +669,7 @@ public final class EditorActivity extends Activity implements
     public void runDeleteFirstCommand(@NonNull EditorCommand.DeleteFirst command) {
         final String content = textEditorView.getText().toString();
         final int cursor = textEditorView.getSelectionStart();
-        TaskExecutor.runTask(new DeleteFirstCommandTask(command.getToDelete(),
+        taskExecutor.runTask(new DeleteFirstCommandTask(command.getToDelete(),
                 content, command.getCount(), cursor),
                 textEditorView::setText);
     }
@@ -680,7 +687,7 @@ public final class EditorActivity extends Activity implements
     @Override
     public void runSubstituteAllCommand(@NonNull EditorCommand.SubstituteAll command) {
         final String content = textEditorView.getText().toString();
-        TaskExecutor.runTask(new SubstituteAllCommandTask(command.getToFind(),
+        taskExecutor.runTask(new SubstituteAllCommandTask(command.getToFind(),
                         command.getReplaceWith(), content),
                 textEditorView::setText);
     }
@@ -689,7 +696,7 @@ public final class EditorActivity extends Activity implements
     public void runSubstituteFirstCommand(@NonNull EditorCommand.SubstituteFirst command) {
         final String content = textEditorView.getText().toString();
         final int cursor = textEditorView.getSelectionStart();
-        TaskExecutor.runTask(new SubstituteFirstCommandTask(command.getToFind(),
+        taskExecutor.runTask(new SubstituteFirstCommandTask(command.getToFind(),
                 command.getReplaceWith(), content, command.getCount(), cursor),
                 textEditorView::setText);
     }

@@ -21,12 +21,15 @@ import java.nio.file.Path;
 
 import exe.bbllw8.anemo.documents.R;
 import exe.bbllw8.anemo.documents.home.HomeEnvironment;
+import exe.bbllw8.anemo.task.TaskExecutor;
 
 public final class ReceiverService extends Service {
     private static final String CHANNEL_ID = "notifications_receiver";
     private static final String TAG = "ReceiverService";
     private static final int NOTIFICATION_ID = 1;
 
+    @NonNull
+    private final TaskExecutor taskExecutor = new TaskExecutor();
     private NotificationManager notificationManager;
     private Importer[] importers;
 
@@ -41,6 +44,12 @@ public final class ReceiverService extends Service {
             Log.e(TAG, "Failed to load importers", e);
             stopSelf();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        taskExecutor.terminate();
+        super.onDestroy();
     }
 
     @Nullable
@@ -75,24 +84,28 @@ public final class ReceiverService extends Service {
         return new Importer[]{
                 // Audio
                 new Importer(this,
+                        taskExecutor,
                         homeEnvironment.getDefaultDirectory(HomeEnvironment.MUSIC)
                                 .orElse(fallbackDir),
                         "audio/",
                         R.string.receiver_audio_default_name),
                 // Images
                 new Importer(this,
+                        taskExecutor,
                         homeEnvironment.getDefaultDirectory(HomeEnvironment.PICTURES)
                                 .orElse(fallbackDir),
                         "image/",
                         R.string.receiver_image_default_name),
                 // PDF
                 new Importer(this,
+                        taskExecutor,
                         homeEnvironment.getDefaultDirectory(HomeEnvironment.DOCUMENTS)
                                 .orElse(fallbackDir),
                         "application/pdf",
                         R.string.receiver_pdf_default_name),
                 // Video
                 new Importer(this,
+                        taskExecutor,
                         homeEnvironment.getDefaultDirectory(HomeEnvironment.MOVIES)
                                 .orElse(fallbackDir),
                         "video/",

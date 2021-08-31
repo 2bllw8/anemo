@@ -8,15 +8,18 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
@@ -24,34 +27,31 @@ import java.util.function.Consumer;
 public final class TaskExecutor {
     private static final String TAG = "TaskExecutor";
 
-    private static final ExecutorService executor = Executors.newFixedThreadPool(2);
+    private final ExecutorService executor = Executors.newFixedThreadPool(2);
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private final List<Future<?>> execFutures = new ArrayList<>(4);
 
-    private TaskExecutor() {
+    public synchronized <T> void runTask(@NonNull @WorkerThread Callable<T> callable,
+                                         @NonNull @MainThread Consumer<T> consumer) {
+        final Future<T> future = executor.submit(callable);
+        execFutures.add(future);
+        try {
+            final T result = future.get(1, TimeUnit.MINUTES);
+            // It's completed, remove to free memory
+            execFutures.remove(future);
+            // Post result
+            handler.post(() -> consumer.accept(result));
+        } catch (InterruptedException e) {
+            Log.w(TAG, e);
+        } catch (ExecutionException | TimeoutException e) {
+            throw new RuntimeException("An error occurred while executing task",
+                    e.getCause());
+        }
     }
 
-    public static <T> void runTask(@NonNull @WorkerThread Callable<T> callable,
-                                   @NonNull Consumer<T> consumer) {
-        final Handler handler = new Handler(Looper.getMainLooper());
-        final FutureTask<T> future = new FutureTask<>(callable) {
-            @Override
-            protected void done() {
-                try {
-                    final T result = get(1, TimeUnit.MINUTES);
-                    handler.post(() -> consumer.accept(result));
-                } catch (InterruptedException e) {
-                    Log.w(TAG, e);
-                } catch (ExecutionException | TimeoutException e) {
-                    throw new RuntimeException("An error occurred while executing task",
-                            e.getCause());
-                }
-            }
-        };
-        executor.execute(future);
-    }
-
-    public static <T> void runTask(@NonNull @WorkerThread Callable<Optional<T>> callable,
-                                   @NonNull Consumer<T> ifPresent,
-                                   @NonNull Runnable ifNotPresent) {
+    public synchronized <T> void runTask(@NonNull @WorkerThread Callable<Optional<T>> callable,
+                                         @NonNull @MainThread Consumer<T> ifPresent,
+                                         @NonNull @MainThread Runnable ifNotPresent) {
         runTask(callable, opt -> {
             if (opt.isPresent()) {
                 ifPresent.accept(opt.get());
@@ -61,7 +61,37 @@ public final class TaskExecutor {
         });
     }
 
-    public static void submit(@NonNull @WorkerThread Runnable runnable) {
-        executor.submit(runnable);
+    public synchronized void submit(@NonNull @WorkerThread Runnable runnable) {
+        // Since this future holds no "outcome", we can safely keep it in the
+        // execFutures list until the executor is terminated
+        execFutures.add(executor.submit(runnable));
+    }
+
+    public void terminate() {
+        executor.shutdown();
+        if (hasUnfinishedTasks()) {
+            try {
+                if (!executor.awaitTermination(250, TimeUnit.MILLISECONDS)) {
+                    executor.shutdownNow();
+                    //noinspection ResultOfMethodCallIgnored
+                    executor.awaitTermination(100, TimeUnit.MILLISECONDS);
+                }
+            } catch (InterruptedException e) {
+                Log.e(TAG, "Interrupted", e);
+                // (Re-)Cancel if current thread also interrupted
+                executor.shutdownNow();
+                // Preserve interrupt status
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    private boolean hasUnfinishedTasks() {
+        for (final Future<?> future : execFutures) {
+            if (!future.isDone()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

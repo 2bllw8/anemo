@@ -33,6 +33,8 @@ public final class Importer {
     private static final String TIME_FORMAT = "yyyy-MM-dd HH:mm";
 
     @NonNull
+    private final TaskExecutor taskExecutor;
+    @NonNull
     private final ContentResolver contentResolver;
     @NonNull
     private final Path destinationFolder;
@@ -44,9 +46,11 @@ public final class Importer {
     private final String defaultNameBase;
 
     public Importer(@NonNull Context context,
+                    @NonNull TaskExecutor taskExecutor,
                     @NonNull Path destinationFolder,
                     @NonNull String typePrefix,
                     @StringRes int defaultNameRes) {
+        this.taskExecutor = taskExecutor;
         this.destinationFolder = destinationFolder;
         this.typePrefix = typePrefix;
         this.contentResolver = context.getContentResolver();
@@ -68,7 +72,7 @@ public final class Importer {
         final Path destination = destinationFolder.resolve(fileName);
 
         onStartImport.accept(fileName);
-        TaskExecutor.runTask(() -> {
+        taskExecutor.runTask(() -> {
             try (final InputStream inputStream = contentResolver.openInputStream(uri)) {
                 writeStream(inputStream, destination);
                 return true;
