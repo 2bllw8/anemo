@@ -14,7 +14,6 @@ import androidx.annotation.WorkerThread;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -47,24 +46,6 @@ public final class TaskExecutor {
             throw new RuntimeException("An error occurred while executing task",
                     e.getCause());
         }
-    }
-
-    public synchronized <T> void runTask(@NonNull @WorkerThread Callable<Optional<T>> callable,
-                                         @NonNull @MainThread Consumer<T> ifPresent,
-                                         @NonNull @MainThread Runnable ifNotPresent) {
-        runTask(callable, opt -> {
-            if (opt.isPresent()) {
-                ifPresent.accept(opt.get());
-            } else {
-                ifNotPresent.run();
-            }
-        });
-    }
-
-    public synchronized void submit(@NonNull @WorkerThread Runnable runnable) {
-        // Since this future holds no "outcome", we can safely keep it in the
-        // execFutures list until the executor is terminated
-        execFutures.add(executor.submit(runnable));
     }
 
     public void terminate() {

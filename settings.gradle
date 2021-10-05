@@ -4,6 +4,5 @@
  */
 include ':app'
 include ':documents'
-include ':editor'
 include ':shell'
 include ':task'
