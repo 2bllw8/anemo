@@ -1,19 +1,19 @@
-Anemo is an utility application made of two components: a private local storage, and a text editor.
+Anemo is a private local storage utility application for android.
 Instead of being a stand-alone file manager user interface, it hooks into various components of
 Android making it feel like a native part of the operative system.
-The text editor can read and edit and create text files from the device or other apps.
+Moreover it provides ways for the user to export contents from other apps and save them as files.
 
 Features
 
-- Private file storage
-  - Create folders and organize files freely
-  - All files in the private storage won't appear in the other apps
-  - Access in the system Files application
-  - Lock access to the private storage
-  - Import content using the share Android functionality
-- Text editor
-  - Open, edit and create text files
-  - Cursor and selection information
-  - Automatically close brackets and quotes: `' '`, `" "`, `( )`, `[ ]`, `{ }`
-  - Find, delete, substitute, undo actions
-  - Open selected text from other apps as a new text file and save it on the device
+- Create folders and organize files freely
+- All files in the private storage won't appear in the other apps
+- Access in the system Files application (the _DocumentsProviderUI_)
+- Lock access to the private storage
+  - Quick tile
+  - Auto lock after 15 minutes
+  - Password for locking access to the files
+- Import content using the share Android functionality
+  - Audio
+  - Images
+  - PDF files
+  - Videos
