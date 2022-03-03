@@ -5,49 +5,17 @@ android_app {
     name: "anemo",
     manifest: "app/src/main/AndroidManifest.xml",
     sdk_version: "31",
+    srcs: [
+        "app/src/main/java/exe/bbllw8/anemo/**/*.java",
+    ],
+    resource_dirs: [
+        "app/src/main/res",
+    ],
     optimize: {
         proguard_flags_files: [
             "app/proguard-rules.pro",
         ],
     },
-    static_libs: [
-        "anemo_documents",
-    ],
-}
-
-android_library {
-    name: "anemo_documents",
-    manifest: "documents/src/main/AndroidManifest.xml",
-    sdk_version: "31",
-    srcs: [
-        "documents/src/main/java/exe/bbllw8/anemo/documents/**/*.java",
-    ],
-    resource_dirs: [
-        "documents/src/main/res",
-    ],
-    static_libs: [
-        "androidx.annotation_annotation",
-        "anemo_shell",
-        "anemo_task",
-    ],
-}
-
-android_library {
-    name: "anemo_shell",
-    manifest: "shell/src/main/AndroidManifest.xml",
-    sdk_version: "31",
-    resource_dirs: [
-        "shell/src/main/res",
-    ],
-}
-
-android_library {
-    name: "anemo_task",
-    manifest: "task/src/main/AndroidManifest.xml",
-    sdk_version: "31",
-    srcs: [
-        "task/src/main/java/exe/bbllw8/anemo/task/**/*.java",
-    ],
     static_libs: [
         "androidx.annotation_annotation",
     ],

@@ -58,5 +58,5 @@ android {
 }
 
 dependencies {
-    implementation(project(':documents'))
+    implementation rootProject.ext.androidxAnnotation
 }

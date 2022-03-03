@@ -3,6 +3,3 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 include ':app'
-include ':documents'
-include ':shell'
-include ':task'

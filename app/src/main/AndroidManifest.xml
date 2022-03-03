@@ -2,4 +2,94 @@
   ~ Copyright (c) 2021 2bllw8
   ~ SPDX-License-Identifier: GPL-3.0-only
   -->
-<manifest package="exe.bbllw8.anemo" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="exe.bbllw8.anemo">
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <application
+        android:allowBackup="true"
+        android:allowClearUserData="false"
+        android:appCategory="productivity"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        tools:targetApi="s">
+
+        <!-- Lock -->
+
+        <service
+            android:name=".documents.lock.AutoLockJobService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <service
+            android:name=".documents.lock.LockTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_key_tile"
+            android:label="@string/tile_title"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <!-- Password -->
+
+        <activity
+            android:name=".documents.password.PasswordActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/password_label"
+            android:theme="@style/DialogTheme" />
+
+        <!-- Provider -->
+
+        <provider
+            android:name=".documents.provider.AnemoDocumentProvider"
+            android:authorities="exe.bbllw8.anemo.documents"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:permission="android.permission.MANAGE_DOCUMENTS">
+
+            <intent-filter>
+                <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
+            </intent-filter>
+        </provider>
+
+        <!-- Receiver -->
+
+        <activity
+            android:name=".documents.receiver.ReceiverActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:label="@string/receiver_label"
+            android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="audio/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/pdf" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="video/*" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".documents.receiver.ReceiverService"
+            android:foregroundServiceType="dataSync" />
+    </application>
+</manifest>
