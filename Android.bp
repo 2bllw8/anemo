@@ -4,7 +4,7 @@
 android_app {
     name: "anemo",
     manifest: "app/src/main/AndroidManifest.xml",
-    sdk_version: "30",
+    sdk_version: "31",
     optimize: {
         proguard_flags_files: [
             "app/proguard-rules.pro",
@@ -18,7 +18,7 @@ android_app {
 android_library {
     name: "anemo_documents",
     manifest: "documents/src/main/AndroidManifest.xml",
-    sdk_version: "30",
+    sdk_version: "31",
     srcs: [
         "documents/src/main/java/exe/bbllw8/anemo/documents/**/*.java",
     ],
@@ -35,7 +35,7 @@ android_library {
 android_library {
     name: "anemo_shell",
     manifest: "shell/src/main/AndroidManifest.xml",
-    sdk_version: "30",
+    sdk_version: "31",
     resource_dirs: [
         "shell/src/main/res",
     ],
@@ -44,7 +44,7 @@ android_library {
 android_library {
     name: "anemo_task",
     manifest: "task/src/main/AndroidManifest.xml",
-    sdk_version: "30",
+    sdk_version: "31",
     srcs: [
         "task/src/main/java/exe/bbllw8/anemo/task/**/*.java",
     ],
