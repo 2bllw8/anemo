@@ -3,12 +3,16 @@
   ~ SPDX-License-Identifier: GPL-3.0-only
   -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="exe.bbllw8.anemo.shell">
 
     <application
-        android:allowBackup="false"
+        android:allowBackup="true"
         android:allowClearUserData="false"
         android:appCategory="productivity"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name" />
+        android:label="@string/app_name"
+        tools:targetApi="s" />
 </manifest>
