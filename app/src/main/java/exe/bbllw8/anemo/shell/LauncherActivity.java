@@ -15,8 +15,8 @@ import androidx.annotation.Nullable;
 
 import exe.bbllw8.anemo.R;
 import exe.bbllw8.anemo.documents.home.HomeEnvironment;
-import exe.bbllw8.anemo.documents.lock.LockStore;
-import exe.bbllw8.anemo.documents.lock.UnlockActivity;
+import exe.bbllw8.anemo.lock.LockStore;
+import exe.bbllw8.anemo.lock.UnlockActivity;
 
 public class LauncherActivity extends Activity {
     // https://cs.android.com/android/platform/superproject/+/master:packages/apps/DocumentsUI/AndroidManifest.xml

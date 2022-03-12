@@ -2,7 +2,7 @@
  * Copyright (c) 2021 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package exe.bbllw8.anemo.documents.config.password;
+package exe.bbllw8.anemo.config.password;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -18,7 +18,7 @@ import java.io.IOException;
 
 import exe.bbllw8.anemo.R;
 import exe.bbllw8.anemo.documents.home.HomeEnvironment;
-import exe.bbllw8.anemo.documents.lock.LockStore;
+import exe.bbllw8.anemo.lock.LockStore;
 
 public final class ResetPasswordDialog extends PasswordDialog {
     private static final String TAG = "ResetPasswordDialog";

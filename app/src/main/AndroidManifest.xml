@@ -46,7 +46,7 @@
         <!-- Configuration -->
 
         <activity
-            android:name=".documents.config.ConfigurationActivity"
+            android:name=".config.ConfigurationActivity"
             android:exported="true"
             android:label="@string/configuration_label"
             android:theme="@style/AppTheme">
@@ -62,12 +62,12 @@
         <!-- Lock -->
 
         <service
-            android:name=".documents.lock.AutoLockJobService"
+            android:name=".lock.AutoLockJobService"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <service
-            android:name=".documents.lock.LockTileService"
+            android:name=".lock.LockTileService"
             android:exported="true"
             android:icon="@drawable/ic_key_tile"
             android:label="@string/tile_title"
@@ -80,7 +80,7 @@
         <!-- Password -->
 
         <activity
-            android:name=".documents.lock.UnlockActivity"
+            android:name=".lock.UnlockActivity"
             android:excludeFromRecents="true"
             android:label="@string/password_label"
             android:theme="@style/DialogTheme" />

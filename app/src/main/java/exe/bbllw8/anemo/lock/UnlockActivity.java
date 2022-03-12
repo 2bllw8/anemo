@@ -2,7 +2,7 @@
  * Copyright (c) 2022 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package exe.bbllw8.anemo.documents.lock;
+package exe.bbllw8.anemo.lock;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,8 +10,8 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 
-import exe.bbllw8.anemo.documents.config.ConfigurationActivity;
-import exe.bbllw8.anemo.documents.config.password.InputPasswordDialog;
+import exe.bbllw8.anemo.config.ConfigurationActivity;
+import exe.bbllw8.anemo.config.password.InputPasswordDialog;
 import exe.bbllw8.anemo.shell.LauncherActivity;
 
 public final class UnlockActivity extends Activity {

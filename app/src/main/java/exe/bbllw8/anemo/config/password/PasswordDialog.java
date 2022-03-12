@@ -2,7 +2,7 @@
  * Copyright (c) 2021 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package exe.bbllw8.anemo.documents.config.password;
+package exe.bbllw8.anemo.config.password;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 
 import exe.bbllw8.anemo.R;
-import exe.bbllw8.anemo.documents.lock.LockStore;
+import exe.bbllw8.anemo.lock.LockStore;
 
 public abstract class PasswordDialog {
     protected static final int MIN_PASSWORD_LENGTH = 4;

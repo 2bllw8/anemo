@@ -2,7 +2,7 @@
  * Copyright (c) 2022 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package exe.bbllw8.anemo.documents.config;
+package exe.bbllw8.anemo.config;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -12,10 +12,10 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import exe.bbllw8.anemo.R;
-import exe.bbllw8.anemo.documents.config.password.ResetPasswordDialog;
-import exe.bbllw8.anemo.documents.config.password.SetPasswordDialog;
-import exe.bbllw8.anemo.documents.lock.LockStore;
-import exe.bbllw8.anemo.documents.config.password.ChangePasswordDialog;
+import exe.bbllw8.anemo.config.password.ResetPasswordDialog;
+import exe.bbllw8.anemo.config.password.SetPasswordDialog;
+import exe.bbllw8.anemo.lock.LockStore;
+import exe.bbllw8.anemo.config.password.ChangePasswordDialog;
 import exe.bbllw8.anemo.shell.AnemoShell;
 
 public final class ConfigurationActivity extends Activity {

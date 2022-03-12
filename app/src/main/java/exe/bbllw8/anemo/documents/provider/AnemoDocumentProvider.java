@@ -36,7 +36,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 import exe.bbllw8.anemo.R;
 import exe.bbllw8.anemo.documents.home.HomeEnvironment;
-import exe.bbllw8.anemo.documents.lock.LockStore;
+import exe.bbllw8.anemo.lock.LockStore;
 
 public final class AnemoDocumentProvider extends DocumentsProvider {
     private static final String TAG = "AnemoDocumentProvider";
