@@ -16,14 +16,17 @@ import exe.bbllw8.anemo.documents.password.dialogs.ResetPasswordDialog;
 import exe.bbllw8.anemo.documents.password.dialogs.SetPasswordDialog;
 
 public final class PasswordActivity extends Activity {
+    public static final String OPEN_AFTER_UNLOCK = "open_after_unlock";
 
     private LockStore lockStore;
+    private boolean openAfterUnlock;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         lockStore = LockStore.getInstance(this);
+        openAfterUnlock = getIntent().getBooleanExtra(OPEN_AFTER_UNLOCK, false);
 
         if (lockStore.hasPassword()) {
             showInputPasswordDialog();
@@ -37,7 +40,8 @@ public final class PasswordActivity extends Activity {
     }
 
     private void showInputPasswordDialog() {
-        new InputPasswordDialog(this, lockStore, this::showChangePasswordDialog).show();
+        new InputPasswordDialog(this, lockStore, openAfterUnlock,
+                this::showChangePasswordDialog).show();
     }
 
     private void showResetPasswordDialog() {

@@ -4,4 +4,5 @@
   -->
 <resources>
     <bool name="documents_support_eject">true</bool>
+    <bool name="documents_shortcut_enabled_default">true</bool>
 </resources>

@@ -18,6 +18,24 @@
         android:label="@string/app_name"
         tools:targetApi="s">
 
+        <!-- Shortcut -->
+        <activity
+            android:name=".shell.ShortcutActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <activity-alias
+            android:name=".shell.AnemoShell"
+            android:enabled="@bool/documents_shortcut_enabled_default"
+            android:exported="true"
+            android:targetActivity=".shell.ShortcutActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
         <!-- Lock -->
 
         <service

@@ -61,4 +61,6 @@
     <string name="tile_status_unlocked">Now unlocked</string>
 
     <string name="tile_auto_lock">Anemo storage was automatically locked</string>
+
+    <string name="shortcut_no_activity">Can\'t find system Files app</string>
 </resources>

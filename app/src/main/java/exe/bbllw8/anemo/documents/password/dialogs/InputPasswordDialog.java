@@ -5,7 +5,9 @@
 package exe.bbllw8.anemo.documents.password.dialogs;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,17 +17,21 @@ import androidx.annotation.NonNull;
 import exe.bbllw8.anemo.R;
 import exe.bbllw8.anemo.documents.lock.LockStore;
 import exe.bbllw8.anemo.documents.password.TextListener;
+import exe.bbllw8.anemo.shell.ShortcutActivity;
 
 public final class InputPasswordDialog extends PasswordDialog {
 
     @NonNull
     private final Runnable changePassword;
+    private final boolean openAfterUnlock;
 
     public InputPasswordDialog(@NonNull Activity activity,
                                @NonNull LockStore lockStore,
+                               boolean openAfterUnlock,
                                @NonNull Runnable changePassword) {
         super(activity, lockStore, R.string.tile_unlock, R.layout.password_input);
         this.changePassword = changePassword;
+        this.openAfterUnlock = openAfterUnlock;
     }
 
     @Override
@@ -44,6 +50,9 @@ public final class InputPasswordDialog extends PasswordDialog {
             final String value = passwordField.getText().toString();
             if (lockStore.passwordMatch(value)) {
                 lockStore.unlock();
+                if (openAfterUnlock) {
+                    openFilesApp();
+                }
                 dismiss();
             } else {
                 passwordField.setError(res.getString(R.string.password_error_wrong));
@@ -65,5 +74,10 @@ public final class InputPasswordDialog extends PasswordDialog {
             final String value = passwordField.getText().toString();
             positiveBtn.setEnabled(value.length() >= MIN_PASSWORD_LENGTH);
         };
+    }
+
+    private void openFilesApp() {
+        final Context context = dialog.getContext();
+        context.startActivity(new Intent(context, ShortcutActivity.class));
     }
 }
