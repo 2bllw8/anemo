@@ -29,6 +29,7 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
     private static final String LOCK_PREFERENCES = "lock_store";
     private static final String KEY_LOCK = "is_locked";
     private static final String KEY_PASSWORD = "password_hash";
+    private static final String KEY_AUTO_LOCK = "auto_lock";
     private static final boolean DEFAULT_LOCK_VALUE = false;
 
     private static final String HASH_ALGORITHM = "SHA-256";
@@ -104,7 +105,9 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
         preferences.edit()
                 .putBoolean(KEY_LOCK, false)
                 .apply();
-        scheduleAutoLock();
+        if (hasAutoLock()) {
+            scheduleAutoLock();
+        }
     }
 
     public synchronized boolean setPassword(@NonNull String password) {
@@ -132,6 +135,28 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
         preferences.edit()
                 .remove(KEY_PASSWORD)
                 .apply();
+    }
+
+    public synchronized boolean hasAutoLock() {
+        return preferences.getBoolean(KEY_AUTO_LOCK, false);
+    }
+
+    public synchronized void setAutoLock(boolean enabled) {
+        preferences.edit()
+                .putBoolean(KEY_AUTO_LOCK, enabled)
+                .apply();
+
+        if (!isLocked()) {
+            if (enabled) {
+                // If auto-lock is enabled while the
+                // storage is unlocked, schedule the job
+                scheduleAutoLock();
+            } else {
+                // If auto-lock is disabled while the
+                // storage is unlocked, cancel the job
+                cancelAutoLock();
+            }
+        }
     }
 
     public int addListener(@NonNull Consumer<Boolean> listener) {

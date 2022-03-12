@@ -41,6 +41,10 @@ public final class ConfigurationActivity extends Activity {
         shortcutSwitch.setOnCheckedChangeListener((v, isChecked) ->
                 AnemoShell.setEnabled(getApplication(), isChecked));
         setupPasswordViews();
+        final Switch autoLockSwitch = findViewById(R.id.configuration_auto_lock);
+        autoLockSwitch.setChecked(lockStore.hasAutoLock());
+        autoLockSwitch.setOnCheckedChangeListener((v, isChecked) ->
+                lockStore.setAutoLock(isChecked));
     }
 
     private void setupPasswordViews() {
