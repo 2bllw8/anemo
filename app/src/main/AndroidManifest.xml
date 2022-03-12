@@ -21,7 +21,9 @@
         <!-- Shortcut -->
         <activity
             android:name=".shell.ShortcutActivity"
+            android:excludeFromRecents="true"
             android:exported="true"
+            android:stateNotNeeded="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <activity-alias
