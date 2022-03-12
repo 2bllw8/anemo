@@ -1,0 +1,9 @@
+<!--
+  ~ Copyright (c) 2022 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<resources>
+    <color name="anemo_primary">#1b1b1b</color>
+    <color name="anemo_primary_dark">#1b1b1b</color>
+    <color name="anemo_accent">#F19D7D</color>
+</resources>

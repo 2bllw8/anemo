@@ -1,0 +1,64 @@
+<!--
+  ~ Copyright (c) 2022 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingVertical="8dp">
+
+        <Switch
+            android:id="@+id/configuration_show_shortcut"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:minHeight="56dp"
+            android:paddingHorizontal="16dp"
+            android:text="@string/configuration_shortcut" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="16dp"
+            android:text="@string/configuration_protection"
+            android:textColor="?android:attr/colorAccent" />
+
+        <TextView
+            android:id="@+id/configuration_password_set"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            android:minHeight="56dp"
+            android:paddingHorizontal="16dp"
+            android:textColor="?android:textColorPrimary"
+            tools:text="@string/configuration_password_set" />
+
+        <TextView
+            android:id="@+id/configuration_password_reset"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            android:minHeight="56dp"
+            android:paddingHorizontal="16dp"
+            android:text="@string/configuration_password_reset"
+            android:textColor="?android:textColorPrimary" />
+
+        <Switch
+            android:id="@+id/configuration_auto_lock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:minHeight="56dp"
+            android:paddingHorizontal="16dp"
+            android:text="@string/configuration_storage_lock_auto" />
+    </LinearLayout>
+</ScrollView>

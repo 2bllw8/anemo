@@ -2,12 +2,10 @@
  * Copyright (c) 2021 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package exe.bbllw8.anemo.documents.password.dialogs;
+package exe.bbllw8.anemo.documents.config.password;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,22 +14,18 @@ import androidx.annotation.NonNull;
 
 import exe.bbllw8.anemo.R;
 import exe.bbllw8.anemo.documents.lock.LockStore;
-import exe.bbllw8.anemo.documents.password.TextListener;
-import exe.bbllw8.anemo.shell.ShortcutActivity;
 
 public final class InputPasswordDialog extends PasswordDialog {
 
     @NonNull
-    private final Runnable changePassword;
-    private final boolean openAfterUnlock;
+    private final Runnable openConfiguration;
 
     public InputPasswordDialog(@NonNull Activity activity,
                                @NonNull LockStore lockStore,
-                               boolean openAfterUnlock,
-                               @NonNull Runnable changePassword) {
-        super(activity, lockStore, R.string.tile_unlock, R.layout.password_input);
-        this.changePassword = changePassword;
-        this.openAfterUnlock = openAfterUnlock;
+                               Runnable onUnlocked,
+                               @NonNull Runnable openConfiguration) {
+        super(activity, lockStore, onUnlocked, R.string.tile_unlock, R.layout.password_input);
+        this.openConfiguration = openConfiguration;
     }
 
     @Override
@@ -49,21 +43,19 @@ public final class InputPasswordDialog extends PasswordDialog {
         positiveBtn.setOnClickListener(v -> {
             final String value = passwordField.getText().toString();
             if (lockStore.passwordMatch(value)) {
-                lockStore.unlock();
-                if (openAfterUnlock) {
-                    openFilesApp();
-                }
                 dismiss();
+                lockStore.unlock();
+                onSuccess.run();
             } else {
                 passwordField.setError(res.getString(R.string.password_error_wrong));
             }
         });
 
         neutralBtn.setVisibility(View.VISIBLE);
-        neutralBtn.setText(R.string.password_input_change);
+        neutralBtn.setText(R.string.configuration_label);
         neutralBtn.setOnClickListener(v -> {
-            dialog.dismiss();
-            changePassword.run();
+            dismiss();
+            openConfiguration.run();
         });
     }
 
@@ -74,10 +66,5 @@ public final class InputPasswordDialog extends PasswordDialog {
             final String value = passwordField.getText().toString();
             positiveBtn.setEnabled(value.length() >= MIN_PASSWORD_LENGTH);
         };
-    }
-
-    private void openFilesApp() {
-        final Context context = dialog.getContext();
-        context.startActivity(new Intent(context, ShortcutActivity.class));
     }
 }

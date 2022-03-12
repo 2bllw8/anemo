@@ -144,7 +144,7 @@ public final class ReceiverService extends Service {
                 .setContentTitle(getString(R.string.receiver_label))
                 .setContentText(getString(message, args))
                 .setSmallIcon(R.drawable.ic_importer_notification)
-                .setColor(getColor(R.color.anemoColor));
+                .setColor(getColor(R.color.anemo_accent));
         if (inProgress) {
             builder.setProgress(100, 50, true);
         }

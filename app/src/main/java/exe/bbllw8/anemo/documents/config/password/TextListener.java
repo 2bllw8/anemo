@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2021 2bllw8
+ * Copyright (c) 2022 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package exe.bbllw8.anemo.documents.password;
+package exe.bbllw8.anemo.documents.config.password;
 
 import android.text.Editable;
 import android.text.TextWatcher;

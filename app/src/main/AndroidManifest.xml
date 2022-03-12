@@ -19,6 +19,7 @@
         tools:targetApi="s">
 
         <!-- Shortcut -->
+
         <activity
             android:name=".shell.ShortcutActivity"
             android:excludeFromRecents="true"
@@ -37,6 +38,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
+
+        <!-- Configuration -->
+
+        <activity
+            android:name=".documents.config.ConfigurationActivity"
+            android:exported="true"
+            android:label="@string/configuration_label"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+        </activity>
 
         <!-- Lock -->
 
@@ -59,7 +76,7 @@
         <!-- Password -->
 
         <activity
-            android:name=".documents.password.PasswordActivity"
+            android:name=".documents.lock.UnlockActivity"
             android:excludeFromRecents="true"
             android:label="@string/password_label"
             android:theme="@style/DialogTheme" />

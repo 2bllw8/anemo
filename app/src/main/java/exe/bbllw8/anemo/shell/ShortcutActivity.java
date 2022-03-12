@@ -16,7 +16,7 @@ import androidx.annotation.Nullable;
 import exe.bbllw8.anemo.R;
 import exe.bbllw8.anemo.documents.home.HomeEnvironment;
 import exe.bbllw8.anemo.documents.lock.LockStore;
-import exe.bbllw8.anemo.documents.password.PasswordActivity;
+import exe.bbllw8.anemo.documents.lock.UnlockActivity;
 
 public class ShortcutActivity extends Activity {
     // https://cs.android.com/android/platform/superproject/+/master:packages/apps/DocumentsUI/AndroidManifest.xml
@@ -30,8 +30,8 @@ public class ShortcutActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         if (LockStore.getInstance(this).isLocked()) {
-            startActivity(new Intent(this, PasswordActivity.class)
-                    .putExtra(PasswordActivity.OPEN_AFTER_UNLOCK, true));
+            startActivity(new Intent(this, UnlockActivity.class)
+                    .putExtra(UnlockActivity.OPEN_AFTER_UNLOCK, true));
         } else {
             final PackageManager pm = getPackageManager();
             final Intent androidIntent = buildIntent(DOCUMENTS_UI_PACKAGE);

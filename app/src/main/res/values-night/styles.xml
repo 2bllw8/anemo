@@ -4,12 +4,9 @@
   -->
 <resources>
     <style name="AppTheme" parent="android:Theme.DeviceDefault">
-        <item name="android:colorAccent">@color/anemoColorNight</item>
+        <item name="android:colorPrimary">@color/anemo_primary</item>
+        <item name="android:colorPrimaryDark">@color/anemo_primary_dark</item>
+        <item name="android:colorAccent">@color/anemo_accent</item>
         <item name="android:navigationBarColor">?android:colorPrimary</item>
-    </style>
-
-    <style name="DialogTheme" parent="android:Theme.DeviceDefault.Dialog.NoActionBar">
-        <item name="android:colorAccent">@color/anemoColorNight</item>
-        <item name="android:background">@null</item>
     </style>
 </resources>

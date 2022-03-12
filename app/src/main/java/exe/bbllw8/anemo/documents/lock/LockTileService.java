@@ -14,7 +14,6 @@ import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 
 import exe.bbllw8.anemo.R;
-import exe.bbllw8.anemo.documents.password.PasswordActivity;
 
 public final class LockTileService extends TileService {
     private boolean hasUnlockActivity;
@@ -26,7 +25,7 @@ public final class LockTileService extends TileService {
         lockStore = LockStore.getInstance(this);
 
         final int status = getPackageManager().getComponentEnabledSetting(
-                new ComponentName(this, PasswordActivity.class));
+                new ComponentName(this, UnlockActivity.class));
         hasUnlockActivity = PackageManager.COMPONENT_ENABLED_STATE_DISABLED != status;
 
         return super.onBind(intent);
@@ -57,7 +56,7 @@ public final class LockTileService extends TileService {
 
         if (lockStore.isLocked()) {
             if (hasUnlockActivity) {
-                final Intent intent = new Intent(this, PasswordActivity.class)
+                final Intent intent = new Intent(this, UnlockActivity.class)
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivityAndCollapse(intent);
             } else {

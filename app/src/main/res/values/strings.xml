@@ -31,7 +31,7 @@
     <string name="password_change_title">Change password</string>
     <string name="password_change_message">Change the password to unlock the Anemo Storage</string>
     <string name="password_change_action">Change</string>
-    <string name="password_change_forgot">Forgot</string>
+    <string name="password_change_remove">Remove</string>
 
     <string name="password_reset_title">Reset password</string>
     <string name="password_reset_message">Warning! In order to reset your password all the files inside the Anemo Storage will be deleted.\nThis action can\'t be undone, proceed carefully.\nType \'%1$s\' below to confirm</string>
@@ -63,4 +63,12 @@
     <string name="tile_auto_lock">Anemo storage was automatically locked</string>
 
     <string name="shortcut_no_activity">Can\'t find system Files app</string>
+
+    <string name="configuration_label">Configuration</string>
+    <string name="configuration_shortcut">Show shortcut</string>
+    <string name="configuration_protection">Protection</string>
+    <string name="configuration_password_set">Set password</string>
+    <string name="configuration_password_change">Change password</string>
+    <string name="configuration_password_reset">Reset password</string>
+    <string name="configuration_storage_lock_auto">Automatically lock storage after 15 minutes</string>
 </resources>

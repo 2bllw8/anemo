@@ -2,7 +2,7 @@
  * Copyright (c) 2021 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package exe.bbllw8.anemo.documents.password.dialogs;
+package exe.bbllw8.anemo.documents.config.password;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,16 +24,19 @@ public abstract class PasswordDialog {
     protected final Resources res;
     @NonNull
     protected final LockStore lockStore;
+    protected final Runnable onSuccess;
     @NonNull
     protected final AlertDialog dialog;
 
     public PasswordDialog(@NonNull Activity activity,
                           @NonNull LockStore lockStore,
+                          Runnable onSuccess,
                           @StringRes int title,
                           @LayoutRes int layout) {
         this.activity = activity;
         this.res = activity.getResources();
         this.lockStore = lockStore;
+        this.onSuccess = onSuccess;
         this.dialog = new AlertDialog.Builder(activity, R.style.DialogTheme)
                 .setTitle(title)
                 .setView(layout)
@@ -42,11 +45,10 @@ public abstract class PasswordDialog {
                 .create();
     }
 
-    public final void dismiss() {
+    public void dismiss() {
         if (dialog.isShowing()) {
             dialog.dismiss();
         }
-        activity.finish();
     }
 
     public final void show() {

@@ -2,7 +2,7 @@
  * Copyright (c) 2021 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package exe.bbllw8.anemo.documents.password.dialogs;
+package exe.bbllw8.anemo.documents.config.password;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -19,7 +19,6 @@ import java.io.IOException;
 import exe.bbllw8.anemo.R;
 import exe.bbllw8.anemo.documents.home.HomeEnvironment;
 import exe.bbllw8.anemo.documents.lock.LockStore;
-import exe.bbllw8.anemo.documents.password.TextListener;
 
 public final class ResetPasswordDialog extends PasswordDialog {
     private static final String TAG = "ResetPasswordDialog";
@@ -27,8 +26,10 @@ public final class ResetPasswordDialog extends PasswordDialog {
     private HomeEnvironment homeEnvironment;
 
     public ResetPasswordDialog(@NonNull Activity activity,
-                               @NonNull LockStore lockStore) {
-        super(activity, lockStore, R.string.password_reset_title, R.layout.password_reset);
+                               @NonNull LockStore lockStore,
+                               Runnable onSuccess) {
+        super(activity, lockStore, onSuccess, R.string.password_reset_title,
+                R.layout.password_reset);
 
         try {
             homeEnvironment = HomeEnvironment.getInstance(activity);
@@ -57,10 +58,11 @@ public final class ResetPasswordDialog extends PasswordDialog {
         positiveBtn.setEnabled(false);
         positiveBtn.setOnClickListener(v -> {
             try {
+                dismiss();
                 homeEnvironment.wipe();
                 lockStore.removePassword();
                 lockStore.unlock();
-                dismiss();
+                onSuccess.run();
             } catch (IOException e) {
                 Log.e(TAG, "Couldn't wipe home environment", e);
             }
