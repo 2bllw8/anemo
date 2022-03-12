@@ -1,0 +1,19 @@
+<!--
+  ~ Copyright (c) 2022 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_configuration"
+        android:shortcutDisabledMessage="@string/shortcut_config_disabled"
+        android:shortcutId="configuration"
+        android:shortcutLongLabel="@string/shortcut_config_long"
+        android:shortcutShortLabel="@string/shortcut_config_short">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="exe.bbllw8.anemo.documents.config.ConfigurationActivity"
+            android:targetPackage="exe.bbllw8.anemo" />
+    </shortcut>
+</shortcuts>
