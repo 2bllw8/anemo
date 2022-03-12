@@ -10,12 +10,9 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 
-import java.util.Optional;
-
 import exe.bbllw8.anemo.documents.config.ConfigurationActivity;
 import exe.bbllw8.anemo.documents.config.password.InputPasswordDialog;
-import exe.bbllw8.anemo.documents.lock.LockStore;
-import exe.bbllw8.anemo.shell.ShortcutActivity;
+import exe.bbllw8.anemo.shell.LauncherActivity;
 
 public final class UnlockActivity extends Activity {
     public static final String OPEN_AFTER_UNLOCK = "open_after_unlock";
@@ -27,7 +24,7 @@ public final class UnlockActivity extends Activity {
         final Runnable onUnlocked;
         if (getIntent().getBooleanExtra(OPEN_AFTER_UNLOCK, false)) {
             onUnlocked = () -> {
-                startActivity(new Intent(this, ShortcutActivity.class));
+                startActivity(new Intent(this, LauncherActivity.class));
                 finish();
             };
         } else {

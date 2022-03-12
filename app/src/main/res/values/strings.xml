@@ -62,7 +62,7 @@
 
     <string name="tile_auto_lock">Anemo storage was automatically locked</string>
 
-    <string name="shortcut_no_activity">Can\'t find system Files app</string>
+    <string name="launcher_no_activity">Can\'t find system Files app</string>
     <string name="shortcut_config_long">Configuration</string>
     <string name="shortcut_config_short">Configure</string>
     <string name="shortcut_config_disabled">Configuration (disabled)</string>

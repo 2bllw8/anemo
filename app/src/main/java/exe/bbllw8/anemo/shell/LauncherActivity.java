@@ -18,7 +18,7 @@ import exe.bbllw8.anemo.documents.home.HomeEnvironment;
 import exe.bbllw8.anemo.documents.lock.LockStore;
 import exe.bbllw8.anemo.documents.lock.UnlockActivity;
 
-public class ShortcutActivity extends Activity {
+public class LauncherActivity extends Activity {
     // https://cs.android.com/android/platform/superproject/+/master:packages/apps/DocumentsUI/AndroidManifest.xml
     private static final String DOCUMENTS_UI_PACKAGE = "com.android.documentsui";
     private static final String DOCUMENTS_UI_ACTIVITY =
@@ -42,7 +42,7 @@ public class ShortcutActivity extends Activity {
                 if (canHandle(pm, googleIntent)) {
                     startActivity(androidIntent);
                 } else {
-                    Toast.makeText(this, R.string.shortcut_no_activity, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.launcher_no_activity, Toast.LENGTH_LONG).show();
                 }
             }
         }
