@@ -9,7 +9,6 @@ import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.MainThread;
-import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
 import java.util.ArrayList;
@@ -30,8 +29,8 @@ public final class TaskExecutor {
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final List<Future<?>> execFutures = new ArrayList<>(4);
 
-    public synchronized <T> void runTask(@NonNull @WorkerThread Callable<T> callable,
-                                         @NonNull @MainThread Consumer<T> consumer) {
+    public synchronized <T> void runTask(@WorkerThread Callable<T> callable,
+                                         @MainThread Consumer<T> consumer) {
         final Future<T> future = executor.submit(callable);
         execFutures.add(future);
         try {

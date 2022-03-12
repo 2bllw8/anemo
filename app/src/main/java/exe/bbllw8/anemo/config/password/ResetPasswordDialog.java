@@ -12,8 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-
 import java.io.IOException;
 
 import exe.bbllw8.anemo.R;
@@ -25,8 +23,8 @@ public final class ResetPasswordDialog extends PasswordDialog {
 
     private HomeEnvironment homeEnvironment;
 
-    public ResetPasswordDialog(@NonNull Activity activity,
-                               @NonNull LockStore lockStore,
+    public ResetPasswordDialog(Activity activity,
+                               LockStore lockStore,
                                Runnable onSuccess) {
         super(activity, lockStore, onSuccess, R.string.password_reset_title,
                 R.layout.password_reset);
@@ -69,9 +67,8 @@ public final class ResetPasswordDialog extends PasswordDialog {
         });
     }
 
-    @NonNull
-    private TextListener buildValidator(@NonNull Button positiveButton,
-                                        @NonNull String resetCode) {
+    private TextListener buildValidator(Button positiveButton,
+                                        String resetCode) {
         return text -> positiveButton.setEnabled(resetCode.equals(text));
     }
 }

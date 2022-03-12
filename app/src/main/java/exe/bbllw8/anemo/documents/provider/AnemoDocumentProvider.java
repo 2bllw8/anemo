@@ -383,14 +383,12 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
 
     /* Projection */
 
-    @NonNull
     private static String[] rootProjection(@Nullable String[] projection) {
         return projection != null
                 ? projection
                 : DEFAULT_ROOT_PROJECTION;
     }
 
-    @NonNull
     private static String[] documentProjection(@Nullable String[] projection) {
         return projection == null
                 ? DEFAULT_DOCUMENT_PROJECTION
@@ -399,20 +397,20 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
 
     /* Results */
 
-    private void includeFile(@NonNull MatrixCursor result,
-                             @NonNull String docId)
+    private void includeFile(MatrixCursor result,
+                             String docId)
             throws FileNotFoundException {
         includeFile(result, docId, getPathForId(docId));
     }
 
-    private void includeFile(@NonNull MatrixCursor result,
-                             @NonNull Path path) {
+    private void includeFile(MatrixCursor result,
+                             Path path) {
         includeFile(result, getDocIdForPath(path), path);
     }
 
-    private void includeFile(@NonNull MatrixCursor result,
-                             @NonNull String docId,
-                             @NonNull Path path) {
+    private void includeFile(MatrixCursor result,
+                             String docId,
+                             Path path) {
         int flags = 0;
         if (Files.isDirectory(path)) {
             if (Files.isWritable(path)) {
@@ -454,8 +452,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
 
     /* Document ids */
 
-    @NonNull
-    private String getDocIdForPath(@NonNull Path path) {
+    private String getDocIdForPath(Path path) {
         final Path rootPath = homeEnvironment.getBaseDir();
         final String id = rootPath.equals(path)
                 ? ""
@@ -463,8 +460,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
         return HomeEnvironment.ROOT + ':' + id;
     }
 
-    @NonNull
-    private Path getPathForId(@NonNull String documentId) throws FileNotFoundException {
+    private Path getPathForId(String documentId) throws FileNotFoundException {
         final Path baseDir = homeEnvironment.getBaseDir();
         if (documentId.equals(HomeEnvironment.ROOT)) {
             return baseDir;
@@ -489,7 +485,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
         cr.notifyChange(DocumentsContract.buildRootsUri(HomeEnvironment.AUTHORITY), null);
     }
 
-    private void notifyChildChange(@NonNull String parentId) {
+    private void notifyChildChange(String parentId) {
         cr.notifyChange(DocumentsContract.buildChildDocumentsUri(
                 HomeEnvironment.AUTHORITY, parentId), null);
     }

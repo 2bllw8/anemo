@@ -10,15 +10,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import androidx.annotation.NonNull;
-
 import exe.bbllw8.anemo.R;
 import exe.bbllw8.anemo.lock.LockStore;
 
 public final class SetPasswordDialog extends PasswordDialog {
 
-    public SetPasswordDialog(@NonNull Activity activity,
-                             @NonNull LockStore lockStore,
+    public SetPasswordDialog(Activity activity,
+                             LockStore lockStore,
                              Runnable onSuccess) {
         super(activity, lockStore, onSuccess, R.string.password_set_title,
                 R.layout.password_first_set);
@@ -47,10 +45,9 @@ public final class SetPasswordDialog extends PasswordDialog {
         });
     }
 
-    @NonNull
-    private TextListener buildValidator(@NonNull EditText passwordField,
-                                        @NonNull EditText repeatField,
-                                        @NonNull Button positiveBtn) {
+    private TextListener buildValidator(EditText passwordField,
+                                        EditText repeatField,
+                                        Button positiveBtn) {
         return text -> {
             final String passwordValue = passwordField.getText().toString();
             final String repeatValue = repeatField.getText().toString();

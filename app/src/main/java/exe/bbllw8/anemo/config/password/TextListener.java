@@ -7,8 +7,6 @@ package exe.bbllw8.anemo.config.password;
 import android.text.Editable;
 import android.text.TextWatcher;
 
-import androidx.annotation.NonNull;
-
 public interface TextListener extends TextWatcher {
 
     @Override
@@ -24,5 +22,5 @@ public interface TextListener extends TextWatcher {
         onTextChanged(s.toString());
     }
 
-    void onTextChanged(@NonNull String text);
+    void onTextChanged(String text);
 }

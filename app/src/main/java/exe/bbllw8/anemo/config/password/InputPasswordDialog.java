@@ -10,20 +10,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import androidx.annotation.NonNull;
-
 import exe.bbllw8.anemo.R;
 import exe.bbllw8.anemo.lock.LockStore;
 
 public final class InputPasswordDialog extends PasswordDialog {
-
-    @NonNull
     private final Runnable openConfiguration;
 
-    public InputPasswordDialog(@NonNull Activity activity,
-                               @NonNull LockStore lockStore,
+    public InputPasswordDialog(Activity activity,
+                               LockStore lockStore,
                                Runnable onUnlocked,
-                               @NonNull Runnable openConfiguration) {
+                               Runnable openConfiguration) {
         super(activity, lockStore, onUnlocked, R.string.tile_unlock, R.layout.password_input);
         this.openConfiguration = openConfiguration;
     }
@@ -59,9 +55,8 @@ public final class InputPasswordDialog extends PasswordDialog {
         });
     }
 
-    @NonNull
-    private TextListener buildInputValidator(@NonNull EditText passwordField,
-                                             @NonNull Button positiveBtn) {
+    private TextListener buildInputValidator(EditText passwordField,
+                                             Button positiveBtn) {
         return text -> {
             final String value = passwordField.getText().toString();
             positiveBtn.setEnabled(value.length() >= MIN_PASSWORD_LENGTH);

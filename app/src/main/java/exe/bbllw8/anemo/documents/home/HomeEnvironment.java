@@ -6,9 +6,6 @@ package exe.bbllw8.anemo.documents.home;
 
 import android.content.Context;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -39,8 +36,7 @@ public final class HomeEnvironment {
 
     private static volatile HomeEnvironment instance;
 
-    @NonNull
-    public static HomeEnvironment getInstance(@NonNull Context context) throws IOException {
+    public static HomeEnvironment getInstance(Context context) throws IOException {
         if (instance == null) {
             synchronized (HomeEnvironment.class) {
                 if (instance == null) {
@@ -51,7 +47,7 @@ public final class HomeEnvironment {
         return instance;
     }
 
-    private HomeEnvironment(@NonNull Context context) throws IOException {
+    private HomeEnvironment(Context context) throws IOException {
         baseDir = context.getFilesDir()
                 .toPath()
                 .resolve(ROOT);
@@ -65,35 +61,31 @@ public final class HomeEnvironment {
         prepare();
     }
 
-    @NonNull
     public Path getBaseDir() {
         return baseDir;
     }
 
-    @NonNull
-    public Optional<Path> getDefaultDirectory(@NonNull String name) {
+    public Optional<Path> getDefaultDirectory(String name) {
         return defaultDirectories.containsKey(name)
                 ? Optional.ofNullable(defaultDirectories.get(name))
                 : Optional.empty();
     }
 
-    public boolean isDefaultDirectory(@NonNull Path path) {
+    public boolean isDefaultDirectory(Path path) {
         return baseDir.equals(path) || defaultDirectories.containsValue(path);
     }
 
     public void wipe() throws IOException {
         Files.walkFileTree(baseDir, new SimpleFileVisitor<>() {
             @Override
-            public FileVisitResult visitFile(@NonNull Path file,
-                                             @NonNull BasicFileAttributes attrs)
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
                     throws IOException {
                 Files.delete(file);
                 return FileVisitResult.CONTINUE;
             }
 
             @Override
-            public FileVisitResult postVisitDirectory(@NonNull Path dir,
-                                                      @Nullable IOException exc)
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc)
                     throws IOException {
                 Files.delete(dir);
                 return FileVisitResult.CONTINUE;
@@ -109,7 +101,7 @@ public final class HomeEnvironment {
         }
     }
 
-    private void ensureExists(@NonNull Path dir) throws IOException {
+    private void ensureExists(Path dir) throws IOException {
         if (!Files.exists(dir)) {
             Files.createDirectory(dir);
         } else if (!Files.isDirectory(dir)) {

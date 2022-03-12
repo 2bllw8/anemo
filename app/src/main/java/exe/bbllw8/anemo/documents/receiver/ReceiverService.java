@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
@@ -28,7 +27,6 @@ public final class ReceiverService extends Service {
     private static final String TAG = "ReceiverService";
     private static final int NOTIFICATION_ID = 1;
 
-    @NonNull
     private final TaskExecutor taskExecutor = new TaskExecutor();
     private NotificationManager notificationManager;
     private Importer[] importers;
@@ -77,7 +75,6 @@ public final class ReceiverService extends Service {
         return START_NOT_STICKY;
     }
 
-    @NonNull
     private Importer[] getImporters() throws IOException {
         final HomeEnvironment homeEnvironment = HomeEnvironment.getInstance(this);
         final Path fallbackDir = homeEnvironment.getBaseDir();
@@ -113,8 +110,7 @@ public final class ReceiverService extends Service {
         };
     }
 
-    private void runImporter(@NonNull Importer importer,
-                             @NonNull Intent intent) {
+    private void runImporter(Importer importer, Intent intent) {
         startForeground(NOTIFICATION_ID,
                 buildNotification(true, R.string.receiver_importing_prepare));
         importer.execute(intent.getParcelableExtra(Intent.EXTRA_STREAM),
@@ -136,10 +132,9 @@ public final class ReceiverService extends Service {
         );
     }
 
-    @NonNull
     private Notification buildNotification(boolean inProgress,
                                            @StringRes int message,
-                                           @NonNull Object... args) {
+                                           Object... args) {
         final Notification.Builder builder = new Notification.Builder(this, CHANNEL_ID)
                 .setContentTitle(getString(R.string.receiver_label))
                 .setContentText(getString(message, args))
@@ -151,7 +146,6 @@ public final class ReceiverService extends Service {
         return builder.build();
     }
 
-    @NonNull
     private NotificationChannel buildNotificationChannel() {
         final NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
                 getString(R.string.receiver_notification_channel_title),

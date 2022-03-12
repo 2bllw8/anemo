@@ -7,8 +7,6 @@ package exe.bbllw8.anemo.documents.provider;
 import android.provider.DocumentsContract;
 import android.webkit.MimeTypeMap;
 
-import androidx.annotation.NonNull;
-
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -30,9 +28,7 @@ final class DocumentUtils {
     private DocumentUtils() {
     }
 
-    @NonNull
-    public static List<Path> getLastModifiedFiles(@NonNull Path parent,
-                                                  int atMost) {
+    public static List<Path> getLastModifiedFiles(Path parent, int atMost) {
         if (!Files.isDirectory(parent)) {
             return Collections.emptyList();
         }
@@ -68,10 +64,7 @@ final class DocumentUtils {
         return list;
     }
 
-    @NonNull
-    public static List<Path> queryFiles(@NonNull Path parent,
-                                        @NonNull String query,
-                                        int atMost) {
+    public static List<Path> queryFiles(Path parent, String query, int atMost) {
         if (!Files.isDirectory(parent)) {
             return Collections.emptyList();
         }
@@ -81,8 +74,7 @@ final class DocumentUtils {
         try {
             Files.walkFileTree(parent, new SimpleFileVisitor<>() {
                 @Override
-                public FileVisitResult preVisitDirectory(Path dir,
-                                                         BasicFileAttributes attrs) {
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                     if (query.contains(dir.getFileName().toString())) {
                         list.add(dir);
                     }
@@ -107,15 +99,13 @@ final class DocumentUtils {
         return list;
     }
 
-    @NonNull
     public static String getTypeForPath(Path path) {
         return Files.isDirectory(path)
                 ? DocumentsContract.Document.MIME_TYPE_DIR
                 : getTypeForName(path.getFileName().toString());
     }
 
-    @NonNull
-    public static String getTypeForName(@NonNull String name) {
+    public static String getTypeForName(String name) {
         final int idxDot = name.lastIndexOf('.');
         if (idxDot < 0) {
             return MIME_TYPE_GENERIC;
@@ -129,8 +119,7 @@ final class DocumentUtils {
         }
     }
 
-    @NonNull
-    public static String getChildMimeTypes(@NonNull Path parent) {
+    public static String getChildMimeTypes(Path parent) {
         try {
             final Set<String> mimeTypes = Files.list(parent)
                     .filter(Objects::nonNull)

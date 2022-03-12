@@ -9,7 +9,6 @@ import android.app.AlertDialog;
 import android.content.res.Resources;
 
 import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 
 import exe.bbllw8.anemo.R;
@@ -18,22 +17,16 @@ import exe.bbllw8.anemo.lock.LockStore;
 public abstract class PasswordDialog {
     protected static final int MIN_PASSWORD_LENGTH = 4;
 
-    @NonNull
-    private final Activity activity;
-    @NonNull
     protected final Resources res;
-    @NonNull
     protected final LockStore lockStore;
     protected final Runnable onSuccess;
-    @NonNull
     protected final AlertDialog dialog;
 
-    public PasswordDialog(@NonNull Activity activity,
-                          @NonNull LockStore lockStore,
+    public PasswordDialog(Activity activity,
+                          LockStore lockStore,
                           Runnable onSuccess,
                           @StringRes int title,
                           @LayoutRes int layout) {
-        this.activity = activity;
         this.res = activity.getResources();
         this.lockStore = lockStore;
         this.onSuccess = onSuccess;

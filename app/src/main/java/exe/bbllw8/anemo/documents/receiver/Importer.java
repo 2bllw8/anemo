@@ -32,23 +32,17 @@ public final class Importer {
     private static final String[] NAME_PROJECTION = {OpenableColumns.DISPLAY_NAME};
     private static final String TIME_FORMAT = "yyyy-MM-dd HH:mm";
 
-    @NonNull
     private final TaskExecutor taskExecutor;
-    @NonNull
     private final ContentResolver contentResolver;
-    @NonNull
     private final Path destinationFolder;
-    @NonNull
     private final String typePrefix;
-    @NonNull
     private final DateTimeFormatter dateTimeFormatter;
-    @NonNull
     private final String defaultNameBase;
 
-    public Importer(@NonNull Context context,
-                    @NonNull TaskExecutor taskExecutor,
-                    @NonNull Path destinationFolder,
-                    @NonNull String typePrefix,
+    public Importer(Context context,
+                    TaskExecutor taskExecutor,
+                    Path destinationFolder,
+                    String typePrefix,
                     @StringRes int defaultNameRes) {
         this.taskExecutor = taskExecutor;
         this.destinationFolder = destinationFolder;
@@ -58,14 +52,14 @@ public final class Importer {
         this.defaultNameBase = context.getString(defaultNameRes);
     }
 
-    public boolean typeMatch(@NonNull String string) {
+    public boolean typeMatch(String string) {
         return string.startsWith(typePrefix);
     }
 
-    public void execute(@NonNull Uri uri,
-                        @NonNull Consumer<String> onStartImport,
-                        @NonNull BiConsumer<String, String> onImportSuccess,
-                        @NonNull Consumer<String> onImportFail) {
+    public void execute(Uri uri,
+                        Consumer<String> onStartImport,
+                        BiConsumer<String, String> onImportSuccess,
+                        Consumer<String> onImportFail) {
         final String fileName = getFileName(uri)
                 .orElseGet(this::getDefaultName);
 
@@ -89,8 +83,7 @@ public final class Importer {
         });
     }
 
-    private void writeStream(@NonNull InputStream inputStream,
-                             @NonNull Path destination) throws IOException {
+    private void writeStream(InputStream inputStream, Path destination) throws IOException {
         try (final OutputStream oStream = Files.newOutputStream(destination)) {
             final byte[] buffer = new byte[4096];
             int read = inputStream.read(buffer);
@@ -101,8 +94,7 @@ public final class Importer {
         }
     }
 
-    @NonNull
-    private Optional<String> getFileName(@NonNull Uri uri) {
+    private Optional<String> getFileName(Uri uri) {
         try (final Cursor cursor = contentResolver.query(uri, NAME_PROJECTION, null, null, null)) {
             if (cursor == null || !cursor.moveToFirst()) {
                 return Optional.empty();

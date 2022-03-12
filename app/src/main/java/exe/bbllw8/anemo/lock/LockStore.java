@@ -38,22 +38,16 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
     // 15 minutes in milliseconds
     private static final long AUTO_LOCK_DELAY = 1000L * 60L * 15L;
 
-    @NonNull
     private final SharedPreferences preferences;
-    @NonNull
     private final AtomicBoolean isLocked;
-    @NonNull
     private final SparseArray<Consumer<Boolean>> listeners;
 
-    @NonNull
     private final JobScheduler jobScheduler;
-    @NonNull
     private final ComponentName autoLockComponent;
 
     private static volatile LockStore instance;
 
-    @NonNull
-    public static LockStore getInstance(@NonNull Context context) {
+    public static LockStore getInstance(Context context) {
         if (instance == null) {
             synchronized (LockStore.class) {
                 if (instance == null) {
@@ -64,7 +58,7 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
         return instance;
     }
 
-    private LockStore(@NonNull Context context) {
+    private LockStore(Context context) {
         preferences = context.getSharedPreferences(LOCK_PREFERENCES, Context.MODE_PRIVATE);
         preferences.registerOnSharedPreferenceChangeListener(this);
 
@@ -110,7 +104,7 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
         }
     }
 
-    public synchronized boolean setPassword(@NonNull String password) {
+    public synchronized boolean setPassword(String password) {
         return hashString(password)
                 .map(hashedPwd -> {
                     preferences.edit()
@@ -121,7 +115,7 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
                 .isPresent();
     }
 
-    public synchronized boolean passwordMatch(@NonNull String password) {
+    public synchronized boolean passwordMatch(String password) {
         return hashString(password)
                 .map(hashedPwd -> hashedPwd.equals(preferences.getString(KEY_PASSWORD, null)))
                 .orElse(false);
@@ -159,7 +153,7 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
         }
     }
 
-    public int addListener(@NonNull Consumer<Boolean> listener) {
+    public int addListener(Consumer<Boolean> listener) {
         synchronized (listeners) {
             final int key = listeners.size();
             listeners.append(key, listener);
@@ -192,8 +186,7 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
         jobScheduler.cancel(AUTO_LOCK_JOB_ID);
     }
 
-    @NonNull
-    private Optional<String> hashString(@NonNull String string) {
+    private Optional<String> hashString(String string) {
         try {
             final MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
             digest.update(string.getBytes());
