@@ -23,26 +23,40 @@ public class ShortcutActivity extends Activity {
     private static final String DOCUMENTS_UI_PACKAGE = "com.android.documentsui";
     private static final String DOCUMENTS_UI_ACTIVITY =
             DOCUMENTS_UI_PACKAGE + ".files.FilesActivity";
+    private static final String GOOGLE_DOCUMENTS_UI_PACKAGE = "com.google.android.documentsui";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         if (LockStore.getInstance(this).isLocked()) {
             startActivity(new Intent(this, PasswordActivity.class)
                     .putExtra(PasswordActivity.OPEN_AFTER_UNLOCK, true));
         } else {
             final PackageManager pm = getPackageManager();
-            final Intent documentsUiIntent = new Intent(Intent.ACTION_VIEW)
-                    .setData(DocumentsContract.buildRootsUri(HomeEnvironment.AUTHORITY))
-                    .setClassName(DOCUMENTS_UI_PACKAGE, DOCUMENTS_UI_ACTIVITY);
-            if (pm.resolveActivity(documentsUiIntent, PackageManager.MATCH_SYSTEM_ONLY) == null) {
-                Toast.makeText(this, R.string.shortcut_no_activity, Toast.LENGTH_LONG).show();
+            final Intent androidIntent = buildIntent(DOCUMENTS_UI_PACKAGE);
+            if (canHandle(pm, androidIntent)) {
+                startActivity(androidIntent);
             } else {
-                startActivity(documentsUiIntent);
+                final Intent googleIntent = buildIntent(GOOGLE_DOCUMENTS_UI_PACKAGE);
+                if (canHandle(pm, googleIntent)) {
+                    startActivity(androidIntent);
+                } else {
+                    Toast.makeText(this, R.string.shortcut_no_activity, Toast.LENGTH_LONG).show();
+                }
             }
         }
         finish();
+    }
+
+    private boolean canHandle(PackageManager pm, Intent intent) {
+        return pm.resolveActivity(intent, PackageManager.MATCH_SYSTEM_ONLY) != null;
+    }
+
+    private Intent buildIntent(String packageName) {
+        return new Intent(Intent.ACTION_VIEW)
+                .setData(DocumentsContract.buildRootsUri(HomeEnvironment.AUTHORITY))
+                // Activity remains the same
+                .setClassName(packageName, DOCUMENTS_UI_ACTIVITY);
     }
 }
