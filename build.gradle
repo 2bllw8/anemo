@@ -37,7 +37,10 @@ ext {
 
     androidxAnnotation = 'androidx.annotation:annotation:1.2.0'
 
-    keyStoreFile = file(localProps.getProperty('androidStoreFile'))
+    keyStoreFile = localProps.getProperty('androidStoreFile')
+    if (keyStoreFile != null && keyStoreFile != '') {
+        keyStoreFile = file(keyStoreFile)
+    }
     keyStorePassword = localProps.getProperty('androidStorePassword')
     keyAlias = localProps.getProperty('androidKeyAlias')
     keyPassword = localProps.getProperty('androidKeyPassword')

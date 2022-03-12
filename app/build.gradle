@@ -30,9 +30,9 @@ android {
     }
 
     signingConfigs {
-        if (rootProject.ext.keyStoreFile.exists()) {
+        if (rootProject.ext.keyStoreFile != null && rootProject.ext.keyStoreFile.exists()) {
             anemo {
-                storeFile rootProject.ext.keyStoreFile
+                storeFile file(rootProject.ext.keyStoreFile)
                 storePassword rootProject.ext.keyStorePassword
                 keyAlias rootProject.ext.keyAlias
                 keyPassword rootProject.ext.keyPassword
@@ -41,16 +41,19 @@ android {
     }
 
     buildTypes {
+        def useAnemoConfig = rootProject.ext.keyStoreFile != null
+                && rootProject.ext.keyStoreFile.exists()
+
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            if (rootProject.ext.keyStoreFile.exists()) {
+            if (useAnemoConfig) {
                 signingConfig = signingConfigs.named('anemo').get()
             }
         }
         debug {
-            if (rootProject.ext.keyStoreFile.exists()) {
+            if (useAnemoConfig) {
                 signingConfig = signingConfigs.named('anemo').get()
             }
         }
