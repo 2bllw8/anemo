@@ -10,6 +10,9 @@ import android.content.pm.PackageManager;
 
 public final class AnemoShell {
 
+    private AnemoShell() {
+    }
+
     public static boolean isEnabled(Context context) {
         final PackageManager packageManager = context.getPackageManager();
         final int status = packageManager.getComponentEnabledSetting(
