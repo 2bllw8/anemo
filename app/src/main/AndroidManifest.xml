@@ -25,13 +25,7 @@
             android:excludeFromRecents="true"
             android:exported="true"
             android:stateNotNeeded="true"
-            android:theme="@android:style/Theme.NoDisplay" />
-
-        <activity-alias
-            android:name=".shell.AnemoShell"
-            android:enabled="@bool/documents_shortcut_enabled_default"
-            android:exported="true"
-            android:targetActivity=".shell.LauncherActivity">
+            android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -41,7 +35,7 @@
             <meta-data
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
-        </activity-alias>
+        </activity>
 
         <!-- Configuration -->
 

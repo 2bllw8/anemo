@@ -16,7 +16,7 @@ public final class AnemoShell {
     public static boolean isEnabled(Context context) {
         final PackageManager packageManager = context.getPackageManager();
         final int status = packageManager.getComponentEnabledSetting(
-                new ComponentName(context, AnemoShell.class));
+                new ComponentName(context, LauncherActivity.class));
         return PackageManager.COMPONENT_ENABLED_STATE_DISABLED > status;
     }
 
@@ -26,7 +26,7 @@ public final class AnemoShell {
                 ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
                 : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
         packageManager.setComponentEnabledSetting(
-                new ComponentName(context, AnemoShell.class),
+                new ComponentName(context, LauncherActivity.class),
                 newStatus,
                 PackageManager.DONT_KILL_APP);
     }
