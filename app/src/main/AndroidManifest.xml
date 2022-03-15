@@ -25,7 +25,7 @@
             android:excludeFromRecents="true"
             android:exported="true"
             android:stateNotNeeded="true"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+            android:theme="@android:style/Theme.NoDisplay" />
 
         <activity-alias
             android:name=".shell.AnemoShell"
