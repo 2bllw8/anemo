@@ -6,8 +6,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="exe.bbllw8.anemo">
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
     <application
         android:allowBackup="true"
         android:allowClearUserData="false"
@@ -97,10 +95,12 @@
 
         <activity
             android:name=".documents.receiver.ReceiverActivity"
+            android:configChanges=""
             android:excludeFromRecents="true"
             android:exported="true"
             android:label="@string/receiver_label"
-            android:theme="@android:style/Theme.NoDisplay">
+            android:stateNotNeeded="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -122,9 +122,5 @@
                 <data android:mimeType="video/*" />
             </intent-filter>
         </activity>
-
-        <service
-            android:name=".documents.receiver.ReceiverService"
-            android:foregroundServiceType="dataSync" />
     </application>
 </manifest>
