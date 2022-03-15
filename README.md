@@ -27,6 +27,10 @@ Moreover it provides ways for the user to export contents from other apps and sa
 
 Download the apk from [latest](https://github.com/2bllw8/anemo/releases/latest) release tag.
 
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="60">](https://f-droid.org/packages/exe.bbllw8.anemo/)
+
 ## Build
 
 With Gradle:
