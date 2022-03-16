@@ -20,7 +20,8 @@
             android:foreground="?android:attr/selectableItemBackground"
             android:minHeight="56dp"
             android:paddingHorizontal="16dp"
-            android:text="@string/configuration_shortcut" />
+            android:text="@string/configuration_shortcut"
+            android:textSize="16sp" />
 
         <TextView
             android:layout_width="match_parent"
@@ -39,6 +40,7 @@
             android:minHeight="56dp"
             android:paddingHorizontal="16dp"
             android:textColor="?android:textColorPrimary"
+            android:textSize="16sp"
             tools:text="@string/configuration_password_set" />
 
         <TextView
@@ -50,7 +52,8 @@
             android:minHeight="56dp"
             android:paddingHorizontal="16dp"
             android:text="@string/configuration_password_reset"
-            android:textColor="?android:textColorPrimary" />
+            android:textColor="?android:textColorPrimary"
+            android:textSize="16sp" />
 
         <Switch
             android:id="@+id/configuration_lock"
@@ -60,7 +63,8 @@
             android:foreground="?android:attr/selectableItemBackground"
             android:minHeight="56dp"
             android:paddingHorizontal="16dp"
-            android:text="@string/configuration_storage_lock" />
+            android:text="@string/configuration_storage_lock"
+            android:textSize="16sp" />
 
         <Switch
             android:id="@+id/configuration_auto_lock"
@@ -69,6 +73,7 @@
             android:foreground="?android:attr/selectableItemBackground"
             android:minHeight="56dp"
             android:paddingHorizontal="16dp"
-            android:text="@string/configuration_storage_lock_auto" />
+            android:text="@string/configuration_storage_lock_auto"
+            android:textSize="16sp" />
     </LinearLayout>
 </ScrollView>
