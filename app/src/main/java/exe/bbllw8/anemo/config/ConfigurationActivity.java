@@ -12,10 +12,10 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import exe.bbllw8.anemo.R;
+import exe.bbllw8.anemo.config.password.ChangePasswordDialog;
 import exe.bbllw8.anemo.config.password.ResetPasswordDialog;
 import exe.bbllw8.anemo.config.password.SetPasswordDialog;
 import exe.bbllw8.anemo.lock.LockStore;
-import exe.bbllw8.anemo.config.password.ChangePasswordDialog;
 import exe.bbllw8.anemo.shell.AnemoShell;
 
 public final class ConfigurationActivity extends Activity {
@@ -40,7 +40,19 @@ public final class ConfigurationActivity extends Activity {
         shortcutSwitch.setChecked(AnemoShell.isEnabled(getApplication()));
         shortcutSwitch.setOnCheckedChangeListener((v, isChecked) ->
                 AnemoShell.setEnabled(getApplication(), isChecked));
+
         setupPasswordViews();
+
+        final Switch lockSwitch = findViewById(R.id.configuration_lock);
+        lockSwitch.setChecked(!lockStore.isLocked());
+        lockSwitch.setOnCheckedChangeListener((v, isChecked) -> {
+            if (isChecked) {
+                lockStore.unlock();
+            } else {
+                lockStore.lock();
+            }
+        });
+
         final Switch autoLockSwitch = findViewById(R.id.configuration_auto_lock);
         autoLockSwitch.setChecked(lockStore.isAutoLockEnabled());
         autoLockSwitch.setOnCheckedChangeListener((v, isChecked) ->

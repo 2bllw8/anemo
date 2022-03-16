@@ -66,5 +66,6 @@
     <string name="configuration_password_set">Set password</string>
     <string name="configuration_password_change">Change password</string>
     <string name="configuration_password_reset">Reset password</string>
-    <string name="configuration_storage_lock_auto">Automatically lock storage after 15 minutes</string>
+    <string name="configuration_storage_lock">Allow storage access</string>
+    <string name="configuration_storage_lock_auto">Automatically lock access after 15 minutes</string>
 </resources>

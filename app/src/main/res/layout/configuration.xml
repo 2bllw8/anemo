@@ -53,6 +53,16 @@
             android:textColor="?android:textColorPrimary" />
 
         <Switch
+            android:id="@+id/configuration_lock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:minHeight="56dp"
+            android:paddingHorizontal="16dp"
+            android:text="@string/configuration_storage_lock" />
+
+        <Switch
             android:id="@+id/configuration_auto_lock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
