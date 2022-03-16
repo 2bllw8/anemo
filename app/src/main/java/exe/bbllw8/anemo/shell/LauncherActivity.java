@@ -40,7 +40,7 @@ public class LauncherActivity extends Activity {
             } else {
                 final Intent googleIntent = buildIntent(GOOGLE_DOCUMENTS_UI_PACKAGE);
                 if (canHandle(pm, googleIntent)) {
-                    startActivity(androidIntent);
+                    startActivity(googleIntent);
                 } else {
                     Toast.makeText(this, R.string.launcher_no_activity, Toast.LENGTH_LONG).show();
                 }
