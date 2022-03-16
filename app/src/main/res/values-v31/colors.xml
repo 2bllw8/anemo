@@ -1,0 +1,9 @@
+<!--
+  ~ Copyright (c) 2021 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<resources>
+    <color name="anemo_primary">@android:color/system_neutral1_100</color>
+    <color name="anemo_primary_dark">@android:color/system_neutral1_300</color>
+    <color name="anemo_accent">@android:color/system_accent1_500</color>
+</resources>

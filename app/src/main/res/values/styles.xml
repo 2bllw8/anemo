@@ -3,7 +3,6 @@
   ~ SPDX-License-Identifier: GPL-3.0-only
   -->
 <resources>
-
     <style name="AppTheme" parent="android:Theme.DeviceDefault.Light">
         <item name="android:colorAccent">@color/anemo_accent</item>
         <item name="android:navigationBarColor">?android:colorPrimary</item>
@@ -12,6 +11,8 @@
     </style>
 
     <style name="DialogTheme" parent="android:Theme.DeviceDefault.Light.Dialog.NoActionBar.MinWidth">
+        <item name="android:colorPrimary">@color/anemo_primary</item>
+        <item name="android:colorPrimaryDark">@color/anemo_primary_dark</item>
         <item name="android:colorAccent">@color/anemo_accent</item>
         <item name="android:background">@null</item>
     </style>

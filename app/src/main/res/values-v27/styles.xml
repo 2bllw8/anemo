@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<!--
   ~ Copyright (c) 2022 2bllw8
   ~ SPDX-License-Identifier: GPL-3.0-only
   -->
-
 <resources>
-
     <style name="AppTheme" parent="android:Theme.DeviceDefault.Light">
         <item name="android:colorAccent">@color/anemo_accent</item>
         <item name="android:navigationBarColor">?android:colorPrimary</item>
