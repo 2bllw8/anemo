@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.provider.OpenableColumns;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 
 import java.io.IOException;
@@ -110,7 +109,6 @@ public final class Importer {
         }
     }
 
-    @NonNull
     private String getDefaultName() {
         return String.format(defaultNameBase, dateTimeFormatter.format(Instant.now()));
     }
