@@ -99,8 +99,13 @@ public final class Importer {
             if (cursor == null || !cursor.moveToFirst()) {
                 return Optional.empty();
             } else {
-                final String name = cursor.getString(cursor.getColumnIndex(NAME_PROJECTION[0]));
-                return Optional.ofNullable(name);
+                final int nameIndex = cursor.getColumnIndex(NAME_PROJECTION[0]);
+                if (nameIndex >= 0) {
+                    final String name = cursor.getString(nameIndex);
+                    return Optional.ofNullable(name);
+                } else {
+                    return Optional.empty();
+                }
             }
         }
     }
