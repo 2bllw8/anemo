@@ -33,6 +33,7 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.function.Consumer;
 
 import exe.bbllw8.anemo.R;
 import exe.bbllw8.anemo.documents.home.HomeEnvironment;
@@ -66,7 +67,6 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     private HomeEnvironment homeEnvironment;
 
     private LockStore lockStore;
-    private int lockStoreListenerToken = LockStore.NULL_LISTENER_ID;
 
     private boolean showInfo = true;
 
@@ -79,7 +79,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
             homeEnvironment = HomeEnvironment.getInstance(context);
             lockStore = LockStore.getInstance(context);
 
-            lockStoreListenerToken = lockStore.addListener(this::onLockChanged);
+            lockStore.addListener(onLockChanged);
             return true;
         } catch (IOException e) {
             Log.e(TAG, "Failed to setup", e);
@@ -89,11 +89,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
 
     @Override
     public void shutdown() {
-        if (lockStoreListenerToken != LockStore.NULL_LISTENER_ID) {
-            lockStore.removeListener(lockStoreListenerToken);
-            lockStoreListenerToken = LockStore.NULL_LISTENER_ID;
-        }
-
+        lockStore.removeListener(onLockChanged);
         super.shutdown();
     }
 
@@ -481,12 +477,11 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
 
     /* Notify */
 
-    private void onLockChanged(boolean isLocked) {
-        cr.notifyChange(DocumentsContract.buildRootsUri(HomeEnvironment.AUTHORITY), null);
-    }
-
     private void notifyChildChange(String parentId) {
         cr.notifyChange(DocumentsContract.buildChildDocumentsUri(
                 HomeEnvironment.AUTHORITY, parentId), null);
     }
+
+    private final Consumer<Boolean> onLockChanged = isLocked ->
+            cr.notifyChange(DocumentsContract.buildRootsUri(HomeEnvironment.AUTHORITY), null);
 }

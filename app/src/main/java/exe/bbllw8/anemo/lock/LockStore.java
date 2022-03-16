@@ -10,20 +10,18 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
-import android.util.SparseArray;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public final class LockStore implements SharedPreferences.OnSharedPreferenceChangeListener {
-    public static final int NULL_LISTENER_ID = -1;
-
     private static final String TAG = "LockStore";
 
     private static final String LOCK_PREFERENCES = "lock_store";
@@ -31,6 +29,7 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
     private static final String KEY_PASSWORD = "password_hash";
     private static final String KEY_AUTO_LOCK = "auto_lock";
     private static final boolean DEFAULT_LOCK_VALUE = false;
+    private static final boolean DEFAULT_AUTO_LOCK_VALUE = false;
 
     private static final String HASH_ALGORITHM = "SHA-256";
 
@@ -39,8 +38,7 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
     private static final long AUTO_LOCK_DELAY = 1000L * 60L * 15L;
 
     private final SharedPreferences preferences;
-    private final AtomicBoolean isLocked;
-    private final SparseArray<Consumer<Boolean>> listeners;
+    private final List<Consumer<Boolean>> listeners = new ArrayList<>();
 
     private final JobScheduler jobScheduler;
     private final ComponentName autoLockComponent;
@@ -62,9 +60,6 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
         preferences = context.getSharedPreferences(LOCK_PREFERENCES, Context.MODE_PRIVATE);
         preferences.registerOnSharedPreferenceChangeListener(this);
 
-        listeners = new SparseArray<>();
-        isLocked = new AtomicBoolean(preferences.getBoolean(KEY_LOCK, DEFAULT_LOCK_VALUE));
-
         jobScheduler = context.getSystemService(JobScheduler.class);
         autoLockComponent = new ComponentName(context, AutoLockJobService.class);
     }
@@ -85,7 +80,7 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
     }
 
     public synchronized boolean isLocked() {
-        return isLocked.get();
+        return preferences.getBoolean(KEY_LOCK, DEFAULT_LOCK_VALUE);
     }
 
     public synchronized void lock() {
@@ -99,7 +94,7 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
         preferences.edit()
                 .putBoolean(KEY_LOCK, false)
                 .apply();
-        if (hasAutoLock()) {
+        if (isAutoLockEnabled()) {
             scheduleAutoLock();
         }
     }
@@ -131,11 +126,11 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
                 .apply();
     }
 
-    public synchronized boolean hasAutoLock() {
-        return preferences.getBoolean(KEY_AUTO_LOCK, false);
+    public synchronized boolean isAutoLockEnabled() {
+        return preferences.getBoolean(KEY_AUTO_LOCK, DEFAULT_AUTO_LOCK_VALUE);
     }
 
-    public synchronized void setAutoLock(boolean enabled) {
+    public synchronized void setAutoLockEnabled(boolean enabled) {
         preferences.edit()
                 .putBoolean(KEY_AUTO_LOCK, enabled)
                 .apply();
@@ -153,27 +148,21 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
         }
     }
 
-    public int addListener(Consumer<Boolean> listener) {
+    public void addListener(Consumer<Boolean> listener) {
         synchronized (listeners) {
-            final int key = listeners.size();
-            listeners.append(key, listener);
-            return key;
+            listeners.add(listener);
         }
     }
 
-    public void removeListener(int key) {
+    public void removeListener(Consumer<Boolean> listener) {
         synchronized (listeners) {
-            listeners.removeAt(key);
+            listeners.remove(listener);
         }
     }
 
     private void onLockChanged() {
         final boolean newValue = preferences.getBoolean(KEY_LOCK, DEFAULT_LOCK_VALUE);
-
-        isLocked.set(newValue);
-        for (int i = 0; i < listeners.size(); i++) {
-            listeners.valueAt(i).accept(newValue);
-        }
+        listeners.forEach(listener -> listener.accept(newValue));
     }
 
     private void scheduleAutoLock() {

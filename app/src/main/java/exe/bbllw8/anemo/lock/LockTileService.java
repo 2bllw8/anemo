@@ -13,12 +13,13 @@ import android.os.IBinder;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 
+import java.util.function.Consumer;
+
 import exe.bbllw8.anemo.R;
 
 public final class LockTileService extends TileService {
     private boolean hasUnlockActivity;
     private LockStore lockStore;
-    private int listenerToken = LockStore.NULL_LISTENER_ID;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -36,18 +37,14 @@ public final class LockTileService extends TileService {
         super.onStartListening();
 
         initializeTile();
-        updateTile(lockStore.isLocked());
-        listenerToken = lockStore.addListener(this::updateTile);
+        updateTile.accept(lockStore.isLocked());
+        lockStore.addListener(updateTile);
     }
 
     @Override
     public void onStopListening() {
         super.onStopListening();
-
-        if (listenerToken != LockStore.NULL_LISTENER_ID) {
-            lockStore.removeListener(listenerToken);
-            listenerToken = LockStore.NULL_LISTENER_ID;
-        }
+        lockStore.removeListener(updateTile);
     }
 
     @Override
@@ -72,7 +69,7 @@ public final class LockTileService extends TileService {
         tile.setIcon(Icon.createWithResource(this, R.drawable.ic_key_tile));
     }
 
-    private void updateTile(boolean isLocked) {
+    private final Consumer<Boolean> updateTile = isLocked -> {
         final Tile tile = getQsTile();
         if (isLocked) {
             tile.setLabel(getString(R.string.tile_unlock));
@@ -88,5 +85,5 @@ public final class LockTileService extends TileService {
             }
         }
         tile.updateTile();
-    }
+    };
 }
