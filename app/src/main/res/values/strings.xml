@@ -61,7 +61,7 @@
     <string name="shortcut_config_disabled">Configuration (disabled)</string>
 
     <string name="configuration_label">Configuration</string>
-    <string name="configuration_shortcut">Show shortcut</string>
+    <string name="configuration_shortcut">Show shortcut in app list</string>
     <string name="configuration_protection">Protection</string>
     <string name="configuration_password_set">Set password</string>
     <string name="configuration_password_change">Change password</string>
