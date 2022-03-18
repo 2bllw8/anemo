@@ -8,6 +8,7 @@ Features
 - Create folders and organize files freely
 - All files in the private storage won't appear in the other apps
 - Access in the system Files application (the _DocumentsProviderUI_)
+    - An optional shortcut for devices that do not expose the system Files app is offered
 - Lock access to the private storage
   - Quick tile
   - Auto lock after 15 minutes

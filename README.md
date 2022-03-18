@@ -13,6 +13,7 @@ Moreover it provides ways for the user to export contents from other apps and sa
 - Create folders and organize files freely
 - All files in the private storage won't appear in the other apps
 - Access in the system Files application (the _DocumentsProviderUI_)
+    - An optional shortcut for devices that do not expose the system Files app is offered
 - Lock access to the private storage
   - Quick tile
   - Auto lock after 15 minutes
@@ -25,7 +26,8 @@ Moreover it provides ways for the user to export contents from other apps and sa
 
 ## Download
 
-Download the apk from [latest](https://github.com/2bllw8/anemo/releases/latest) release tag.
+Get the apk from [latest](https://github.com/2bllw8/anemo/releases/latest) release tag or
+from F-Droid.
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
      alt="Get it on F-Droid"
