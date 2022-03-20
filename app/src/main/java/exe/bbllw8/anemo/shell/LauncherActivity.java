@@ -50,7 +50,7 @@ public class LauncherActivity extends Activity {
     }
 
     private boolean canHandle(PackageManager pm, Intent intent) {
-        return pm.resolveActivity(intent, PackageManager.MATCH_SYSTEM_ONLY) != null;
+        return pm.resolveActivity(intent, PackageManager.MATCH_ALL) != null;
     }
 
     private Intent buildIntent(String packageName) {
