@@ -7,6 +7,7 @@ package exe.bbllw8.anemo.shell;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.widget.Toast;
@@ -20,10 +21,26 @@ import exe.bbllw8.anemo.lock.UnlockActivity;
 
 public class LauncherActivity extends Activity {
     // https://cs.android.com/android/platform/superproject/+/master:packages/apps/DocumentsUI/AndroidManifest.xml
-    private static final String DOCUMENTS_UI_PACKAGE = "com.android.documentsui";
+    private static final String DOCUMENTS_UI_PACKAGE =
+            "com.android.documentsui";
     private static final String DOCUMENTS_UI_ACTIVITY =
             DOCUMENTS_UI_PACKAGE + ".files.FilesActivity";
-    private static final String GOOGLE_DOCUMENTS_UI_PACKAGE = "com.google.android.documentsui";
+    private static final String GOOGLE_DOCUMENTS_UI_PACKAGE =
+            "com.google.android.documentsui";
+    private static final String FILES_ROOT_TYPE = "vnd.android.document/root";
+    private static final Uri ANEMO_URI = DocumentsContract.buildRootsUri(
+            HomeEnvironment.AUTHORITY);
+
+    private final Intent[] LAUNCHER_INTENTS = {
+            new Intent(Intent.ACTION_VIEW)
+                    .setData(ANEMO_URI)
+                    .setClassName(DOCUMENTS_UI_PACKAGE, DOCUMENTS_UI_ACTIVITY),
+            new Intent(Intent.ACTION_VIEW)
+                    .setData(ANEMO_URI)
+                    .setClassName(GOOGLE_DOCUMENTS_UI_PACKAGE, DOCUMENTS_UI_ACTIVITY),
+            new Intent(Intent.ACTION_VIEW)
+                    .setDataAndType(ANEMO_URI, FILES_ROOT_TYPE),
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,16 +51,17 @@ public class LauncherActivity extends Activity {
                     .putExtra(UnlockActivity.OPEN_AFTER_UNLOCK, true));
         } else {
             final PackageManager pm = getPackageManager();
-            final Intent androidIntent = buildIntent(DOCUMENTS_UI_PACKAGE);
-            if (canHandle(pm, androidIntent)) {
-                startActivity(androidIntent);
-            } else {
-                final Intent googleIntent = buildIntent(GOOGLE_DOCUMENTS_UI_PACKAGE);
-                if (canHandle(pm, googleIntent)) {
-                    startActivity(googleIntent);
-                } else {
-                    Toast.makeText(this, R.string.launcher_no_activity, Toast.LENGTH_LONG).show();
+            int i = 0;
+            while (i < LAUNCHER_INTENTS.length) {
+                final Intent intent = LAUNCHER_INTENTS[i];
+                if (canHandle(pm, intent)) {
+                    startActivity(intent);
+                    break;
                 }
+            }
+            if (i == LAUNCHER_INTENTS.length) {
+                Toast.makeText(this, R.string.launcher_no_activity, Toast.LENGTH_LONG)
+                        .show();
             }
         }
         finish();
@@ -51,12 +69,5 @@ public class LauncherActivity extends Activity {
 
     private boolean canHandle(PackageManager pm, Intent intent) {
         return pm.resolveActivity(intent, PackageManager.MATCH_ALL) != null;
-    }
-
-    private Intent buildIntent(String packageName) {
-        return new Intent(Intent.ACTION_VIEW)
-                .setData(DocumentsContract.buildRootsUri(HomeEnvironment.AUTHORITY))
-                // Activity remains the same
-                .setClassName(packageName, DOCUMENTS_UI_ACTIVITY);
     }
 }
