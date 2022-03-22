@@ -27,7 +27,6 @@ public class LauncherActivity extends Activity {
             DOCUMENTS_UI_PACKAGE + ".files.FilesActivity";
     private static final String GOOGLE_DOCUMENTS_UI_PACKAGE =
             "com.google.android.documentsui";
-    private static final String FILES_ROOT_TYPE = "vnd.android.document/root";
     private static final Uri ANEMO_URI = DocumentsContract.buildRootsUri(
             HomeEnvironment.AUTHORITY);
 
@@ -38,8 +37,6 @@ public class LauncherActivity extends Activity {
             new Intent(Intent.ACTION_VIEW)
                     .setData(ANEMO_URI)
                     .setClassName(GOOGLE_DOCUMENTS_UI_PACKAGE, DOCUMENTS_UI_ACTIVITY),
-            new Intent(Intent.ACTION_VIEW)
-                    .setDataAndType(ANEMO_URI, FILES_ROOT_TYPE),
     };
 
     @Override
@@ -53,7 +50,7 @@ public class LauncherActivity extends Activity {
             final PackageManager pm = getPackageManager();
             int i = 0;
             while (i < LAUNCHER_INTENTS.length) {
-                final Intent intent = LAUNCHER_INTENTS[i];
+                final Intent intent = LAUNCHER_INTENTS[i++];
                 if (canHandle(pm, intent)) {
                     startActivity(intent);
                     break;
