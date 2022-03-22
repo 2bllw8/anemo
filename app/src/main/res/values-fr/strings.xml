@@ -1,0 +1,71 @@
+<!--
+  ~ Copyright (c) 2022 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<resources>
+    <string name="app_name">Anemo</string>
+
+    <string name="anemo_description">Stockage privé local</string>
+    <string name="anemo_info">Les fichiers stockés dans le stockage Anemo sont privés et les autres applications ne peuvent pas y accéder sans le consentement de l\'utilisateur.</string>
+
+    <string name="password_label">Mot de passe d\'Anemo</string>
+
+    <string name="password_hint_field">Mot de passe</string>
+    <string name="password_hint_repeat">Retaper pour confirmer</string>
+    <string name="password_hint_current">Mot de passe actuel</string>
+
+    <string name="password_error_length">Le mot de passe doit avoir une longueur d\'au moins %1$d</string>
+    <string name="password_error_mismatch">Les mots de passe ne concordent pas</string>
+    <string name="password_error_wrong">Mot de passe erroné</string>
+
+    <string name="password_input_message">Taper votre mot de passe pour déverrouiller le stockage Anemo</string>
+    <string name="password_input_action">Déverrouiller</string>
+
+    <string name="password_set_title">Ajouter un mot de passe par sécurité</string>
+    <string name="password_set_message">Définissez un mot de passe pour verrouiller l\'accès au stockage Anemo.</string>
+    <string name="password_set_action">Définir un mot de passe</string>
+
+    <string name="password_change_title">Modifier le mot de passe</string>
+    <string name="password_change_message">Changez le mot de passe pour déverrouiller le stockage Anemo</string>
+    <string name="password_change_action">Modifier</string>
+    <string name="password_change_remove">Supprimer</string>
+
+    <string name="password_reset_title">Réinitialiser le mot de passe</string>
+    <string name="password_reset_message">Avertissement! Afin de réinitialiser votre mot de passe, tous les fichiers à l\'intérieur du stockage Anemo seront supprimés.\nCette action ne peut être annulée, procédez avec précaution.\nToucher \'%1$s\' ci-dessous pour confirmer</string>
+    <string name="password_reset_code">réinitialiser et effacer</string>
+    <string name="password_reset_action">réinitialiser &amp; effacer</string>
+
+    <string name="receiver_label">Importer dans Anemo</string>
+
+    <string name="receiver_importing_message">Importation de %1$s…</string>
+    <string name="receiver_importing_done_ok">Importé dans Anemo/%1$s/%2$s</string>
+    <string name="receiver_importing_done_fail">Impossible d\'importer %1$s. Réessayer</string>
+
+    <string name="receiver_audio_default_name">fichier audio %1$s.mp3 partagé</string>
+    <string name="receiver_image_default_name">fichier image %1$s.jpg partagé</string>
+    <string name="receiver_pdf_default_name">fichier pdf %1$s.pdf partagé</string>
+    <string name="receiver_video_default_name">fichier vidéo %1$s.mp4 partagé</string>
+
+    <string name="tile_title">Stockage Anemo</string>
+
+    <string name="tile_lock">Cadenasser Anemo</string>
+    <string name="tile_unlock">Décadenasser Anemo</string>
+    <string name="tile_status_locked">Verrouillé</string>
+    <string name="tile_status_unlocked">Déverrouillé</string>
+
+    <string name="tile_auto_lock">Le stockage Anemo a été verrouillé automatiquement</string>
+
+    <string name="launcher_no_activity">Impossible de trouver l\'application Fichiers du système</string>
+    <string name="shortcut_config_long">Configuration</string>
+    <string name="shortcut_config_short">Configurer</string>
+    <string name="shortcut_config_disabled">Configuration (désactivé)</string>
+
+    <string name="configuration_label">Préférence</string>
+    <string name="configuration_shortcut">Afficher un raccourci dans la liste des applications</string>
+    <string name="configuration_protection">Sécurité</string>
+    <string name="configuration_password_set">Définir le mot de passe</string>
+    <string name="configuration_password_change">Modifier le mot de passe</string>
+    <string name="configuration_password_reset">Réinitialiser le mot de passe</string>
+    <string name="configuration_storage_lock">Autoriser l\'accès au stockage</string>
+    <string name="configuration_storage_lock_auto">Verrouiller automatiquement l\'accès après 15 minutes</string>
+</resources>
