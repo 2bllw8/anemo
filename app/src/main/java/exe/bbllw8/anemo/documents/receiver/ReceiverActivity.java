@@ -109,10 +109,9 @@ public final class ReceiverActivity extends Activity {
                     dialogRef.getAndSet(Optional.of(dialog)).ifPresent(Dialog::dismiss);
                     dialog.show();
                 },
-                (destination, fileName) -> {
+                path -> {
                     final Dialog dialog = new AlertDialog.Builder(this, R.style.DialogTheme)
-                            .setMessage(getString(R.string.receiver_importing_done_ok,
-                                    destination, fileName))
+                            .setMessage(getString(R.string.receiver_importing_done_ok, path))
                             .setPositiveButton(android.R.string.ok, (d, which) -> d.dismiss())
                             .setOnDismissListener(d -> finish())
                             .create();
@@ -120,7 +119,6 @@ public final class ReceiverActivity extends Activity {
                     dialog.show();
                 },
                 fileName -> {
-                    Log.e(TAG, "Failed to import " + fileName);
                     final Dialog dialog = new AlertDialog.Builder(this, R.style.DialogTheme)
                             .setMessage(getString(R.string.receiver_importing_done_fail, fileName))
                             .setPositiveButton(android.R.string.ok, (d, which) -> d.dismiss())
