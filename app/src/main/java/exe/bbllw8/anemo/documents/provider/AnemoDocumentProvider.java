@@ -4,8 +4,11 @@
  */
 package exe.bbllw8.anemo.documents.provider;
 
+import android.app.AuthenticationRequiredException;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.graphics.Point;
@@ -27,6 +30,7 @@ import java.util.function.Consumer;
 import exe.bbllw8.anemo.R;
 import exe.bbllw8.anemo.documents.home.HomeEnvironment;
 import exe.bbllw8.anemo.lock.LockStore;
+import exe.bbllw8.anemo.lock.UnlockActivity;
 import exe.bbllw8.either.Try;
 
 public final class AnemoDocumentProvider extends DocumentsProvider {
@@ -46,6 +50,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
         final Context context = getContext();
         cr = context.getContentResolver();
         lockStore = LockStore.getInstance(context);
+        lockStore.addListener(onLockChanged);
 
         return Try.from(() -> HomeEnvironment.getInstance(context))
                 .fold(failure -> {
@@ -67,24 +72,31 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
 
     @Override
     public Cursor queryRoots(@NonNull String[] projection) {
-        final Context context = getContext();
-        return operations.queryRoot(context.getString(R.string.app_name),
-                context.getString(R.string.anemo_description),
-                R.drawable.ic_storage,
-                lockStore.isLocked());
+        if (lockStore.isLocked()) {
+            return new EmptyCursor();
+        } else {
+            final Context context = getContext();
+            return operations.queryRoot(context.getString(R.string.app_name),
+                    context.getString(R.string.anemo_description),
+                    R.drawable.ic_storage);
+        }
     }
 
     @Override
     public Cursor queryDocument(@NonNull String documentId,
                                 @Nullable String[] projection)
             throws FileNotFoundException {
-        final Try<Cursor> result = operations.queryDocument(documentId);
-        if (result.isFailure()) {
-            result.failed().forEach(failure ->
-                    Log.e(TAG, "Failed to query document", failure));
-            throw new FileNotFoundException(documentId);
+        if (lockStore.isLocked()) {
+            return new EmptyCursor();
         } else {
-            return result.get();
+            final Try<Cursor> result = operations.queryDocument(documentId);
+            if (result.isFailure()) {
+                result.failed().forEach(failure ->
+                        Log.e(TAG, "Failed to query document", failure));
+                throw new FileNotFoundException(documentId);
+            } else {
+                return result.get();
+            }
         }
     }
 
@@ -93,23 +105,27 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                                       @NonNull String[] projection,
                                       @Nullable String sortOrder)
             throws FileNotFoundException {
-        final Try<Cursor> result = operations.queryChildDocuments(parentDocumentId);
-        if (result.isFailure()) {
-            result.failed().forEach(failure ->
-                    Log.e(TAG, "Failed to query child documents", failure));
-            throw new FileNotFoundException(parentDocumentId);
+        if (lockStore.isLocked()) {
+            return new EmptyCursor();
         } else {
-            final Cursor c = result.get();
-            if (showInfo && operations.isRoot(parentDocumentId)) {
-                // Hide from now on
-                showInfo = false;
-                // Show info in root dir
-                final Bundle extras = new Bundle();
-                extras.putCharSequence(DocumentsContract.EXTRA_INFO,
-                        getContext().getText(R.string.anemo_info));
-                c.setExtras(extras);
+            final Try<Cursor> result = operations.queryChildDocuments(parentDocumentId);
+            if (result.isFailure()) {
+                result.failed().forEach(failure ->
+                        Log.e(TAG, "Failed to query child documents", failure));
+                throw new FileNotFoundException(parentDocumentId);
+            } else {
+                final Cursor c = result.get();
+                if (showInfo && operations.isRoot(parentDocumentId)) {
+                    // Hide from now on
+                    showInfo = false;
+                    // Show info in root dir
+                    final Bundle extras = new Bundle();
+                    extras.putCharSequence(DocumentsContract.EXTRA_INFO,
+                            getContext().getText(R.string.anemo_info));
+                    c.setExtras(extras);
+                }
+                return c;
             }
-            return c;
         }
     }
 
@@ -117,13 +133,17 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     public Cursor queryRecentDocuments(@NonNull String rootId,
                                        @NonNull String[] projection)
             throws FileNotFoundException {
-        final Try<Cursor> result = operations.queryRecentDocuments(rootId, MAX_LAST_MODIFIED);
-        if (result.isFailure()) {
-            result.failed().forEach(failure ->
-                    Log.e(TAG, "Failed to query recent documents", failure));
-            throw new FileNotFoundException(rootId);
+        if (lockStore.isLocked()) {
+            return new EmptyCursor();
         } else {
-            return result.get();
+            final Try<Cursor> result = operations.queryRecentDocuments(rootId, MAX_LAST_MODIFIED);
+            if (result.isFailure()) {
+                result.failed().forEach(failure ->
+                        Log.e(TAG, "Failed to query recent documents", failure));
+                throw new FileNotFoundException(rootId);
+            } else {
+                return result.get();
+            }
         }
     }
 
@@ -132,14 +152,18 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                                        @NonNull String query,
                                        @Nullable String[] projection)
             throws FileNotFoundException {
-        final Try<Cursor> result = operations.querySearchDocuments(rootId, query,
-                MAX_SEARCH_RESULTS);
-        if (result.isFailure()) {
-            result.failed().forEach(failure ->
-                    Log.e(TAG, "Failed to query search documents", failure));
-            throw new FileNotFoundException(rootId);
+        if (lockStore.isLocked()) {
+            return new EmptyCursor();
         } else {
-            return result.get();
+            final Try<Cursor> result = operations.querySearchDocuments(rootId, query,
+                    MAX_SEARCH_RESULTS);
+            if (result.isFailure()) {
+                result.failed().forEach(failure ->
+                        Log.e(TAG, "Failed to query search documents", failure));
+                throw new FileNotFoundException(rootId);
+            } else {
+                return result.get();
+            }
         }
     }
 
@@ -150,6 +174,8 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                                              @NonNull String mode,
                                              @Nullable CancellationSignal signal)
             throws FileNotFoundException {
+        assertUnlocked();
+
         final Try<ParcelFileDescriptor> pfd = operations.openDocument(documentId, mode);
         if (pfd.isFailure()) {
             pfd.failed().forEach(failure ->
@@ -165,6 +191,8 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                                                      @Nullable Point sizeHint,
                                                      @Nullable CancellationSignal signal)
             throws FileNotFoundException {
+        assertUnlocked();
+
         final Try<AssetFileDescriptor> afd = operations.openDocumentThumbnail(documentId);
         if (afd.isFailure()) {
             afd.failed().forEach(failure ->
@@ -182,6 +210,8 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                                  @NonNull String mimeType,
                                  @NonNull String displayName)
             throws FileNotFoundException {
+        assertUnlocked();
+
         final Try<String> result = operations.createDocument(parentDocumentId, mimeType,
                 displayName);
         if (result.isFailure()) {
@@ -196,6 +226,8 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
 
     @Override
     public void deleteDocument(@NonNull String documentId) throws FileNotFoundException {
+        assertUnlocked();
+
         final Try<String> result = operations.deleteDocument(documentId);
         if (result.isFailure()) {
             result.failed().forEach(failure ->
@@ -216,6 +248,8 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     public String copyDocument(@NonNull String sourceDocumentId,
                                @NonNull String targetParentDocumentId)
             throws FileNotFoundException {
+        assertUnlocked();
+
         final Try<String> result = operations.copyDocument(sourceDocumentId,
                 targetParentDocumentId);
         if (result.isFailure()) {
@@ -233,6 +267,8 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
                                @NonNull String sourceParentDocumentId,
                                @NonNull String targetParentDocumentId)
             throws FileNotFoundException {
+        assertUnlocked();
+
         final Try<String> result = operations.moveDocument(sourceDocumentId,
                 targetParentDocumentId);
         if (result.isFailure()) {
@@ -250,6 +286,8 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     public String renameDocument(@NonNull String documentId,
                                  @NonNull String displayName)
             throws FileNotFoundException {
+        assertUnlocked();
+
         final Try<Pair<String, String>> result = operations.renameDocument(documentId, displayName);
         if (result.isFailure()) {
             result.failed().forEach(failure ->
@@ -264,6 +302,8 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
 
     @Override
     public String getDocumentType(@NonNull String documentId) throws FileNotFoundException {
+        assertUnlocked();
+
         final Try<String> result = operations.getDocumentType(documentId);
         if (result.isFailure()) {
             result.failed().forEach(failure ->
@@ -296,6 +336,20 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     public void ejectRoot(String rootId) {
         if (HomeEnvironment.ROOT.equals(rootId)) {
             lockStore.lock();
+        }
+    }
+
+    /**
+     * @throws AuthenticationRequiredException if {@link LockStore#isLocked()} is true.
+     */
+    private void assertUnlocked() {
+        if (lockStore.isLocked()) {
+            final Context context = getContext();
+            final Intent intent = new Intent(context, UnlockActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            throw new AuthenticationRequiredException(new Throwable("Locked storage"),
+                    PendingIntent.getActivity(context, 0, intent,
+                            PendingIntent.FLAG_IMMUTABLE));
         }
     }
 

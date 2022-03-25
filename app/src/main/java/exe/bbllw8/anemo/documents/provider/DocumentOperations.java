@@ -66,27 +66,24 @@ public final class DocumentOperations {
 
     public Cursor queryRoot(String title,
                             String summary,
-                            @DrawableRes int icon,
-                            boolean isUnlocked) {
+                            @DrawableRes int icon) {
         final MatrixCursor result = new MatrixCursor(ROOT_PROJECTION);
-        if (isUnlocked) {
-            final Path baseDir = homeEnvironment.getBaseDir();
+        final Path baseDir = homeEnvironment.getBaseDir();
 
-            final int flags = DocumentsContract.Root.FLAG_LOCAL_ONLY
-                    | DocumentsContract.Root.FLAG_SUPPORTS_CREATE
-                    | DocumentsContract.Root.FLAG_SUPPORTS_RECENTS
-                    | DocumentsContract.Root.FLAG_SUPPORTS_SEARCH
-                    | DocumentsContract.Root.FLAG_SUPPORTS_EJECT;
+        final int flags = DocumentsContract.Root.FLAG_LOCAL_ONLY
+                | DocumentsContract.Root.FLAG_SUPPORTS_CREATE
+                | DocumentsContract.Root.FLAG_SUPPORTS_RECENTS
+                | DocumentsContract.Root.FLAG_SUPPORTS_SEARCH
+                | DocumentsContract.Root.FLAG_SUPPORTS_EJECT;
 
-            result.newRow()
-                    .add(DocumentsContract.Root.COLUMN_ROOT_ID, HomeEnvironment.ROOT)
-                    .add(DocumentsContract.Root.COLUMN_DOCUMENT_ID, getDocIdForPath(baseDir))
-                    .add(DocumentsContract.Root.COLUMN_FLAGS, flags)
-                    .add(DocumentsContract.Root.COLUMN_MIME_TYPES, getChildMimeTypes(baseDir))
-                    .add(DocumentsContract.Root.COLUMN_ICON, icon)
-                    .add(DocumentsContract.Root.COLUMN_TITLE, title)
-                    .add(DocumentsContract.Root.COLUMN_SUMMARY, summary);
-        }
+        result.newRow()
+                .add(DocumentsContract.Root.COLUMN_ROOT_ID, HomeEnvironment.ROOT)
+                .add(DocumentsContract.Root.COLUMN_DOCUMENT_ID, getDocIdForPath(baseDir))
+                .add(DocumentsContract.Root.COLUMN_FLAGS, flags)
+                .add(DocumentsContract.Root.COLUMN_MIME_TYPES, getChildMimeTypes(baseDir))
+                .add(DocumentsContract.Root.COLUMN_ICON, icon)
+                .add(DocumentsContract.Root.COLUMN_TITLE, title)
+                .add(DocumentsContract.Root.COLUMN_SUMMARY, summary);
         return result;
     }
 
