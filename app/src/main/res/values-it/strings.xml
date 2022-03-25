@@ -1,0 +1,71 @@
+<!--
+  ~ Copyright (c) 2022 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<resources>
+    <string name="app_name">Anemo</string>
+
+    <string name="anemo_description">Archiviazione privata locale</string>
+    <string name="anemo_info">I file archiviati nell\'archivio di Anemo sono privati e le altre app non possono accedervi senza il consenso dell\'utente</string>
+
+    <string name="password_label">Password di Anemo</string>
+
+    <string name="password_hint_field">Password</string>
+    <string name="password_hint_repeat">Digita di nuovo per confermare</string>
+    <string name="password_hint_current">Password attuale</string>
+
+    <string name="password_error_length">La password dovrebbe essere lunga almeno %1$d caratteri</string>
+    <string name="password_error_mismatch">Le password non corrispondono</string>
+    <string name="password_error_wrong">Password errata</string>
+
+    <string name="password_input_message">Digita la tua password di Anemo per sbloccare l\'archiviazione</string>
+    <string name="password_input_action">Sblocca</string>
+
+    <string name="password_set_title">Aggiungi la protezione con password</string>
+    <string name="password_set_message">Imposta una password per bloccare l\'accesso all\'archiviazione di Anemo</string>
+    <string name="password_set_action">Imposta password</string>
+
+    <string name="password_change_title">Modifica password</string>
+    <string name="password_change_message">Modifica la password per sbloccare l\'archiviazione di Anemo</string>
+    <string name="password_change_action">Modifica</string>
+    <string name="password_change_remove">Rimuovi</string>
+
+    <string name="password_reset_title">Reimposta password</string>
+    <string name="password_reset_message">Attenzione! Per reimpostare la tua password tutti i file all\'interno dell\'archiviazione di Anemo saranno eliminati.\nQuesta azione non può essere annullata, procedi con cautela.\nScrivi \'%1$s\' qui sotto per confermare</string>
+    <string name="password_reset_code">reimposta e cancella</string>
+    <string name="password_reset_action">Reimposta &amp; cancella</string>
+
+    <string name="receiver_label">Importa in Anemo</string>
+
+    <string name="receiver_importing_message">Importando %1$s…</string>
+    <string name="receiver_importing_done_ok">Importato in Anemo/%1$s</string>
+    <string name="receiver_importing_done_fail">Impossibile importare %1$s. Riprova</string>
+
+    <string name="receiver_audio_default_name">Audio %1$s.mp3 condiviso</string>
+    <string name="receiver_image_default_name">Immagine %1$s.jpg condivisa</string>
+    <string name="receiver_pdf_default_name">PDF %1$s.pdf condiviso</string>
+    <string name="receiver_video_default_name">Video %1$s.mp4 condiviso</string>
+
+    <string name="tile_title">Archiviazione di Anemo</string>
+
+    <string name="tile_lock">Blocca Anemo</string>
+    <string name="tile_unlock">Sblocca Anemo</string>
+    <string name="tile_status_locked">Bloccato</string>
+    <string name="tile_status_unlocked">Sbloccato</string>
+
+    <string name="tile_auto_lock">L\'archiviazione di Anemo è stata bloccata automaticamente</string>
+
+    <string name="launcher_no_activity">Impossibile trovare l\'app File di sistema</string>
+    <string name="shortcut_config_long">Configurazione</string>
+    <string name="shortcut_config_short">Configura</string>
+    <string name="shortcut_config_disabled">Configurazione (disattivata)</string>
+
+    <string name="configuration_label">Configurazione</string>
+    <string name="configuration_shortcut">Mostra il collegamento nell\'elenco delle app</string>
+    <string name="configuration_protection">Protezione</string>
+    <string name="configuration_password_set">Imposta password</string>
+    <string name="configuration_password_change">Modifica password</string>
+    <string name="configuration_password_reset">Reimposta password</string>
+    <string name="configuration_storage_lock">Consenti accesso allo spazio di archiviazione</string>
+    <string name="configuration_storage_lock_auto">Blocca automaticamente l\'accesso dopo 15 minuti</string>
+</resources>
