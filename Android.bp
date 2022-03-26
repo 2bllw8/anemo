@@ -1,4 +1,4 @@
-// Copyright (c) 2021 2bllw8
+// Copyright (c) 2022 2bllw8
 // SPDX-License-Identifier: GPL-3.0-only
 
 android_app {
@@ -18,5 +18,13 @@ android_app {
     },
     static_libs: [
         "androidx.annotation_annotation",
+        "anemo-lib-either",
     ],
 }
+
+java_import {
+    name: "anemo-lib-either",
+    jars: ["libs/either-3.3.0.jar"],
+    sdk_version: "current",
+}
+

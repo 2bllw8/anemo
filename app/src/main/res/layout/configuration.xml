@@ -32,6 +32,18 @@
             android:textColor="?android:attr/colorAccent" />
 
         <TextView
+            android:id="@+id/configuration_lock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            android:minHeight="56dp"
+            android:paddingHorizontal="16dp"
+            android:textColor="?android:textColorPrimary"
+            android:textSize="16sp"
+            tools:text="@string/configuration_storage_lock" />
+
+        <TextView
             android:id="@+id/configuration_password_set"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -53,17 +65,6 @@
             android:paddingHorizontal="16dp"
             android:text="@string/configuration_password_reset"
             android:textColor="?android:textColorPrimary"
-            android:textSize="16sp" />
-
-        <Switch
-            android:id="@+id/configuration_lock"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:minHeight="56dp"
-            android:paddingHorizontal="16dp"
-            android:text="@string/configuration_storage_lock"
             android:textSize="16sp" />
 
         <Switch

@@ -65,7 +65,10 @@ public final class UnlockActivity extends Activity {
             }
         });
 
-        cancelBtn.setOnClickListener(v -> finish());
+        cancelBtn.setOnClickListener(v -> {
+            setResult(Activity.RESULT_CANCELED);
+            finish();
+        });
     }
 
     private void doUnlock() {
@@ -77,10 +80,14 @@ public final class UnlockActivity extends Activity {
         if (intent.getBooleanExtra(OPEN_AFTER_UNLOCK, false)) {
             return () -> {
                 startActivity(new Intent(this, LauncherActivity.class));
+                setResult(Activity.RESULT_OK);
                 finish();
             };
         } else {
-            return this::finish;
+            return () -> {
+                setResult(Activity.RESULT_OK);
+                finish();
+            };
         }
     }
 }
