@@ -35,8 +35,6 @@ ext {
     sourceCompatibilityVersion = JavaVersion.VERSION_11
     targetCompatibilityVersion = JavaVersion.VERSION_11
 
-    androidxAnnotation = 'androidx.annotation:annotation:1.2.0'
-
     keyStoreFile = localProps.getProperty('androidStoreFile')
     if (keyStoreFile != null && keyStoreFile != '') {
         keyStoreFile = file(keyStoreFile)

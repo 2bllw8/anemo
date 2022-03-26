@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import exe.bbllw8.anemo.R;
 import exe.bbllw8.anemo.documents.home.HomeEnvironment;
 import exe.bbllw8.anemo.task.TaskExecutor;
+import exe.bbllw8.either.Try;
 
 public final class ReceiverActivity extends Activity {
     private static final String TAG = "ReceiverActivity";
@@ -41,20 +42,31 @@ public final class ReceiverActivity extends Activity {
         }
 
         final String type = intent.getType();
-        if (type != null) {
-            try {
-                final Importer[] importers = getImporters();
-                for (final Importer importer : importers) {
-                    if (importer.typeMatch(type)) {
-                        runImporter(importer, intent);
-                        break;
-                    }
-                }
-            } catch (IOException e) {
-                Log.e(TAG, "Failed import", e);
-                finish();
-            }
+        if (type == null) {
+            Log.e(TAG, "Can't determine type of sent content");
+            finish();
+            return;
         }
+
+        Try.from(() -> {
+            final Importer[] importers = getImporters();
+            for (final Importer importer : importers) {
+                if (importer.typeMatch(type)) {
+                    runImporter(importer, intent);
+                    return true;
+                }
+            }
+            return false;
+        }).forEach(result -> {
+                    if (!result) {
+                        Log.e(TAG, "No importer for type " + type);
+                        finish();
+                    }
+                },
+                failure -> {
+                    Log.e(TAG, "Failed import", failure);
+                    finish();
+                });
     }
 
     @Override
@@ -109,10 +121,9 @@ public final class ReceiverActivity extends Activity {
                     dialogRef.getAndSet(Optional.of(dialog)).ifPresent(Dialog::dismiss);
                     dialog.show();
                 },
-                (destination, fileName) -> {
+                path -> {
                     final Dialog dialog = new AlertDialog.Builder(this, R.style.DialogTheme)
-                            .setMessage(getString(R.string.receiver_importing_done_ok,
-                                    destination, fileName))
+                            .setMessage(getString(R.string.receiver_importing_done_ok, path))
                             .setPositiveButton(android.R.string.ok, (d, which) -> d.dismiss())
                             .setOnDismissListener(d -> finish())
                             .create();
@@ -120,7 +131,6 @@ public final class ReceiverActivity extends Activity {
                     dialog.show();
                 },
                 fileName -> {
-                    Log.e(TAG, "Failed to import " + fileName);
                     final Dialog dialog = new AlertDialog.Builder(this, R.style.DialogTheme)
                             .setMessage(getString(R.string.receiver_importing_done_fail, fileName))
                             .setPositiveButton(android.R.string.ok, (d, which) -> d.dismiss())

@@ -38,7 +38,7 @@
     <string name="receiver_label">Import into Anemo</string>
 
     <string name="receiver_importing_message">Importing %1$s…</string>
-    <string name="receiver_importing_done_ok">Imported to Anemo/%1$s/%2$s</string>
+    <string name="receiver_importing_done_ok">Imported to Anemo/%1$s</string>
     <string name="receiver_importing_done_fail">Could not import %1$s. Try again</string>
 
     <string name="receiver_audio_default_name">Shared audio %1$s.mp3</string>
@@ -66,6 +66,7 @@
     <string name="configuration_password_set">Set password</string>
     <string name="configuration_password_change">Change password</string>
     <string name="configuration_password_reset">Reset password</string>
-    <string name="configuration_storage_lock">Allow storage access</string>
+    <string name="configuration_storage_lock">Lock storage access</string>
+    <string name="configuration_storage_unlock">Unlock storage access</string>
     <string name="configuration_storage_lock_auto">Automatically lock access after 15 minutes</string>
 </resources>

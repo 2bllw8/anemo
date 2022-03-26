@@ -21,10 +21,10 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import exe.bbllw8.anemo.task.TaskExecutor;
+import exe.bbllw8.either.Try;
 
 public final class Importer {
     private static final String TAG = "Importer";
@@ -57,29 +57,23 @@ public final class Importer {
 
     public void execute(Uri uri,
                         Consumer<String> onStartImport,
-                        BiConsumer<String, String> onImportSuccess,
+                        Consumer<String> onImportSuccess,
                         Consumer<String> onImportFail) {
         final String fileName = getFileName(uri)
                 .orElseGet(this::getDefaultName);
 
-        final Path destination = destinationFolder.resolve(fileName);
-
         onStartImport.accept(fileName);
-        taskExecutor.runTask(() -> {
-            try (final InputStream inputStream = contentResolver.openInputStream(uri)) {
-                writeStream(inputStream, destination);
-                return true;
-            } catch (IOException e) {
-                Log.e(TAG, "Failed to import", e);
-                return false;
-            }
-        }, success -> {
-            if (success) {
-                onImportSuccess.accept(destinationFolder.getFileName().toString(), fileName);
-            } else {
-                onImportFail.accept(fileName);
-            }
-        });
+        taskExecutor.runTask(() -> Try.from(() -> {
+                    final Path destination = destinationFolder.resolve(fileName);
+                    try (final InputStream inputStream = contentResolver.openInputStream(uri)) {
+                        writeStream(inputStream, destination);
+                    }
+                    return destinationFolder.getFileName() + "/" + fileName;
+                }),
+                result -> result.forEach(onImportSuccess, failure -> {
+                    Log.e(TAG, "Failed to import", failure);
+                    onImportFail.accept(fileName);
+                }));
     }
 
     private void writeStream(InputStream inputStream, Path destination) throws IOException {

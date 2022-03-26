@@ -12,8 +12,8 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 9
-        versionName '2.1'
+        versionCode 10
+        versionName '2.1.1'
     }
 
     buildFeatures {
@@ -61,5 +61,9 @@ android {
 }
 
 dependencies {
-    implementation rootProject.ext.androidxAnnotation
+    def androidxAnnotation = 'androidx.annotation:annotation:1.2.0'
+    def eitherLib = 'io.github.2bllw8:either:3.3.0'
+
+    implementation androidxAnnotation
+    implementation eitherLib
 }

@@ -38,7 +38,7 @@
     <string name="receiver_label">Importer dans Anemo</string>
 
     <string name="receiver_importing_message">Importation de %1$s…</string>
-    <string name="receiver_importing_done_ok">Importé dans Anemo/%1$s/%2$s</string>
+    <string name="receiver_importing_done_ok">Importé dans Anemo/%1$s</string>
     <string name="receiver_importing_done_fail">Impossible d\'importer %1$s. Réessayer</string>
 
     <string name="receiver_audio_default_name">fichier audio %1$s.mp3 partagé</string>
@@ -66,6 +66,5 @@
     <string name="configuration_password_set">Définir le mot de passe</string>
     <string name="configuration_password_change">Modifier le mot de passe</string>
     <string name="configuration_password_reset">Réinitialiser le mot de passe</string>
-    <string name="configuration_storage_lock">Autoriser l\'accès au stockage</string>
     <string name="configuration_storage_lock_auto">Verrouiller automatiquement l\'accès après 15 minutes</string>
 </resources>

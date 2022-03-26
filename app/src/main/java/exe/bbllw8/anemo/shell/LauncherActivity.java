@@ -50,11 +50,12 @@ public class LauncherActivity extends Activity {
             final PackageManager pm = getPackageManager();
             int i = 0;
             while (i < LAUNCHER_INTENTS.length) {
-                final Intent intent = LAUNCHER_INTENTS[i++];
+                final Intent intent = LAUNCHER_INTENTS[i];
                 if (canHandle(pm, intent)) {
                     startActivity(intent);
                     break;
                 }
+                i++;
             }
             if (i == LAUNCHER_INTENTS.length) {
                 Toast.makeText(this, R.string.launcher_no_activity, Toast.LENGTH_LONG)

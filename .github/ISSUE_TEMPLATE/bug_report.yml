@@ -1,0 +1,43 @@
+---
+name: Bug report
+description: Report a bug
+labels: [bug]
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Hi! Thanks for reporting a bug.
+
+        To make it easier for people to help you please enter detailed information below.
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expectations
+      placeholder: Tell what you think should happen
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Reality
+      placeholder: Tell what happened instead
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: App version
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Android version
+    validations:
+      required: true
