@@ -1,0 +1,1 @@
+Un'applicazione di archiviazione locale privata per Android.
