@@ -5,7 +5,7 @@
 <resources>
     <string name="app_name">Anemo</string>
 
-    <string name="anemo_description">Stockage privé local</string>
+    <string name="anemo_description">Stockage local privé</string>
     <string name="anemo_info">Les fichiers stockés dans le stockage Anemo sont privés et les autres applications ne peuvent pas y accéder sans le consentement de l\'utilisateur.</string>
 
     <string name="password_label">Mot de passe d\'Anemo</string>
@@ -66,5 +66,7 @@
     <string name="configuration_password_set">Définir le mot de passe</string>
     <string name="configuration_password_change">Modifier le mot de passe</string>
     <string name="configuration_password_reset">Réinitialiser le mot de passe</string>
+    <string name="configuration_storage_lock">Verrouiller l\'accès au stockage</string>
+    <string name="configuration_storage_unlock">Déverrouiller l\'accès au stockage</string>
     <string name="configuration_storage_lock_auto">Verrouiller automatiquement l\'accès après 15 minutes</string>
 </resources>
