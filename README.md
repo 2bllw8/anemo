@@ -44,7 +44,15 @@ With AOSP / LineageOS:
 
 ## Get help
 
-Open an issue [on github](https://github.com/2bllw8/anemo/issues/)
+Open an discussion [on github](https://github.com/2bllw8/anemo/discussions/new?category=Q-A)
+
+## Contributions
+
+**Every contributions, including ideas, feature requests, bug reports and Pull Requests are welcome!**
+
+- **solve bug(s)**, add **features** or **translate** Anemo to your native language by making a **[pull request](https://help.github.com/articles/about-pull-requests/)**
+- You have an idea for improvement or a new feature but don't know how to code it, open a **[feature request](https://github.com/2bllw8/anemo/issues/new?assignees=&labels=enhancement&template=feature_request.yml&title=[Feature+request]+)**
+- You faced a bug, let us know by opening a **[bug report](https://github.com/2bllw8/anemo/issues/new?assignees=&labels=bug&template=bug_report.yml&title=%5BBug%5D+)**
 
 ## License
 
