@@ -66,6 +66,5 @@
     <string name="configuration_password_set">Définir le mot de passe</string>
     <string name="configuration_password_change">Modifier le mot de passe</string>
     <string name="configuration_password_reset">Réinitialiser le mot de passe</string>
-    <string name="configuration_storage_lock">Autoriser l\'accès au stockage</string>
     <string name="configuration_storage_lock_auto">Verrouiller automatiquement l\'accès après 15 minutes</string>
 </resources>
