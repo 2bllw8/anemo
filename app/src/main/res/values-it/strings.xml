@@ -66,6 +66,7 @@
     <string name="configuration_password_set">Imposta password</string>
     <string name="configuration_password_change">Modifica password</string>
     <string name="configuration_password_reset">Reimposta password</string>
-    <string name="configuration_storage_lock">Consenti accesso allo spazio di archiviazione</string>
+    <string name="configuration_storage_lock">Blocca l\'accesso allo spazio di archiviazione</string>
+    <string name="configuration_storage_unlock">Sblocca l\'accesso allo spazio di archiviazione</string>
     <string name="configuration_storage_lock_auto">Blocca automaticamente l\'accesso dopo 15 minuti</string>
 </resources>
