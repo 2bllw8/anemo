@@ -101,6 +101,13 @@ public final class ReceiverActivity extends Activity {
                                 .orElse(fallbackDir),
                         "application/pdf",
                         R.string.receiver_pdf_default_name),
+                // Text
+                new Importer(this,
+                        taskExecutor,
+                        homeEnvironment.getDefaultDirectory(HomeEnvironment.DOCUMENTS)
+                                .orElse(fallbackDir),
+                        "text/",
+                        R.string.receiver_document_default_name),
                 // Video
                 new Importer(this,
                         taskExecutor,

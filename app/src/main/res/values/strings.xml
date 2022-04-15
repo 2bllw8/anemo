@@ -42,6 +42,7 @@
     <string name="receiver_importing_done_fail">Could not import %1$s. Try again</string>
 
     <string name="receiver_audio_default_name">Shared audio %1$s.mp3</string>
+    <string name="receiver_document_default_name">Shared document %1$s.pdf</string>
     <string name="receiver_image_default_name">Shared image %1$s.jpg</string>
     <string name="receiver_pdf_default_name">Shared pdf %1$s.pdf</string>
     <string name="receiver_video_default_name">Shared video %1$s.mp4</string>
