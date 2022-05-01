@@ -65,7 +65,8 @@ public final class DocumentOperations {
                 | DocumentsContract.Root.FLAG_SUPPORTS_CREATE
                 | DocumentsContract.Root.FLAG_SUPPORTS_RECENTS
                 | DocumentsContract.Root.FLAG_SUPPORTS_SEARCH
-                | DocumentsContract.Root.FLAG_SUPPORTS_EJECT;
+                | DocumentsContract.Root.FLAG_SUPPORTS_EJECT
+                | DocumentsContract.Root.FLAG_SUPPORTS_IS_CHILD;
 
         result.newRow()
                 .add(DocumentsContract.Root.COLUMN_ROOT_ID, HomeEnvironment.ROOT)
@@ -273,6 +274,10 @@ public final class DocumentOperations {
 
     public boolean isRoot(String documentId) {
         return HomeEnvironment.ROOT.equals(documentId);
+    }
+
+    public boolean isChild(String parentId, String childId) {
+        return childId.contains(parentId);
     }
 
     /*

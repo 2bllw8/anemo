@@ -112,14 +112,9 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
             } else {
                 final Cursor c = result.get();
                 if (showInfo && operations.isRoot(parentDocumentId)) {
-                    // Hide
-                    // from
-                    // now on
+                    // Hide from now on
                     showInfo = false;
-                    // Show
-                    // info in
-                    // root
-                    // dir
+                    // Show info in root dir
                     final Bundle extras = new Bundle();
                     extras.putCharSequence(DocumentsContract.EXTRA_INFO,
                             getContext().getText(R.string.anemo_info));
@@ -323,6 +318,11 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
         if (HomeEnvironment.ROOT.equals(rootId)) {
             lockStore.lock();
         }
+    }
+
+    @Override
+    public boolean isChildDocument(String parentDocumentId, String documentId) {
+        return operations.isChild(parentDocumentId, documentId);
     }
 
     /**
