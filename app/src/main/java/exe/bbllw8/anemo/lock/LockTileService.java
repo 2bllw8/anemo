@@ -25,8 +25,8 @@ public final class LockTileService extends TileService {
     public IBinder onBind(Intent intent) {
         lockStore = LockStore.getInstance(this);
 
-        final int status = getPackageManager().getComponentEnabledSetting(
-                new ComponentName(this, UnlockActivity.class));
+        final int status = getPackageManager()
+                .getComponentEnabledSetting(new ComponentName(this, UnlockActivity.class));
         hasUnlockActivity = PackageManager.COMPONENT_ENABLED_STATE_DISABLED != status;
 
         return super.onBind(intent);

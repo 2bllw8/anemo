@@ -22,16 +22,12 @@ public abstract class PasswordDialog {
     protected final Runnable onSuccess;
     protected final AlertDialog dialog;
 
-    public PasswordDialog(Activity activity,
-                          LockStore lockStore,
-                          Runnable onSuccess,
-                          @StringRes int title,
-                          @LayoutRes int layout) {
+    public PasswordDialog(Activity activity, LockStore lockStore, Runnable onSuccess,
+            @StringRes int title, @LayoutRes int layout) {
         this.res = activity.getResources();
         this.lockStore = lockStore;
         this.onSuccess = onSuccess;
-        this.dialog = new AlertDialog.Builder(activity, R.style.DialogTheme)
-                .setTitle(title)
+        this.dialog = new AlertDialog.Builder(activity, R.style.DialogTheme).setTitle(title)
                 .setView(layout)
                 .setCancelable(false)
                 .setNegativeButton(android.R.string.cancel, (d, which) -> dismiss())

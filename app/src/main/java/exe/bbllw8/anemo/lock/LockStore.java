@@ -34,7 +34,10 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
     private static final String HASH_ALGORITHM = "SHA-256";
 
     private static final int AUTO_LOCK_JOB_ID = 64;
-    // 15 minutes in milliseconds
+    // 15
+    // minutes
+    // in
+    // milliseconds
     private static final long AUTO_LOCK_DELAY = 1000L * 60L * 15L;
 
     private final SharedPreferences preferences;
@@ -73,7 +76,7 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
 
     @Override
     public void onSharedPreferenceChanged(@NonNull SharedPreferences sharedPreferences,
-                                          @Nullable String key) {
+            @Nullable String key) {
         if (KEY_LOCK.equals(key)) {
             onLockChanged();
         }
@@ -84,30 +87,22 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
     }
 
     public synchronized void lock() {
-        preferences.edit()
-                .putBoolean(KEY_LOCK, true)
-                .apply();
+        preferences.edit().putBoolean(KEY_LOCK, true).apply();
         cancelAutoLock();
     }
 
     public synchronized void unlock() {
-        preferences.edit()
-                .putBoolean(KEY_LOCK, false)
-                .apply();
+        preferences.edit().putBoolean(KEY_LOCK, false).apply();
         if (isAutoLockEnabled()) {
             scheduleAutoLock();
         }
     }
 
     public synchronized boolean setPassword(String password) {
-        return hashString(password)
-                .map(hashedPwd -> {
-                    preferences.edit()
-                            .putString(KEY_PASSWORD, hashedPwd)
-                            .apply();
-                    return hashedPwd;
-                })
-                .isPresent();
+        return hashString(password).map(hashedPwd -> {
+            preferences.edit().putString(KEY_PASSWORD, hashedPwd).apply();
+            return hashedPwd;
+        }).isPresent();
     }
 
     public synchronized boolean passwordMatch(String password) {
@@ -121,9 +116,7 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
     }
 
     public synchronized void removePassword() {
-        preferences.edit()
-                .remove(KEY_PASSWORD)
-                .apply();
+        preferences.edit().remove(KEY_PASSWORD).apply();
     }
 
     public synchronized boolean isAutoLockEnabled() {
@@ -131,18 +124,34 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
     }
 
     public synchronized void setAutoLockEnabled(boolean enabled) {
-        preferences.edit()
-                .putBoolean(KEY_AUTO_LOCK, enabled)
-                .apply();
+        preferences.edit().putBoolean(KEY_AUTO_LOCK, enabled).apply();
 
         if (!isLocked()) {
             if (enabled) {
-                // If auto-lock is enabled while the
-                // storage is unlocked, schedule the job
+                // If
+                // auto-lock
+                // is
+                // enabled
+                // while
+                // the
+                // storage
+                // is
+                // unlocked,
+                // schedule
+                // the job
                 scheduleAutoLock();
             } else {
-                // If auto-lock is disabled while the
-                // storage is unlocked, cancel the job
+                // If
+                // auto-lock
+                // is
+                // disabled
+                // while
+                // the
+                // storage
+                // is
+                // unlocked,
+                // cancel
+                // the job
                 cancelAutoLock();
             }
         }

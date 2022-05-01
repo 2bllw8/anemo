@@ -15,9 +15,7 @@ import exe.bbllw8.anemo.lock.LockStore;
 
 public final class ChangePasswordDialog extends PasswordDialog {
 
-    public ChangePasswordDialog(Activity activity,
-                                LockStore lockStore,
-                                Runnable onSuccess) {
+    public ChangePasswordDialog(Activity activity, LockStore lockStore, Runnable onSuccess) {
         super(activity, lockStore, onSuccess, R.string.password_change_title,
                 R.layout.password_change);
     }
@@ -61,23 +59,21 @@ public final class ChangePasswordDialog extends PasswordDialog {
         });
     }
 
-    private TextListener buildTextListener(EditText passwordField,
-                                           EditText repeatField,
-                                           Button positiveBtn) {
+    private TextListener buildTextListener(EditText passwordField, EditText repeatField,
+            Button positiveBtn) {
         return text -> {
             final String passwordValue = passwordField.getText().toString();
             final String repeatValue = repeatField.getText().toString();
 
             if (passwordValue.length() < MIN_PASSWORD_LENGTH) {
                 positiveBtn.setEnabled(false);
-                passwordField.setError(res.getString(
-                        R.string.password_error_length, MIN_PASSWORD_LENGTH));
+                passwordField.setError(
+                        res.getString(R.string.password_error_length, MIN_PASSWORD_LENGTH));
                 repeatField.setError(null);
             } else if (!passwordValue.equals(repeatValue)) {
                 positiveBtn.setEnabled(false);
                 passwordField.setError(null);
-                repeatField.setError(res.getString(
-                        R.string.password_error_mismatch));
+                repeatField.setError(res.getString(R.string.password_error_mismatch));
             } else {
                 positiveBtn.setEnabled(true);
                 passwordField.setError(null);

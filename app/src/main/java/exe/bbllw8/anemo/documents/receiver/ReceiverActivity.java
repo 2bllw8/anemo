@@ -27,8 +27,8 @@ public final class ReceiverActivity extends Activity {
     private static final String TAG = "ReceiverActivity";
 
     private final TaskExecutor taskExecutor = new TaskExecutor();
-    private final AtomicReference<Optional<Dialog>> dialogRef
-            = new AtomicReference<>(Optional.empty());
+    private final AtomicReference<Optional<Dialog>> dialogRef = new AtomicReference<>(
+            Optional.empty());
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,15 +58,14 @@ public final class ReceiverActivity extends Activity {
             }
             return false;
         }).forEach(result -> {
-                    if (!result) {
-                        Log.e(TAG, "No importer for type " + type);
-                        finish();
-                    }
-                },
-                failure -> {
-                    Log.e(TAG, "Failed import", failure);
-                    finish();
-                });
+            if (!result) {
+                Log.e(TAG, "No importer for type " + type);
+                finish();
+            }
+        }, failure -> {
+            Log.e(TAG, "Failed import", failure);
+            finish();
+        });
     }
 
     @Override
@@ -81,71 +80,56 @@ public final class ReceiverActivity extends Activity {
         final Path fallbackDir = homeEnvironment.getBaseDir();
         return new Importer[]{
                 // Audio
-                new Importer(this,
-                        taskExecutor,
+                new Importer(this, taskExecutor,
                         homeEnvironment.getDefaultDirectory(HomeEnvironment.MUSIC)
                                 .orElse(fallbackDir),
-                        "audio/",
-                        R.string.receiver_audio_default_name),
+                        "audio/", R.string.receiver_audio_default_name),
                 // Images
-                new Importer(this,
-                        taskExecutor,
+                new Importer(this, taskExecutor,
                         homeEnvironment.getDefaultDirectory(HomeEnvironment.PICTURES)
                                 .orElse(fallbackDir),
-                        "image/",
-                        R.string.receiver_image_default_name),
+                        "image/", R.string.receiver_image_default_name),
                 // PDF
-                new Importer(this,
-                        taskExecutor,
+                new Importer(this, taskExecutor,
                         homeEnvironment.getDefaultDirectory(HomeEnvironment.DOCUMENTS)
                                 .orElse(fallbackDir),
-                        "application/pdf",
-                        R.string.receiver_pdf_default_name),
+                        "application/pdf", R.string.receiver_pdf_default_name),
                 // Text
-                new Importer(this,
-                        taskExecutor,
+                new Importer(this, taskExecutor,
                         homeEnvironment.getDefaultDirectory(HomeEnvironment.DOCUMENTS)
                                 .orElse(fallbackDir),
-                        "text/",
-                        R.string.receiver_document_default_name),
+                        "text/", R.string.receiver_document_default_name),
                 // Video
-                new Importer(this,
-                        taskExecutor,
+                new Importer(this, taskExecutor,
                         homeEnvironment.getDefaultDirectory(HomeEnvironment.MOVIES)
                                 .orElse(fallbackDir),
-                        "video/",
-                        R.string.receiver_video_default_name),
-        };
+                        "video/", R.string.receiver_video_default_name),};
     }
 
     private void runImporter(Importer importer, Intent intent) {
-        importer.execute(intent.getParcelableExtra(Intent.EXTRA_STREAM),
-                fileName -> {
-                    final Dialog dialog = new AlertDialog.Builder(this, R.style.DialogTheme)
-                            .setMessage(getString(R.string.receiver_importing_message, fileName))
-                            .setCancelable(false)
-                            .create();
-                    dialogRef.getAndSet(Optional.of(dialog)).ifPresent(Dialog::dismiss);
-                    dialog.show();
-                },
-                path -> {
-                    final Dialog dialog = new AlertDialog.Builder(this, R.style.DialogTheme)
-                            .setMessage(getString(R.string.receiver_importing_done_ok, path))
-                            .setPositiveButton(android.R.string.ok, (d, which) -> d.dismiss())
-                            .setOnDismissListener(d -> finish())
-                            .create();
-                    dialogRef.getAndSet(Optional.of(dialog)).ifPresent(Dialog::dismiss);
-                    dialog.show();
-                },
-                fileName -> {
-                    final Dialog dialog = new AlertDialog.Builder(this, R.style.DialogTheme)
-                            .setMessage(getString(R.string.receiver_importing_done_fail, fileName))
-                            .setPositiveButton(android.R.string.ok, (d, which) -> d.dismiss())
-                            .setOnDismissListener(d -> finish())
-                            .create();
-                    dialogRef.getAndSet(Optional.of(dialog)).ifPresent(Dialog::dismiss);
-                    dialog.show();
-                }
-        );
+        importer.execute(intent.getParcelableExtra(Intent.EXTRA_STREAM), fileName -> {
+            final Dialog dialog = new AlertDialog.Builder(this, R.style.DialogTheme)
+                    .setMessage(getString(R.string.receiver_importing_message, fileName))
+                    .setCancelable(false)
+                    .create();
+            dialogRef.getAndSet(Optional.of(dialog)).ifPresent(Dialog::dismiss);
+            dialog.show();
+        }, path -> {
+            final Dialog dialog = new AlertDialog.Builder(this, R.style.DialogTheme)
+                    .setMessage(getString(R.string.receiver_importing_done_ok, path))
+                    .setPositiveButton(android.R.string.ok, (d, which) -> d.dismiss())
+                    .setOnDismissListener(d -> finish())
+                    .create();
+            dialogRef.getAndSet(Optional.of(dialog)).ifPresent(Dialog::dismiss);
+            dialog.show();
+        }, fileName -> {
+            final Dialog dialog = new AlertDialog.Builder(this, R.style.DialogTheme)
+                    .setMessage(getString(R.string.receiver_importing_done_fail, fileName))
+                    .setPositiveButton(android.R.string.ok, (d, which) -> d.dismiss())
+                    .setOnDismissListener(d -> finish())
+                    .create();
+            dialogRef.getAndSet(Optional.of(dialog)).ifPresent(Dialog::dismiss);
+            dialog.show();
+        });
     }
 }

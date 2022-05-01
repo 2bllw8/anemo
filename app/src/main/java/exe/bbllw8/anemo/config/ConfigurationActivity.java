@@ -44,8 +44,8 @@ public final class ConfigurationActivity extends Activity {
 
         final Switch shortcutSwitch = findViewById(R.id.configuration_show_shortcut);
         shortcutSwitch.setChecked(AnemoShell.isEnabled(getApplication()));
-        shortcutSwitch.setOnCheckedChangeListener((v, isChecked) ->
-                AnemoShell.setEnabled(getApplication(), isChecked));
+        shortcutSwitch.setOnCheckedChangeListener(
+                (v, isChecked) -> AnemoShell.setEnabled(getApplication(), isChecked));
 
         setupPasswordViews();
 
@@ -63,8 +63,8 @@ public final class ConfigurationActivity extends Activity {
 
         final Switch autoLockSwitch = findViewById(R.id.configuration_auto_lock);
         autoLockSwitch.setChecked(lockStore.isAutoLockEnabled());
-        autoLockSwitch.setOnCheckedChangeListener((v, isChecked) ->
-                lockStore.setAutoLockEnabled(isChecked));
+        autoLockSwitch.setOnCheckedChangeListener(
+                (v, isChecked) -> lockStore.setAutoLockEnabled(isChecked));
     }
 
     @Override
@@ -76,18 +76,19 @@ public final class ConfigurationActivity extends Activity {
     private void setupPasswordViews() {
         if (lockStore.hasPassword()) {
             passwordSetView.setText(R.string.configuration_password_change);
-            passwordSetView.setOnClickListener($ -> new ChangePasswordDialog(this,
-                    lockStore, this::setupPasswordViews).show());
+            passwordSetView.setOnClickListener(
+                    $ -> new ChangePasswordDialog(this, lockStore, this::setupPasswordViews)
+                            .show());
             passwordResetView.setEnabled(true);
         } else {
             passwordSetView.setText(R.string.configuration_password_set);
-            passwordSetView.setOnClickListener($ -> new SetPasswordDialog(this,
-                    lockStore, this::setupPasswordViews).show());
+            passwordSetView.setOnClickListener(
+                    $ -> new SetPasswordDialog(this, lockStore, this::setupPasswordViews).show());
             passwordResetView.setEnabled(false);
         }
         passwordSetView.setEnabled(!lockStore.isLocked());
-        passwordResetView.setOnClickListener($ -> new ResetPasswordDialog(this,
-                lockStore, this::setupPasswordViews).show());
+        passwordResetView.setOnClickListener(
+                $ -> new ResetPasswordDialog(this, lockStore, this::setupPasswordViews).show());
     }
 
     private final Consumer<Boolean> onLockChanged = isLocked -> {

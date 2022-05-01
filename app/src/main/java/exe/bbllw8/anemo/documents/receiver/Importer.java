@@ -38,11 +38,8 @@ public final class Importer {
     private final DateTimeFormatter dateTimeFormatter;
     private final String defaultNameBase;
 
-    public Importer(Context context,
-                    TaskExecutor taskExecutor,
-                    Path destinationFolder,
-                    String typePrefix,
-                    @StringRes int defaultNameRes) {
+    public Importer(Context context, TaskExecutor taskExecutor, Path destinationFolder,
+            String typePrefix, @StringRes int defaultNameRes) {
         this.taskExecutor = taskExecutor;
         this.destinationFolder = destinationFolder;
         this.typePrefix = typePrefix;
@@ -55,25 +52,21 @@ public final class Importer {
         return string.startsWith(typePrefix);
     }
 
-    public void execute(Uri uri,
-                        Consumer<String> onStartImport,
-                        Consumer<String> onImportSuccess,
-                        Consumer<String> onImportFail) {
-        final String fileName = getFileName(uri)
-                .orElseGet(this::getDefaultName);
+    public void execute(Uri uri, Consumer<String> onStartImport, Consumer<String> onImportSuccess,
+            Consumer<String> onImportFail) {
+        final String fileName = getFileName(uri).orElseGet(this::getDefaultName);
 
         onStartImport.accept(fileName);
         taskExecutor.runTask(() -> Try.from(() -> {
-                    final Path destination = destinationFolder.resolve(fileName);
-                    try (final InputStream inputStream = contentResolver.openInputStream(uri)) {
-                        writeStream(inputStream, destination);
-                    }
-                    return destinationFolder.getFileName() + "/" + fileName;
-                }),
-                result -> result.forEach(onImportSuccess, failure -> {
-                    Log.e(TAG, "Failed to import", failure);
-                    onImportFail.accept(fileName);
-                }));
+            final Path destination = destinationFolder.resolve(fileName);
+            try (final InputStream inputStream = contentResolver.openInputStream(uri)) {
+                writeStream(inputStream, destination);
+            }
+            return destinationFolder.getFileName() + "/" + fileName;
+        }), result -> result.forEach(onImportSuccess, failure -> {
+            Log.e(TAG, "Failed to import", failure);
+            onImportFail.accept(fileName);
+        }));
     }
 
     private void writeStream(InputStream inputStream, Path destination) throws IOException {

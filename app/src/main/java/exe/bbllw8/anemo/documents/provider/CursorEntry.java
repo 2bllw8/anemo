@@ -14,8 +14,8 @@ public final class CursorEntry {
     private final long lastModified;
     private final long size;
 
-    public CursorEntry(String id, String displayName, String mimeType,
-                       int flags, long lastModified, long size) {
+    public CursorEntry(String id, String displayName, String mimeType, int flags, long lastModified,
+            long size) {
         this.id = id;
         this.displayName = displayName;
         this.mimeType = mimeType;
@@ -54,11 +54,8 @@ public final class CursorEntry {
             return true;
         } else if (o instanceof CursorEntry) {
             final CursorEntry that = (CursorEntry) o;
-            return flags == that.flags
-                    && lastModified == that.lastModified
-                    && size == that.size
-                    && Objects.equals(id, that.id)
-                    && Objects.equals(displayName, that.displayName)
+            return flags == that.flags && lastModified == that.lastModified && size == that.size
+                    && Objects.equals(id, that.id) && Objects.equals(displayName, that.displayName)
                     && Objects.equals(mimeType, that.mimeType);
         } else {
             return false;

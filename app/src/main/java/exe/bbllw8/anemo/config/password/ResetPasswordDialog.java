@@ -23,9 +23,7 @@ public final class ResetPasswordDialog extends PasswordDialog {
 
     private HomeEnvironment homeEnvironment;
 
-    public ResetPasswordDialog(Activity activity,
-                               LockStore lockStore,
-                               Runnable onSuccess) {
+    public ResetPasswordDialog(Activity activity, LockStore lockStore, Runnable onSuccess) {
         super(activity, lockStore, onSuccess, R.string.password_reset_title,
                 R.layout.password_reset);
 
@@ -67,8 +65,7 @@ public final class ResetPasswordDialog extends PasswordDialog {
         });
     }
 
-    private TextListener buildValidator(Button positiveButton,
-                                        String resetCode) {
+    private TextListener buildValidator(Button positiveButton, String resetCode) {
         return text -> positiveButton.setEnabled(resetCode.equals(text));
     }
 }

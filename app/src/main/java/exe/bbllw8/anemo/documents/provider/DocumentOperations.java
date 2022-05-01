@@ -40,23 +40,16 @@ import exe.bbllw8.either.Try;
 public final class DocumentOperations {
     private static final String MIME_TYPE_GENERIC = "application/octet-stream";
 
-    private static final String[] ROOT_PROJECTION = {
-            DocumentsContract.Root.COLUMN_ROOT_ID,
+    private static final String[] ROOT_PROJECTION = {DocumentsContract.Root.COLUMN_ROOT_ID,
             DocumentsContract.Root.COLUMN_DOCUMENT_ID,
-            DocumentsContract.Root.COLUMN_AVAILABLE_BYTES,
-            DocumentsContract.Root.COLUMN_FLAGS,
-            DocumentsContract.Root.COLUMN_ICON,
-            DocumentsContract.Root.COLUMN_MIME_TYPES,
-            DocumentsContract.Root.COLUMN_TITLE,
-    };
+            DocumentsContract.Root.COLUMN_AVAILABLE_BYTES, DocumentsContract.Root.COLUMN_FLAGS,
+            DocumentsContract.Root.COLUMN_ICON, DocumentsContract.Root.COLUMN_MIME_TYPES,
+            DocumentsContract.Root.COLUMN_TITLE,};
     private static final String[] DOCUMENT_PROJECTION = {
             DocumentsContract.Document.COLUMN_DOCUMENT_ID,
-            DocumentsContract.Document.COLUMN_DISPLAY_NAME,
-            DocumentsContract.Document.COLUMN_FLAGS,
+            DocumentsContract.Document.COLUMN_DISPLAY_NAME, DocumentsContract.Document.COLUMN_FLAGS,
             DocumentsContract.Document.COLUMN_LAST_MODIFIED,
-            DocumentsContract.Document.COLUMN_MIME_TYPE,
-            DocumentsContract.Document.COLUMN_SIZE,
-    };
+            DocumentsContract.Document.COLUMN_MIME_TYPE, DocumentsContract.Document.COLUMN_SIZE,};
 
     private final HomeEnvironment homeEnvironment;
 
@@ -64,9 +57,7 @@ public final class DocumentOperations {
         this.homeEnvironment = homeEnvironment;
     }
 
-    public Cursor queryRoot(String title,
-                            String summary,
-                            @DrawableRes int icon) {
+    public Cursor queryRoot(String title, String summary, @DrawableRes int icon) {
         final MatrixCursor result = new MatrixCursor(ROOT_PROJECTION);
         final Path baseDir = homeEnvironment.getBaseDir();
 
@@ -89,18 +80,15 @@ public final class DocumentOperations {
 
     public Try<Cursor> queryDocument(String documentId) {
         final MatrixCursor result = new MatrixCursor(DOCUMENT_PROJECTION);
-        return getPathForId(documentId)
-                .flatMap(path -> buildEntry(path, documentId))
-                .map(entry -> {
-                    addToCursor(result, entry);
-                    return result;
-                });
+        return getPathForId(documentId).flatMap(path -> buildEntry(path, documentId)).map(entry -> {
+            addToCursor(result, entry);
+            return result;
+        });
     }
 
     public Try<Cursor> queryChildDocuments(String parentDocumentId) {
         final MatrixCursor result = new MatrixCursor(DOCUMENT_PROJECTION);
-        return getPathForId(parentDocumentId)
-                .map(Files::list)
+        return getPathForId(parentDocumentId).map(Files::list)
                 .map(children -> children.flatMap(path -> buildEntry(path).stream()))
                 .map(entries -> {
                     entries.forEach(entry -> addToCursor(result, entry));
@@ -110,36 +98,32 @@ public final class DocumentOperations {
 
     public Try<Cursor> queryRecentDocuments(String rootId, int atMost) {
         final MatrixCursor result = new MatrixCursor(DOCUMENT_PROJECTION);
-        return getPathForId(rootId)
-                .filter(Files::isDirectory)
-                .map(root -> {
-                    final Queue<Path> lastModifiedFiles = new PriorityQueue<>((a, b) ->
-                            Try.from(() -> {
-                                final long timeA = Files.getLastModifiedTime(a).toMillis();
-                                final long timeB = Files.getLastModifiedTime(b).toMillis();
-                                return Long.compare(timeA, timeB);
-                            }).getOrElse(1));
+        return getPathForId(rootId).filter(Files::isDirectory).map(root -> {
+            final Queue<Path> lastModifiedFiles = new PriorityQueue<>((a, b) -> Try.from(() -> {
+                final long timeA = Files.getLastModifiedTime(a).toMillis();
+                final long timeB = Files.getLastModifiedTime(b).toMillis();
+                return Long.compare(timeA, timeB);
+            }).getOrElse(1));
 
-                    Files.walkFileTree(root, new SimpleFileVisitor<>() {
-                        @Override
-                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                            lastModifiedFiles.add(file);
-                            return FileVisitResult.CONTINUE;
-                        }
-                    });
+            Files.walkFileTree(root, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    lastModifiedFiles.add(file);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
 
-                    lastModifiedFiles.stream()
-                            .limit(atMost)
-                            .flatMap(path -> buildEntry(path).stream())
-                            .forEachOrdered(entry -> addToCursor(result, entry));
-                    return result;
-                });
+            lastModifiedFiles.stream()
+                    .limit(atMost)
+                    .flatMap(path -> buildEntry(path).stream())
+                    .forEachOrdered(entry -> addToCursor(result, entry));
+            return result;
+        });
     }
 
     public Try<Cursor> querySearchDocuments(String parentDocumentId, String query, int atMost) {
         final MatrixCursor result = new MatrixCursor(DOCUMENT_PROJECTION);
-        return getPathForId(parentDocumentId)
-                .filter(Files::isDirectory)
+        return getPathForId(parentDocumentId).filter(Files::isDirectory)
                 .filter(Files::isReadable)
                 .map(parent -> {
                     final List<Path> list = new ArrayList<>(atMost / 2);
@@ -157,7 +141,7 @@ public final class DocumentOperations {
 
                         @Override
                         public FileVisitResult preVisitDirectory(Path dir,
-                                                                 BasicFileAttributes attrs) {
+                                BasicFileAttributes attrs) {
                             if (query.contains(dir.getFileName().toString())) {
                                 list.add(dir);
                             }
@@ -175,23 +159,20 @@ public final class DocumentOperations {
     }
 
     public Try<ParcelFileDescriptor> openDocument(String documentId, String mode) {
-        return getPathForId(documentId)
-                .map(path -> ParcelFileDescriptor.open(path.toFile(),
-                        ParcelFileDescriptor.parseMode(mode)));
+        return getPathForId(documentId).map(path -> ParcelFileDescriptor.open(path.toFile(),
+                ParcelFileDescriptor.parseMode(mode)));
     }
 
     public Try<AssetFileDescriptor> openDocumentThumbnail(String documentId) {
         return getPathForId(documentId)
-                .map(path -> ParcelFileDescriptor.open(
-                        path.toFile(), ParcelFileDescriptor.MODE_READ_ONLY))
+                .map(path -> ParcelFileDescriptor.open(path.toFile(),
+                        ParcelFileDescriptor.MODE_READ_ONLY))
                 .map(pfd -> new AssetFileDescriptor(pfd, 0, pfd.getStatSize()));
     }
 
-    public Try<String> createDocument(String parentDocumentId,
-                                      String mimeType,
-                                      String displayName) {
-        return getPathForId(parentDocumentId)
-                .map(parent -> parent.resolve(displayName))
+    public Try<String> createDocument(String parentDocumentId, String mimeType,
+            String displayName) {
+        return getPathForId(parentDocumentId).map(parent -> parent.resolve(displayName))
                 .map(target -> {
                     if (Document.MIME_TYPE_DIR.equals(mimeType)) {
                         Files.createDirectory(target);
@@ -207,12 +188,11 @@ public final class DocumentOperations {
      * @return The id of the parent of the deleted document for content change notification.
      */
     public Try<String> deleteDocument(String documentId) {
-        return getPathForId(documentId)
-                .map(path -> {
-                    final String parentId = getDocIdForPath(path.getParent());
-                    Files.delete(path);
-                    return parentId;
-                });
+        return getPathForId(documentId).map(path -> {
+            final String parentId = getDocIdForPath(path.getParent());
+            Files.delete(path);
+            return parentId;
+        });
     }
 
     public Try<String> copyDocument(String sourceDocumentId, String targetDocumentId) {
@@ -248,30 +228,27 @@ public final class DocumentOperations {
     }
 
     /**
-     * @return A pair of ids: the first is the parent for content change notification and the
-     * second is the id of the renamed document.
+     * @return A pair of ids: the first is the parent for content change notification and the second
+     *         is the id of the renamed document.
      */
     public Try<Pair<String, String>> renameDocument(String documentId, String displayName) {
-        return getPathForId(documentId)
-                .map(source -> {
-                    final Path parent = source.getParent();
-                    final Path target = parent.resolve(displayName);
+        return getPathForId(documentId).map(source -> {
+            final Path parent = source.getParent();
+            final Path target = parent.resolve(displayName);
 
-                    Files.move(source, target);
+            Files.move(source, target);
 
-                    return new Pair<>(getDocIdForPath(parent), getDocIdForPath(target));
-                });
+            return new Pair<>(getDocIdForPath(parent), getDocIdForPath(target));
+        });
     }
 
     public Try<String> getDocumentType(String documentId) {
-        return getPathForId(documentId)
-                .map(this::getTypeForPath);
+        return getPathForId(documentId).map(this::getTypeForPath);
     }
 
     @RequiresApi(29)
     public Try<Pair<Long, Long>> getSizeAndCount(String documentId) {
-        return getPathForId(documentId)
-                .filter(Files::exists)
+        return getPathForId(documentId).filter(Files::exists)
                 .filter(Files::isReadable)
                 .map(path -> {
                     if (Files.isDirectory(path)) {
@@ -298,7 +275,9 @@ public final class DocumentOperations {
         return HomeEnvironment.ROOT.equals(documentId);
     }
 
-    /* CursorEntry */
+    /*
+     * CursorEntry
+     */
 
     private Try<CursorEntry> buildEntry(Path path) {
         return buildEntry(path, getDocIdForPath(path));
@@ -319,16 +298,13 @@ public final class DocumentOperations {
                 }
 
                 if (!homeEnvironment.isDefaultDirectory(path)) {
-                    flags |= Document.FLAG_SUPPORTS_DELETE
-                            | Document.FLAG_SUPPORTS_MOVE
+                    flags |= Document.FLAG_SUPPORTS_DELETE | Document.FLAG_SUPPORTS_MOVE
                             | Document.FLAG_SUPPORTS_RENAME;
                 }
             } else {
                 if (isWritable) {
-                    flags |= Document.FLAG_SUPPORTS_DELETE
-                            | Document.FLAG_SUPPORTS_MOVE
-                            | Document.FLAG_SUPPORTS_RENAME
-                            | Document.FLAG_SUPPORTS_WRITE;
+                    flags |= Document.FLAG_SUPPORTS_DELETE | Document.FLAG_SUPPORTS_MOVE
+                            | Document.FLAG_SUPPORTS_RENAME | Document.FLAG_SUPPORTS_WRITE;
                 }
 
                 if (mimeType.startsWith("image/")) {
@@ -336,11 +312,7 @@ public final class DocumentOperations {
                 }
             }
 
-            return new CursorEntry(documentId,
-                    fileName,
-                    mimeType,
-                    flags,
-                    lastModifiedTime,
+            return new CursorEntry(documentId, fileName, mimeType, flags, lastModifiedTime,
                     fileSize);
         });
     }
@@ -355,7 +327,9 @@ public final class DocumentOperations {
                 .add(Document.COLUMN_SIZE, entry.getSize());
     }
 
-    /* Path-Id */
+    /*
+     * Path-Id
+     */
 
     private String getDocIdForPath(Path path) {
         final Path rootPath = homeEnvironment.getBaseDir();
@@ -381,14 +355,16 @@ public final class DocumentOperations {
                 if (Files.exists(target)) {
                     return new Success<>(target);
                 } else {
-                    return new Failure<>(new FileNotFoundException("No path for "
-                            + documentId + " at " + target));
+                    return new Failure<>(new FileNotFoundException(
+                            "No path for " + documentId + " at " + target));
                 }
             }
         }
     }
 
-    /* MimeType */
+    /*
+     * MimeType
+     */
 
     private String getChildMimeTypes(Path parent) {
         return Try.from(() -> Files.list(parent))
@@ -412,11 +388,8 @@ public final class DocumentOperations {
             return MIME_TYPE_GENERIC;
         } else {
             final String extension = name.substring(idxDot + 1);
-            final String mime = MimeTypeMap.getSingleton()
-                    .getMimeTypeFromExtension(extension);
-            return mime == null
-                    ? MIME_TYPE_GENERIC
-                    : mime;
+            final String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+            return mime == null ? MIME_TYPE_GENERIC : mime;
         }
     }
 }

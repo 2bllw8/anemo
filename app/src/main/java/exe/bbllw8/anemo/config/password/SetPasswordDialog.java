@@ -15,9 +15,7 @@ import exe.bbllw8.anemo.lock.LockStore;
 
 public final class SetPasswordDialog extends PasswordDialog {
 
-    public SetPasswordDialog(Activity activity,
-                             LockStore lockStore,
-                             Runnable onSuccess) {
+    public SetPasswordDialog(Activity activity, LockStore lockStore, Runnable onSuccess) {
         super(activity, lockStore, onSuccess, R.string.password_set_title,
                 R.layout.password_first_set);
     }
@@ -45,23 +43,21 @@ public final class SetPasswordDialog extends PasswordDialog {
         });
     }
 
-    private TextListener buildValidator(EditText passwordField,
-                                        EditText repeatField,
-                                        Button positiveBtn) {
+    private TextListener buildValidator(EditText passwordField, EditText repeatField,
+            Button positiveBtn) {
         return text -> {
             final String passwordValue = passwordField.getText().toString();
             final String repeatValue = repeatField.getText().toString();
 
             if (passwordValue.length() < MIN_PASSWORD_LENGTH) {
                 positiveBtn.setEnabled(false);
-                passwordField.setError(res.getString(
-                        R.string.password_error_length, MIN_PASSWORD_LENGTH));
+                passwordField.setError(
+                        res.getString(R.string.password_error_length, MIN_PASSWORD_LENGTH));
                 repeatField.setError(null);
             } else if (!passwordValue.equals(repeatValue)) {
                 positiveBtn.setEnabled(false);
                 passwordField.setError(null);
-                repeatField.setError(res.getString(
-                        R.string.password_error_mismatch));
+                repeatField.setError(res.getString(R.string.password_error_mismatch));
             } else {
                 positiveBtn.setEnabled(true);
                 passwordField.setError(null);

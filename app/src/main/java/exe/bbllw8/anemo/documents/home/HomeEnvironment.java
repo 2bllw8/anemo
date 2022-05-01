@@ -28,8 +28,8 @@ public final class HomeEnvironment {
     public static final String MOVIES = "Movies";
     public static final String MUSIC = "Music";
 
-    public static final Set<PosixFilePermission> ATTR_DEFAULT_POSIX
-            = PosixFilePermissions.fromString("rwxr--r--");
+    public static final Set<PosixFilePermission> ATTR_DEFAULT_POSIX = PosixFilePermissions
+            .fromString("rwxr--r--");
 
     private final Path baseDir;
     private final Map<String, Path> defaultDirectories;
@@ -48,9 +48,7 @@ public final class HomeEnvironment {
     }
 
     private HomeEnvironment(Context context) throws IOException {
-        baseDir = context.getFilesDir()
-                .toPath()
-                .resolve(ROOT);
+        baseDir = context.getFilesDir().toPath().resolve(ROOT);
 
         defaultDirectories = new HashMap<>(4);
         defaultDirectories.put(DOCUMENTS, baseDir.resolve(DOCUMENTS));

@@ -47,8 +47,8 @@ public final class UnlockActivity extends Activity {
         final Button unlockBtn = findViewById(R.id.unlockButton);
         final Button cancelBtn = findViewById(R.id.cancelButton);
 
-        passwordField.addTextChangedListener((TextListener) text ->
-                unlockBtn.setEnabled(passwordField.getText().length() >= MIN_PASSWORD_LENGTH));
+        passwordField.addTextChangedListener((TextListener) text -> unlockBtn
+                .setEnabled(passwordField.getText().length() >= MIN_PASSWORD_LENGTH));
 
         configBtn.setOnClickListener(v -> {
             startActivity(new Intent(this, ConfigurationActivity.class));

@@ -23,8 +23,7 @@ public final class AutoLockJobService extends JobService {
         final LockStore lockStore = LockStore.getInstance(getApplicationContext());
         if (!lockStore.isLocked()) {
             lockStore.lock();
-            Toast.makeText(this, getString(R.string.tile_auto_lock), Toast.LENGTH_LONG)
-                    .show();
+            Toast.makeText(this, getString(R.string.tile_auto_lock), Toast.LENGTH_LONG).show();
         }
         return false;
     }
