@@ -12,6 +12,7 @@
 # Gradle
 .gradle
 /local.properties
+/build
 
 # Sign key
 *.jks

@@ -4,6 +4,7 @@
  */
 plugins {
     id 'com.android.application'
+    id "com.diffplug.spotless" version "6.5.1"
 }
 
 android {
@@ -66,4 +67,33 @@ dependencies {
 
     implementation androidxAnnotation
     implementation eitherLib
+}
+
+spotless {
+    java {
+        target 'src/*/java/**/*.java'
+
+        importOrder('android', 'androidx', 'java', 'javax', '')
+        removeUnusedImports()
+
+        eclipse().configFile('code-format.xml')
+        endWithNewline()
+    }
+
+    format 'misc', {
+        target '**/*.gradle', '**/*.md', '**/.gitignore'
+
+        indentWithSpaces()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
+
+afterEvaluate {
+    def spotlessCheck = tasks.findByName('spotlessCheck')
+    if (spotlessCheck) {
+        tasks.withType(JavaCompile) {
+            finalizedBy(spotlessCheck)
+        }
+    }
 }
