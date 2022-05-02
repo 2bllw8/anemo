@@ -83,6 +83,7 @@
         <provider
             android:name=".documents.provider.AnemoDocumentProvider"
             android:authorities="exe.bbllw8.anemo.documents"
+            android:enabled="true"
             android:exported="true"
             android:grantUriPermissions="true"
             android:permission="android.permission.MANAGE_DOCUMENTS">

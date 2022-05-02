@@ -23,6 +23,7 @@ public final class HomeEnvironment {
     public static final String AUTHORITY = "exe.bbllw8.anemo.documents";
 
     public static final String ROOT = "anemo";
+    public static final String ROOT_DOC_ID = "anemo:";
     public static final String DOCUMENTS = "Documents";
     public static final String PICTURES = "Pictures";
     public static final String MOVIES = "Movies";

@@ -6,49 +6,53 @@ package exe.bbllw8.anemo.documents.provider;
 
 import android.app.AuthenticationRequiredException;
 import android.app.PendingIntent;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.os.ParcelFileDescriptor;
 import android.provider.DocumentsContract;
-import android.provider.DocumentsProvider;
+import android.provider.DocumentsContract.Root;
 import android.util.Log;
-import android.util.Pair;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.function.Consumer;
 
 import exe.bbllw8.anemo.R;
 import exe.bbllw8.anemo.documents.home.HomeEnvironment;
 import exe.bbllw8.anemo.lock.LockStore;
 import exe.bbllw8.anemo.lock.UnlockActivity;
+import exe.bbllw8.either.Failure;
+import exe.bbllw8.either.Success;
 import exe.bbllw8.either.Try;
 
-public final class AnemoDocumentProvider extends DocumentsProvider {
+public final class AnemoDocumentProvider extends FileSystemProvider {
     private static final String TAG = "AnemoDocumentProvider";
 
-    private static final int MAX_SEARCH_RESULTS = 20;
-    private static final int MAX_LAST_MODIFIED = 5;
+    private static final String[] DEFAULT_ROOT_PROJECTION = {Root.COLUMN_ROOT_ID, Root.COLUMN_FLAGS,
+            Root.COLUMN_ICON, Root.COLUMN_TITLE, Root.COLUMN_DOCUMENT_ID,};
 
-    private ContentResolver cr;
-    private DocumentOperations operations;
+    private HomeEnvironment homeEnvironment;
     private LockStore lockStore;
 
     private boolean showInfo = true;
 
     @Override
     public boolean onCreate() {
+        if (!super.onCreate()) {
+            return false;
+        }
+
         final Context context = getContext();
-        cr = context.getContentResolver();
         lockStore = LockStore.getInstance(context);
         lockStore.addListener(onLockChanged);
 
@@ -56,7 +60,7 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
             Log.e(TAG, "Failed to setup", failure);
             return false;
         }, homeEnvironment -> {
-            this.operations = new DocumentOperations(homeEnvironment);
+            this.homeEnvironment = homeEnvironment;
             return true;
         });
     }
@@ -67,250 +71,122 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
         super.shutdown();
     }
 
-    /*
-     * Query
-     */
-
     @Override
-    public Cursor queryRoots(@NonNull String[] projection) {
+    public Cursor queryRoots(String[] projection) {
         if (lockStore.isLocked()) {
             return new EmptyCursor();
-        } else {
-            final Context context = getContext();
-            return operations.queryRoot(context.getString(R.string.app_name),
-                    context.getString(R.string.anemo_description), R.drawable.ic_storage);
         }
+
+        final Context context = getContext();
+        final MatrixCursor result = new MatrixCursor(resolveRootProjection(projection));
+        final MatrixCursor.RowBuilder row = result.newRow();
+
+        int flags = Root.FLAG_LOCAL_ONLY;
+        flags |= Root.FLAG_SUPPORTS_CREATE;
+        flags |= DocumentsContract.Root.FLAG_SUPPORTS_EJECT;
+        if (Build.VERSION.SDK_INT >= 29) {
+            flags |= Root.FLAG_SUPPORTS_SEARCH;
+        }
+
+        row.add(Root.COLUMN_ROOT_ID, HomeEnvironment.ROOT)
+                .add(DocumentsContract.Root.COLUMN_DOCUMENT_ID, HomeEnvironment.ROOT_DOC_ID)
+                .add(Root.COLUMN_FLAGS, flags)
+                .add(DocumentsContract.Root.COLUMN_ICON, R.drawable.ic_storage)
+                .add(DocumentsContract.Root.COLUMN_TITLE, context.getString(R.string.app_name))
+                .add(DocumentsContract.Root.COLUMN_SUMMARY,
+                        context.getString(R.string.anemo_description));
+        return result;
     }
 
     @Override
-    public Cursor queryDocument(@NonNull String documentId, @Nullable String[] projection)
+    public Cursor queryChildDocuments(String parentDocumentId, String[] projection,
+            String sortOrder) throws FileNotFoundException {
+        if (lockStore.isLocked()) {
+            return new EmptyCursor();
+        }
+
+        final Cursor c = super.queryChildDocuments(parentDocumentId, projection, sortOrder);
+        if (showInfo && HomeEnvironment.ROOT_DOC_ID.equals(parentDocumentId)) {
+            // Hide from now on
+            showInfo = false;
+            // Show info in root dir
+            final Bundle extras = new Bundle();
+            extras.putCharSequence(DocumentsContract.EXTRA_INFO,
+                    getContext().getText(R.string.anemo_info));
+            c.setExtras(extras);
+        }
+        return c;
+    }
+
+    @Override
+    public Cursor queryDocument(String documentId, String[] projection)
             throws FileNotFoundException {
         if (lockStore.isLocked()) {
             return new EmptyCursor();
         } else {
-            final Try<Cursor> result = operations.queryDocument(documentId);
-            if (result.isFailure()) {
-                result.failed().forEach(failure -> Log.e(TAG, "Failed to query document", failure));
-                throw new FileNotFoundException(documentId);
-            } else {
-                return result.get();
-            }
+            return super.queryDocument(documentId, projection);
         }
     }
 
     @Override
-    public Cursor queryChildDocuments(@NonNull String parentDocumentId,
-            @NonNull String[] projection, @Nullable String sortOrder) throws FileNotFoundException {
-        if (lockStore.isLocked()) {
-            return new EmptyCursor();
-        } else {
-            final Try<Cursor> result = operations.queryChildDocuments(parentDocumentId);
-            if (result.isFailure()) {
-                result.failed()
-                        .forEach(failure -> Log.e(TAG, "Failed to query child documents", failure));
-                throw new FileNotFoundException(parentDocumentId);
-            } else {
-                final Cursor c = result.get();
-                if (showInfo && operations.isRoot(parentDocumentId)) {
-                    // Hide from now on
-                    showInfo = false;
-                    // Show info in root dir
-                    final Bundle extras = new Bundle();
-                    extras.putCharSequence(DocumentsContract.EXTRA_INFO,
-                            getContext().getText(R.string.anemo_info));
-                    c.setExtras(extras);
-                }
-                return c;
-            }
-        }
-    }
-
-    @Override
-    public Cursor queryRecentDocuments(@NonNull String rootId, @NonNull String[] projection)
+    public Cursor querySearchDocuments(String rootId, String[] projection, Bundle queryArgs)
             throws FileNotFoundException {
         if (lockStore.isLocked()) {
             return new EmptyCursor();
         } else {
-            final Try<Cursor> result = operations.queryRecentDocuments(rootId, MAX_LAST_MODIFIED);
-            if (result.isFailure()) {
-                result.failed()
-                        .forEach(
-                                failure -> Log.e(TAG, "Failed to query recent documents", failure));
-                throw new FileNotFoundException(rootId);
-            } else {
-                return result.get();
-            }
+            return super.querySearchDocuments(rootId, projection, queryArgs);
         }
     }
 
     @Override
-    public Cursor querySearchDocuments(@NonNull String rootId, @NonNull String query,
-            @Nullable String[] projection) throws FileNotFoundException {
-        if (lockStore.isLocked()) {
-            return new EmptyCursor();
-        } else {
-            final Try<Cursor> result = operations.querySearchDocuments(rootId, query,
-                    MAX_SEARCH_RESULTS);
-            if (result.isFailure()) {
-                result.failed()
-                        .forEach(
-                                failure -> Log.e(TAG, "Failed to query search documents", failure));
-                throw new FileNotFoundException(rootId);
-            } else {
-                return result.get();
-            }
-        }
-    }
-
-    /* Open */
-
-    @Override
-    public ParcelFileDescriptor openDocument(@NonNull String documentId, @NonNull String mode,
-            @Nullable CancellationSignal signal) throws FileNotFoundException {
+    public ParcelFileDescriptor openDocument(String documentId, String mode,
+            CancellationSignal signal) throws FileNotFoundException {
         assertUnlocked();
-
-        final Try<ParcelFileDescriptor> pfd = operations.openDocument(documentId, mode);
-        if (pfd.isFailure()) {
-            pfd.failed().forEach(failure -> Log.e(TAG, "Failed to open document", failure));
-            throw new FileNotFoundException(documentId);
-        } else {
-            return pfd.get();
-        }
+        return super.openDocument(documentId, mode, signal);
     }
 
     @Override
-    public AssetFileDescriptor openDocumentThumbnail(@NonNull String documentId,
-            @Nullable Point sizeHint, @Nullable CancellationSignal signal)
-            throws FileNotFoundException {
+    public AssetFileDescriptor openDocumentThumbnail(String docId, Point sizeHint,
+            CancellationSignal signal) throws FileNotFoundException {
         assertUnlocked();
-
-        final Try<AssetFileDescriptor> afd = operations.openDocumentThumbnail(documentId);
-        if (afd.isFailure()) {
-            afd.failed()
-                    .forEach(failure -> Log.e(TAG, "Failed to open document thumbnail", failure));
-            throw new FileNotFoundException(documentId);
-        } else {
-            return afd.get();
-        }
+        return super.openDocumentThumbnail(docId, sizeHint, signal);
     }
 
-    /*
-     * Manage
-     */
-
     @Override
-    public String createDocument(@NonNull String parentDocumentId, @NonNull String mimeType,
-            @NonNull String displayName) throws FileNotFoundException {
+    public String createDocument(String parentDocumentId, String mimeType, String displayName) {
         assertUnlocked();
-
-        final Try<String> result = operations.createDocument(parentDocumentId, mimeType,
-                displayName);
-        if (result.isFailure()) {
-            result.failed().forEach(failure -> Log.e(TAG, "Failed to create document", failure));
-            throw new FileNotFoundException(parentDocumentId);
-        } else {
-            notifyChildChange(parentDocumentId);
-            return result.get();
-        }
+        return super.createDocument(parentDocumentId, mimeType, displayName);
     }
 
     @Override
-    public void deleteDocument(@NonNull String documentId) throws FileNotFoundException {
+    public void deleteDocument(String documentId) {
         assertUnlocked();
-
-        final Try<String> result = operations.deleteDocument(documentId);
-        if (result.isFailure()) {
-            result.failed().forEach(failure -> Log.e(TAG, "Failed to delete document", failure));
-            throw new FileNotFoundException(documentId);
-        } else {
-            notifyChildChange(result.get());
-        }
+        super.deleteDocument(documentId);
     }
 
     @Override
-    public void removeDocument(@NonNull String documentId, @NonNull String parentDocumentId)
-            throws FileNotFoundException {
+    public void removeDocument(String documentId, String parentDocumentId) {
         deleteDocument(documentId);
     }
 
     @Override
-    public String copyDocument(@NonNull String sourceDocumentId,
-            @NonNull String targetParentDocumentId) throws FileNotFoundException {
-        assertUnlocked();
-
-        final Try<String> result = operations.copyDocument(sourceDocumentId,
-                targetParentDocumentId);
-        if (result.isFailure()) {
-            result.failed().forEach(failure -> Log.e(TAG, "Failed to copy document", failure));
-            throw new FileNotFoundException(targetParentDocumentId);
-        } else {
-            notifyChildChange(targetParentDocumentId);
-            return result.get();
-        }
-    }
-
-    @Override
-    public String moveDocument(@NonNull String sourceDocumentId,
-            @NonNull String sourceParentDocumentId, @NonNull String targetParentDocumentId)
+    public String copyDocument(String sourceDocumentId, String targetParentDocumentId)
             throws FileNotFoundException {
         assertUnlocked();
-
-        final Try<String> result = operations.moveDocument(sourceDocumentId,
-                targetParentDocumentId);
-        if (result.isFailure()) {
-            result.failed().forEach(failure -> Log.e(TAG, "Failed to move document", failure));
-            throw new FileNotFoundException(sourceDocumentId);
-        } else {
-            notifyChildChange(sourceParentDocumentId);
-            notifyChildChange(targetParentDocumentId);
-            return result.get();
-        }
+        return super.copyDocument(sourceDocumentId, targetParentDocumentId);
     }
 
     @Override
-    public String renameDocument(@NonNull String documentId, @NonNull String displayName)
-            throws FileNotFoundException {
+    public String moveDocument(String sourceDocumentId, String sourceParentDocumentId,
+            String targetParentDocumentId) {
         assertUnlocked();
-
-        final Try<Pair<String, String>> result = operations.renameDocument(documentId, displayName);
-        if (result.isFailure()) {
-            result.failed().forEach(failure -> Log.e(TAG, "Failed to rename document", failure));
-            throw new FileNotFoundException(documentId);
-        } else {
-            final Pair<String, String> pair = result.get();
-            notifyChildChange(pair.first);
-            return pair.second;
-        }
+        return super.moveDocument(sourceDocumentId, sourceParentDocumentId, targetParentDocumentId);
     }
 
     @Override
-    public String getDocumentType(@NonNull String documentId) throws FileNotFoundException {
+    public String renameDocument(String documentId, String displayName) {
         assertUnlocked();
-
-        final Try<String> result = operations.getDocumentType(documentId);
-        if (result.isFailure()) {
-            result.failed().forEach(failure -> Log.e(TAG, "Failed to get document type", failure));
-            throw new FileNotFoundException(documentId);
-        } else {
-            return result.get();
-        }
-    }
-
-    @Override
-    public Bundle getDocumentMetadata(@NonNull String documentId) {
-        if (Build.VERSION.SDK_INT >= 29) {
-            return operations.getSizeAndCount(documentId).fold(failure -> {
-                Log.e(TAG, "Failed to retrieve metadata", failure);
-                return null;
-            }, info -> {
-                final Bundle bundle = new Bundle();
-                bundle.putLong(DocumentsContract.METADATA_TREE_SIZE, info.first);
-                bundle.putLong(DocumentsContract.METADATA_TREE_COUNT, info.second);
-                return bundle;
-            });
-        } else {
-            return null;
-        }
+        return super.renameDocument(documentId, displayName);
     }
 
     @Override
@@ -321,8 +197,56 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
     }
 
     @Override
-    public boolean isChildDocument(String parentDocumentId, String documentId) {
-        return operations.isChild(parentDocumentId, documentId);
+    protected Uri buildNotificationUri(String docId) {
+        return DocumentsContract.buildChildDocumentsUri(HomeEnvironment.AUTHORITY, docId);
+    }
+
+    @Override
+    protected Try<Path> getPathForId(String docId) {
+        final Path baseDir = homeEnvironment.getBaseDir();
+        if (HomeEnvironment.ROOT.equals(docId)) {
+            return new Success<>(baseDir);
+        } else {
+            final int splitIndex = docId.indexOf(':', 1);
+            if (splitIndex < 0) {
+                return new Failure<>(new FileNotFoundException("No root for " + docId));
+            } else {
+                final String targetPath = docId.substring(splitIndex + 1);
+                final Path target = Paths.get(baseDir.toString(), targetPath);
+                if (Files.exists(target)) {
+                    return new Success<>(target);
+                } else {
+                    return new Failure<>(
+                            new FileNotFoundException("No path for " + docId + " at " + target));
+                }
+            }
+        }
+    }
+
+    @Override
+    protected String getDocIdForPath(Path path) {
+        final Path rootPath = homeEnvironment.getBaseDir();
+        if (rootPath.equals(path)) {
+            return HomeEnvironment.ROOT_DOC_ID;
+        } else {
+            return HomeEnvironment.ROOT_DOC_ID
+                    + path.toString().replaceFirst(rootPath.toString(), "");
+        }
+    }
+
+    @Override
+    protected boolean isNotEssential(Path path) {
+        return !homeEnvironment.isDefaultDirectory(path);
+    }
+
+    @Override
+    protected void onDocIdChanged(String docId) {
+        // no-op
+    }
+
+    @Override
+    protected void onDocIdDeleted(String docId) {
+        // no-op
     }
 
     /**
@@ -339,14 +263,8 @@ public final class AnemoDocumentProvider extends DocumentsProvider {
         }
     }
 
-    /*
-     * Notify
-     */
-
-    private void notifyChildChange(String parentId) {
-        cr.notifyChange(
-                DocumentsContract.buildChildDocumentsUri(HomeEnvironment.AUTHORITY, parentId),
-                null);
+    private static String[] resolveRootProjection(String[] projection) {
+        return projection == null ? DEFAULT_ROOT_PROJECTION : projection;
     }
 
     private final Consumer<Boolean> onLockChanged = isLocked -> cr
