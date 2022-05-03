@@ -110,7 +110,7 @@ public abstract class FileSystemProvider extends DocumentsProvider {
 
     @Override
     public String createDocument(String parentDocumentId, String mimeType, String displayName) {
-        final String docName = PathUtils.buildValidFilename(displayName);
+        final String docName = PathUtils.buildValidFileName(displayName);
         final Try<String> result = getPathForId(parentDocumentId).filter(Files::isDirectory)
                 .map(parent -> {
                     final Path path = PathUtils.buildUniquePath(parent, mimeType, docName);
@@ -166,7 +166,7 @@ public abstract class FileSystemProvider extends DocumentsProvider {
 
     @Override
     public String renameDocument(String documentId, String displayName) {
-        final String docName = PathUtils.buildValidFilename(displayName);
+        final String docName = PathUtils.buildValidFileName(displayName);
         final Try<String> result = getPathForId(documentId).map(before -> {
             final Path after = PathUtils.buildUniquePath(before.getParent(), docName);
             // before, beforeVisible, after

@@ -27,9 +27,9 @@ public final class PathUtils {
      * Mutate the given filename to make it valid for a FAT filesystem, replacing any invalid
      * characters with "_".
      * <p>
-     * From android.os.FileUtils
+     * Based on {@code android.os.FileUtils#buildUniqueFile#buildValidFilename}
      */
-    public static String buildValidFilename(String name) {
+    public static String buildValidFileName(String name) {
         if (TextUtils.isEmpty(name) || ".".equals(name)) {
             return "(invalid)";
         }
@@ -48,6 +48,8 @@ public final class PathUtils {
 
     /**
      * Generates a unique file name under the given parent directory, keeping any extension intact.
+     * <p>
+     * Based on {@code android.os.FileUtils#buildUniqueFile}
      */
     public static Path buildUniquePath(Path parent, String displayName)
             throws FileNotFoundException {
@@ -75,6 +77,8 @@ public final class PathUtils {
      * <p>
      * For example, the display name 'example' with 'text/plain' MIME might produce 'example.txt' or
      * 'example (1).txt', etc.
+     * <p>
+     * Based on {@code android.os.FileUtils#buildUniqueFile#buildUniqueFile}
      */
     public static Path buildUniquePath(Path parent, String mimeType, String displayName)
             throws FileNotFoundException {
@@ -86,6 +90,8 @@ public final class PathUtils {
      * Splits file name into base name and extension. If the display name doesn't have an extension
      * that matches the requested MIME type, the extension is regarded as a part of filename and
      * default extension for that MIME type is appended.
+     * <p>
+     * Based on {@code android.os.FileUtils#buildUniqueFile#splitFileName}
      */
     public static String[] splitFileName(String mimeType, String displayName) {
         String name;
@@ -136,6 +142,9 @@ public final class PathUtils {
         return new String[]{name, ext};
     }
 
+    /**
+     * Recursively delete a directory.
+     */
     public static void deleteContents(Path path) throws IOException {
         Files.walkFileTree(path, new SimpleFileVisitor<>() {
             @Override
@@ -161,6 +170,9 @@ public final class PathUtils {
         });
     }
 
+    /**
+     * Get the mime-type of a given path document.
+     */
     public static String getDocumentType(String documentId, Path path) {
         if (Files.isDirectory(path)) {
             return DocumentsContract.Document.MIME_TYPE_DIR;
@@ -200,7 +212,7 @@ public final class PathUtils {
 
     private static Path buildUniquePathWithExtension(Path parent, String name, String ext)
             throws FileNotFoundException {
-        Path path = buildFile(parent, name, ext);
+        Path path = buildPath(parent, name, ext);
 
         // If conflicting path, try adding counter suffix
         int n = 0;
@@ -208,13 +220,13 @@ public final class PathUtils {
             if (n++ >= 32) {
                 throw new FileNotFoundException("Failed to create unique file");
             }
-            path = buildFile(parent, name + " (" + n + ")", ext);
+            path = buildPath(parent, name + " (" + n + ")", ext);
         }
 
         return path;
     }
 
-    private static Path buildFile(Path parent, String name, String ext) {
+    private static Path buildPath(Path parent, String name, String ext) {
         if (TextUtils.isEmpty(ext)) {
             return parent.resolve(name);
         } else {
