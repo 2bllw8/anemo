@@ -385,6 +385,11 @@ public abstract class FileSystemProvider extends DocumentsProvider {
         return result;
     }
 
+    @Override
+    public boolean isChildDocument(String parentDocumentId, String documentId) {
+        return documentId.contains(parentDocumentId);
+    }
+
     /**
      * Callback indicating that the given document has been modified. This gives the provider a hook
      * to invalidate cached data, such as {@code sdcardfs}.

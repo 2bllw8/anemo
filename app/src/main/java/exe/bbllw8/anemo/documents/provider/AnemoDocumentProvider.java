@@ -83,6 +83,7 @@ public final class AnemoDocumentProvider extends FileSystemProvider {
 
         int flags = Root.FLAG_LOCAL_ONLY;
         flags |= Root.FLAG_SUPPORTS_CREATE;
+        flags |= Root.FLAG_SUPPORTS_IS_CHILD;
         flags |= DocumentsContract.Root.FLAG_SUPPORTS_EJECT;
         if (Build.VERSION.SDK_INT >= 29) {
             flags |= Root.FLAG_SUPPORTS_SEARCH;
