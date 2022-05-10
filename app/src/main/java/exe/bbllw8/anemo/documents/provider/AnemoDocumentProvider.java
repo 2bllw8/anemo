@@ -208,7 +208,7 @@ public final class AnemoDocumentProvider extends FileSystemProvider {
         if (HomeEnvironment.ROOT_DOC_ID.equals(docId)) {
             return new Success<>(baseDir);
         } else {
-            final int splitIndex = docId.indexOf(':', 1);
+            final int splitIndex = docId.indexOf('/', 1);
             if (splitIndex < 0) {
                 return new Failure<>(new FileNotFoundException("No root for " + docId));
             } else {
