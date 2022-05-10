@@ -205,7 +205,7 @@ public final class AnemoDocumentProvider extends FileSystemProvider {
     @Override
     protected Try<Path> getPathForId(String docId) {
         final Path baseDir = homeEnvironment.getBaseDir();
-        if (HomeEnvironment.ROOT.equals(docId)) {
+        if (HomeEnvironment.ROOT_DOC_ID.equals(docId)) {
             return new Success<>(baseDir);
         } else {
             final int splitIndex = docId.indexOf(':', 1);
