@@ -497,7 +497,12 @@ public abstract class FileSystemProvider extends DocumentsProvider {
         synchronized (observers) {
             DirectoryObserver observer = observers.get(path);
             if (observer == null) {
-                observer = new DirectoryObserver(path, cr, notifyUri);
+                if (Build.VERSION.SDK_INT >= 29) {
+                    observer = new DirectoryObserver(path, cr, notifyUri);
+                } else {
+                    observer = new DirectoryObserver(path.toFile().getAbsolutePath(), cr,
+                            notifyUri);
+                }
                 observer.startWatching();
                 observers.put(path, observer);
             }
@@ -580,6 +585,7 @@ public abstract class FileSystemProvider extends DocumentsProvider {
         return true;
     }
 
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     private static void updateMediaStore(Context context, Path path) {
         final Intent intent;
         if (!Files.isDirectory(path) && path.getFileName().toString().endsWith("nomedia")) {
@@ -659,8 +665,17 @@ public abstract class FileSystemProvider extends DocumentsProvider {
         private final Uri notifyUri;
         private final CopyOnWriteArrayList<DirectoryCursor> cursors;
 
+        @SuppressWarnings({"deprecation", "RedundantSuppression"})
+        public DirectoryObserver(String absolutePath, ContentResolver resolver, Uri notifyUri) {
+            super(absolutePath, NOTIFY_EVENTS);
+            this.resolver = resolver;
+            this.notifyUri = notifyUri;
+            this.cursors = new CopyOnWriteArrayList<>();
+        }
+
+        @RequiresApi(29)
         public DirectoryObserver(Path path, ContentResolver resolver, Uri notifyUri) {
-            super(path.toFile().getAbsolutePath(), NOTIFY_EVENTS);
+            super(path.toFile(), NOTIFY_EVENTS);
             this.resolver = resolver;
             this.notifyUri = notifyUri;
             this.cursors = new CopyOnWriteArrayList<>();
@@ -672,7 +687,7 @@ public abstract class FileSystemProvider extends DocumentsProvider {
                 for (final DirectoryCursor cursor : cursors) {
                     cursor.notifyChanged();
                 }
-                resolver.notifyChange(notifyUri, null, false);
+                resolver.notifyChange(notifyUri, null, 0);
             }
         }
     }
