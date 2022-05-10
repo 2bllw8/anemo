@@ -34,10 +34,7 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
     private static final String HASH_ALGORITHM = "SHA-256";
 
     private static final int AUTO_LOCK_JOB_ID = 64;
-    // 15
-    // minutes
-    // in
-    // milliseconds
+    // 15 minutes in milliseconds
     private static final long AUTO_LOCK_DELAY = 1000L * 60L * 15L;
 
     private final SharedPreferences preferences;
@@ -128,30 +125,10 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
 
         if (!isLocked()) {
             if (enabled) {
-                // If
-                // auto-lock
-                // is
-                // enabled
-                // while
-                // the
-                // storage
-                // is
-                // unlocked,
-                // schedule
-                // the job
+                // If auto-lock is enabled while the storage is unlocked, schedule the job
                 scheduleAutoLock();
             } else {
-                // If
-                // auto-lock
-                // is
-                // disabled
-                // while
-                // the
-                // storage
-                // is
-                // unlocked,
-                // cancel
-                // the job
+                // If auto-lock is disabled while the storage is unlocked, cancel the job
                 cancelAutoLock();
             }
         }

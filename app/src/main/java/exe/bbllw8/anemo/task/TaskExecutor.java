@@ -35,14 +35,9 @@ public final class TaskExecutor {
         execFutures.add(future);
         try {
             final T result = future.get(1, TimeUnit.MINUTES);
-            // It's
-            // completed,
-            // remove
-            // to free
-            // memory
+            // It's completed, remove to free memory
             execFutures.remove(future);
-            // Post
-            // result
+            // Post result
             handler.post(() -> consumer.accept(result));
         } catch (InterruptedException e) {
             Log.w(TAG, e);
@@ -57,22 +52,16 @@ public final class TaskExecutor {
             try {
                 if (!executor.awaitTermination(250, TimeUnit.MILLISECONDS)) {
                     executor.shutdownNow();
-                    // noinspection
-                    // ResultOfMethodCallIgnored
+                    //@formatter:off
+                    //noinspection ResultOfMethodCallIgnored
                     executor.awaitTermination(100, TimeUnit.MILLISECONDS);
+                    //@formatter:on
                 }
             } catch (InterruptedException e) {
                 Log.e(TAG, "Interrupted", e);
-                // (Re-)Cancel
-                // if
-                // current
-                // thread
-                // also
-                // interrupted
+                // (Re-)Cancel if current thread also interrupted
                 executor.shutdownNow();
-                // Preserve
-                // interrupt
-                // status
+                // Preserve interrupt status
                 Thread.currentThread().interrupt();
             }
         }
