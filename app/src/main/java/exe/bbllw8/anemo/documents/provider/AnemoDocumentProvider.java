@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.function.Consumer;
 
 import exe.bbllw8.anemo.R;
@@ -136,6 +137,16 @@ public final class AnemoDocumentProvider extends FileSystemProvider {
             return new EmptyCursor();
         } else {
             return super.querySearchDocuments(rootId, projection, queryArgs);
+        }
+    }
+
+    @Override
+    public DocumentsContract.Path findDocumentPath(String parentDocumentId,
+            String childDocumentId) {
+        if (lockStore.isLocked()) {
+            return new DocumentsContract.Path(null, Collections.emptyList());
+        } else {
+            return super.findDocumentPath(parentDocumentId, childDocumentId);
         }
     }
 

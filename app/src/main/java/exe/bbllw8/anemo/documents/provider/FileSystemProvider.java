@@ -42,6 +42,8 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -292,6 +294,20 @@ public abstract class FileSystemProvider extends DocumentsProvider {
             Log.w(TAG, parentDocumentId + ": not a directory");
         }
         return result;
+    }
+
+    @Override
+    public DocumentsContract.Path findDocumentPath(String parentDocumentId,
+            String childDocumentId) {
+        final String pathStr;
+        if (parentDocumentId == null) {
+            pathStr = childDocumentId;
+        } else {
+            pathStr = childDocumentId.substring(parentDocumentId.length());
+        }
+
+        final List<String> segments = Arrays.asList(pathStr.split("/"));
+        return new DocumentsContract.Path(parentDocumentId, segments);
     }
 
     @Override

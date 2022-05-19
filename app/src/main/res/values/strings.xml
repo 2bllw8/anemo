@@ -37,15 +37,11 @@
 
     <string name="receiver_label">Import into Anemo</string>
 
-    <string name="receiver_importing_message">Importing %1$s…</string>
-    <string name="receiver_importing_done_ok">Imported to Anemo/%1$s</string>
-    <string name="receiver_importing_done_fail">Could not import %1$s. Try again</string>
+    <string name="receiver_importing_message">Importing the file…</string>
+    <string name="receiver_importing_done_ok">Imported to Anemo</string>
+    <string name="receiver_importing_done_fail">Could not import the file. Try again</string>
 
-    <string name="receiver_audio_default_name">Shared audio %1$s.mp3</string>
-    <string name="receiver_document_default_name">Shared document %1$s.pdf</string>
-    <string name="receiver_image_default_name">Shared image %1$s.jpg</string>
-    <string name="receiver_pdf_default_name">Shared pdf %1$s.pdf</string>
-    <string name="receiver_video_default_name">Shared video %1$s.mp4</string>
+    <string name="receiver_default_file_name">Shared file</string>
 
     <string name="tile_title">Anemo storage</string>
 
