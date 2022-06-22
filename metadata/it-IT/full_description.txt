@@ -14,7 +14,3 @@ Caratteristiche
   - Blocco automatico dopo 15 minuti
   - Password per bloccare l'accesso ai file
 - Importa contenuti utilizzando la funzionalità Android di condivisione
-  - Audio
-  - Immagini
-  - File PDF
-  - Video

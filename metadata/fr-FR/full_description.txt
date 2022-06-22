@@ -15,7 +15,3 @@ Fonctionnalités
     - Verrouillage automatique après 15 minutes
     - Mot de passe pour cadenasser l'accès aux fichiers
 - Importer du contenu à l'aide de la fonctionnalité de partage d'Android
-    - Audio
-    - Images
-    - Fichiers PDF
-    - Vidéos

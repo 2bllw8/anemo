@@ -14,7 +14,3 @@ Features
   - Auto lock after 15 minutes
   - Password for locking access to the files
 - Import content using the share Android functionality
-  - Audio
-  - Images
-  - PDF files
-  - Videos
