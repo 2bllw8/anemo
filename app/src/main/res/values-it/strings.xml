@@ -41,11 +41,6 @@
     <string name="receiver_importing_done_ok">Importato in Anemo/%1$s</string>
     <string name="receiver_importing_done_fail">Impossibile importare %1$s. Riprova</string>
 
-    <string name="receiver_audio_default_name">Audio %1$s.mp3 condiviso</string>
-    <string name="receiver_image_default_name">Immagine %1$s.jpg condivisa</string>
-    <string name="receiver_pdf_default_name">PDF %1$s.pdf condiviso</string>
-    <string name="receiver_video_default_name">Video %1$s.mp4 condiviso</string>
-
     <string name="tile_title">Archiviazione di Anemo</string>
 
     <string name="tile_lock">Blocca Anemo</string>
