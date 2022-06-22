@@ -49,8 +49,6 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import exe.bbllw8.anemo.tuple.Tuple2;
-import exe.bbllw8.anemo.tuple.Tuple3;
 import exe.bbllw8.either.Try;
 
 /**
@@ -138,26 +136,18 @@ public abstract class FileSystemProvider extends DocumentsProvider {
     public String copyDocument(String sourceDocumentId, String targetParentDocumentId)
             throws FileNotFoundException {
         final Try<String> result = getPathForId(sourceDocumentId)
-                .flatMap(source -> getPathForId(targetParentDocumentId)
-                        .map(parent -> new Tuple2<>(source, parent)))
-                .map(tup -> {
-                    final Path source = tup._1;
+                .flatMap(source -> getPathForId(targetParentDocumentId).map(parent -> {
                     final String fileName = source.getFileName().toString();
-                    final Path target = PathUtils.buildUniquePath(tup._2.getParent(), fileName);
-                    return new Tuple2<>(tup._1, target);
-                })
-                .map(tup -> {
-                    Files.copy(tup._1, tup._2);
-                    return tup._2;
-                })
-                .map(target -> {
-                    updateMediaStore(getContext(), target);
-                    return getDocIdForPath(target);
-                })
-                .map(docId -> {
-                    onDocIdChanged(docId);
-                    return docId;
-                });
+                    final Path target = PathUtils.buildUniquePath(parent, fileName);
+                    Files.copy(source, target);
+
+                    final Context context = getContext();
+                    updateMediaStore(context, target);
+
+                    final String targetId = getDocIdForPath(target);
+                    onDocIdChanged(targetId);
+                    return targetId;
+                }));
         if (result.isSuccess()) {
             return result.get();
         } else {
@@ -171,24 +161,22 @@ public abstract class FileSystemProvider extends DocumentsProvider {
         final String docName = PathUtils.buildValidFileName(displayName);
         final Try<String> result = getPathForId(documentId).map(before -> {
             final Path after = PathUtils.buildUniquePath(before.getParent(), docName);
-            // before, beforeVisible, after
-            return new Tuple2<>(before, after);
-        }).map(tup -> {
-            Files.move(tup._1, tup._2);
-            return tup;
-        }).map(tup -> new Tuple3<>(tup._1, tup._2, getDocIdForPath(tup._2))).map(tup -> {
+            Files.move(before, after);
+
             final Context context = getContext();
-            updateMediaStore(context, tup._1);
-            updateMediaStore(context, tup._2);
+            updateMediaStore(context, before);
+            updateMediaStore(context, after);
+
             onDocIdChanged(documentId);
             onDocIdDeleted(documentId);
-            onDocIdChanged(tup._3);
-            return tup._3;
-        }).map(afterId -> {
+
+            final String afterId = getDocIdForPath(after);
             if (TextUtils.equals(documentId, afterId)) {
                 // Null is used when the source and destination are equal
+                // according to the Android API specification
                 return null;
             } else {
+                onDocIdChanged(afterId);
                 return afterId;
             }
         });
@@ -204,23 +192,22 @@ public abstract class FileSystemProvider extends DocumentsProvider {
     public String moveDocument(String sourceDocumentId, String sourceParentDocumentId,
             String targetParentDocumentId) {
         final Try<String> result = getPathForId(sourceDocumentId)
-                .flatMap(before -> getPathForId(targetParentDocumentId)
-                        .flatMap(parent -> getPathForId(before.getFileName().toString()))
-                        .map(after -> new Tuple2<>(before, after)))
-                .map(tup -> {
-                    Files.move(tup._1, tup._2);
-                    return tup;
-                })
-                .map(tup -> new Tuple3<>(tup, getDocIdForPath(tup._2)))
-                .map(tup -> {
+                .flatMap(before -> getPathForId(targetParentDocumentId).map(parent -> {
+                    final String documentName = before.getFileName().toString();
+                    final Path after = parent.resolve(documentName);
+                    Files.move(before, after);
+
                     final Context context = getContext();
-                    updateMediaStore(context, tup._1);
-                    updateMediaStore(context, tup._2);
+                    updateMediaStore(context, before);
+                    updateMediaStore(context, after);
+
                     onDocIdChanged(sourceDocumentId);
                     onDocIdDeleted(sourceDocumentId);
-                    onDocIdChanged(tup._3);
-                    return tup._3;
-                });
+
+                    final String afterId = getDocIdForPath(after);
+                    onDocIdChanged(afterId);
+                    return afterId;
+                }));
         if (result.isSuccess()) {
             return result.get();
         } else {
@@ -322,36 +309,39 @@ public abstract class FileSystemProvider extends DocumentsProvider {
     @Override
     public AssetFileDescriptor openDocumentThumbnail(String docId, Point sizeHint,
             CancellationSignal signal) throws FileNotFoundException {
-        final Try<AssetFileDescriptor> pathTry = getPathForId(docId).map(path -> {
-            final ParcelFileDescriptor pfd = ParcelFileDescriptor.open(path.toFile(),
-                    ParcelFileDescriptor.MODE_READ_ONLY);
-            final ExifInterface exif = new ExifInterface(path.toFile().getAbsolutePath());
+        final Try<AssetFileDescriptor> pathTry = getPathForId(docId)
+                .filter(path -> PathUtils.getDocumentType(docId, path).startsWith("image/"))
+                .map(path -> {
+                    final ParcelFileDescriptor pfd = ParcelFileDescriptor.open(path.toFile(),
+                            ParcelFileDescriptor.MODE_READ_ONLY);
+                    final ExifInterface exif = new ExifInterface(path.toFile().getAbsolutePath());
 
-            final long[] thumb = exif.getThumbnailRange();
-            if (thumb == null) {
-                // Do full file decoding, we don't need to handle the orientation
-                return new AssetFileDescriptor(pfd, 0, AssetFileDescriptor.UNKNOWN_LENGTH, null);
-            } else {
-                // If we use thumb to decode, we need to handle the rotation by ourselves.
-                Bundle extras = null;
-                switch (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1)) {
-                    case ExifInterface.ORIENTATION_ROTATE_90 :
-                        extras = new Bundle(1);
-                        extras.putInt(DocumentsContract.EXTRA_ORIENTATION, 90);
-                        break;
-                    case ExifInterface.ORIENTATION_ROTATE_180 :
-                        extras = new Bundle(1);
-                        extras.putInt(DocumentsContract.EXTRA_ORIENTATION, 180);
-                        break;
-                    case ExifInterface.ORIENTATION_ROTATE_270 :
-                        extras = new Bundle(1);
-                        extras.putInt(DocumentsContract.EXTRA_ORIENTATION, 270);
-                        break;
-                }
+                    final long[] thumb = exif.getThumbnailRange();
+                    if (thumb == null) {
+                        // Do full file decoding, we don't need to handle the orientation
+                        return new AssetFileDescriptor(pfd, 0, AssetFileDescriptor.UNKNOWN_LENGTH,
+                                null);
+                    } else {
+                        // If we use thumb to decode, we need to handle the rotation by ourselves.
+                        Bundle extras = null;
+                        switch (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1)) {
+                            case ExifInterface.ORIENTATION_ROTATE_90 :
+                                extras = new Bundle(1);
+                                extras.putInt(DocumentsContract.EXTRA_ORIENTATION, 90);
+                                break;
+                            case ExifInterface.ORIENTATION_ROTATE_180 :
+                                extras = new Bundle(1);
+                                extras.putInt(DocumentsContract.EXTRA_ORIENTATION, 180);
+                                break;
+                            case ExifInterface.ORIENTATION_ROTATE_270 :
+                                extras = new Bundle(1);
+                                extras.putInt(DocumentsContract.EXTRA_ORIENTATION, 270);
+                                break;
+                        }
 
-                return new AssetFileDescriptor(pfd, thumb[0], thumb[1], extras);
-            }
-        });
+                        return new AssetFileDescriptor(pfd, thumb[0], thumb[1], extras);
+                    }
+                });
         if (pathTry.isFailure()) {
             throw new FileNotFoundException("Couldn't open " + docId);
         }
