@@ -4,7 +4,7 @@
 android_app {
     name: "anemo",
     manifest: "app/src/main/AndroidManifest.xml",
-    sdk_version: "31",
+    sdk_version: "32",
     srcs: [
         "app/src/main/java/exe/bbllw8/anemo/**/*.java",
     ],
