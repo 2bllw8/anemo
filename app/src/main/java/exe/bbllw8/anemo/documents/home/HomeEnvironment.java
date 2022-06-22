@@ -14,17 +14,17 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public final class HomeEnvironment {
     public static final String AUTHORITY = "exe.bbllw8.anemo.documents";
 
     public static final String ROOT = "anemo";
     public static final String ROOT_DOC_ID = "root";
-    public static final String DOCUMENTS = "Documents";
-    public static final String PICTURES = "Pictures";
-    public static final String MOVIES = "Movies";
-    public static final String MUSIC = "Music";
+
+    private static final String DOCUMENTS = "Documents";
+    private static final String PICTURES = "Pictures";
+    private static final String MOVIES = "Movies";
+    private static final String MUSIC = "Music";
 
     private final Path baseDir;
     private final Map<String, Path> defaultDirectories;
@@ -56,12 +56,6 @@ public final class HomeEnvironment {
 
     public Path getBaseDir() {
         return baseDir;
-    }
-
-    public Optional<Path> getDefaultDirectory(String name) {
-        return defaultDirectories.containsKey(name)
-                ? Optional.ofNullable(defaultDirectories.get(name))
-                : Optional.empty();
     }
 
     public boolean isDefaultDirectory(Path path) {
