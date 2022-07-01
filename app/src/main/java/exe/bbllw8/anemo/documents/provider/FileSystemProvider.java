@@ -139,7 +139,28 @@ public abstract class FileSystemProvider extends DocumentsProvider {
                 .flatMap(source -> getPathForId(targetParentDocumentId).map(parent -> {
                     final String fileName = source.getFileName().toString();
                     final Path target = PathUtils.buildUniquePath(parent, fileName);
-                    Files.copy(source, target);
+
+                    if (Files.isDirectory(source)) {
+                        // Recursive copy
+                        Files.walkFileTree(source, new SimpleFileVisitor<>() {
+                            @Override
+                            public FileVisitResult preVisitDirectory(Path dir,
+                                    BasicFileAttributes attrs) throws IOException {
+                                Files.createDirectories(target.resolve(dir.relativize(source)));
+                                return FileVisitResult.CONTINUE;
+                            }
+
+                            @Override
+                            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                                    throws IOException {
+                                Files.copy(file, target.resolve(file.relativize(source)));
+                                return FileVisitResult.CONTINUE;
+                            }
+                        });
+                    } else {
+                        // Simple copy
+                        Files.copy(source, target);
+                    }
 
                     final Context context = getContext();
                     updateMediaStore(context, target);
