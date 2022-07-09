@@ -147,12 +147,6 @@ public final class PathUtils {
      */
     public static void deleteContents(Path path) throws IOException {
         Files.walkFileTree(path, new SimpleFileVisitor<>() {
-            @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
-                    throws IOException {
-                deleteContents(dir);
-                return FileVisitResult.SKIP_SUBTREE;
-            }
 
             @Override
             public FileVisitResult postVisitDirectory(Path dir, IOException exc)
