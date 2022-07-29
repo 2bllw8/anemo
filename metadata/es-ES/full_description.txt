@@ -1,0 +1,16 @@
+Anemo es una aplicación de utilidad de almacenamiento local privado para Android.
+En lugar de ser una interfaz de usuario de administrador de archivos independiente, se conecta a varios componentes de
+Android haciéndolo sentir como una parte nativa del sistema operativo.
+Además, proporciona formas para que el usuario exporte contenidos de otras aplicaciones y los guarde como archivos.
+
+Características
+
+- Crea carpetas y organiza archivos libremente
+- Todos los archivos en el almacenamiento privado no aparecerán en las otras aplicaciones
+- Acceso en la aplicación Archivos del sistema (the _DocumentsProviderUI_)
+    - Se ofrece un acceso directo opcional para dispositivos que no exponen la aplicación Archivos del sistema
+- Bloquear el acceso al almacenamiento privado
+  - Mosaico rápido
+  - Bloqueo automático después de 15 minutos
+  - Contraseña para bloquear el acceso a los archivos
+- Importar contenido usando la funcionalidad de compartir de Android
