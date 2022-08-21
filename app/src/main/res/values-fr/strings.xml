@@ -37,9 +37,9 @@
 
     <string name="receiver_label">Importer dans Anemo</string>
 
-    <string name="receiver_importing_message">Importation de %1$s…</string>
-    <string name="receiver_importing_done_ok">Importé dans Anemo/%1$s</string>
-    <string name="receiver_importing_done_fail">Impossible d\'importer %1$s. Réessayer</string>
+    <string name="receiver_importing_message">Importation de ficher…</string>
+    <string name="receiver_importing_done_ok">Importé dans Anemo</string>
+    <string name="receiver_importing_done_fail">Impossible d\'importer ficher. Réessayer</string>
 
     <string name="tile_title">Stockage Anemo</string>
 
