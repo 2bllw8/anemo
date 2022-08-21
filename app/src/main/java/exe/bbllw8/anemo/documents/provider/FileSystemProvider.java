@@ -429,11 +429,6 @@ public abstract class FileSystemProvider extends DocumentsProvider {
      */
     protected abstract void onDocIdDeleted(String docId);
 
-    @RequiresApi(30)
-    protected boolean shouldBlockFromTree(String docId) {
-        return false;
-    }
-
     protected boolean isNotEssential(Path path) {
         return true;
     }
@@ -469,9 +464,6 @@ public abstract class FileSystemProvider extends DocumentsProvider {
                         flags |= Document.FLAG_SUPPORTS_DELETE;
                         flags |= Document.FLAG_SUPPORTS_RENAME;
                         flags |= Document.FLAG_SUPPORTS_MOVE;
-                    }
-                    if (Build.VERSION.SDK_INT >= 30 && shouldBlockFromTree(docId)) {
-                        flags |= Document.FLAG_DIR_BLOCKS_OPEN_DOCUMENT_TREE;
                     }
                 } else {
                     flags |= Document.FLAG_SUPPORTS_WRITE;
