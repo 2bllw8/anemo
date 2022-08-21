@@ -12,8 +12,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.HashMap;
-import java.util.Map;
 
 public final class HomeEnvironment {
     public static final String AUTHORITY = "exe.bbllw8.anemo.documents";
@@ -21,13 +19,7 @@ public final class HomeEnvironment {
     public static final String ROOT = "anemo";
     public static final String ROOT_DOC_ID = "root";
 
-    private static final String DOCUMENTS = "Documents";
-    private static final String PICTURES = "Pictures";
-    private static final String MOVIES = "Movies";
-    private static final String MUSIC = "Music";
-
     private final Path baseDir;
-    private final Map<String, Path> defaultDirectories;
 
     private static volatile HomeEnvironment instance;
 
@@ -45,12 +37,6 @@ public final class HomeEnvironment {
     private HomeEnvironment(Context context) throws IOException {
         baseDir = context.getFilesDir().toPath().resolve(ROOT);
 
-        defaultDirectories = new HashMap<>(4);
-        defaultDirectories.put(DOCUMENTS, baseDir.resolve(DOCUMENTS));
-        defaultDirectories.put(PICTURES, baseDir.resolve(PICTURES));
-        defaultDirectories.put(MOVIES, baseDir.resolve(MOVIES));
-        defaultDirectories.put(MUSIC, baseDir.resolve(MUSIC));
-
         prepare();
     }
 
@@ -58,8 +44,8 @@ public final class HomeEnvironment {
         return baseDir;
     }
 
-    public boolean isDefaultDirectory(Path path) {
-        return baseDir.equals(path) || defaultDirectories.containsValue(path);
+    public boolean isRoot(Path path) {
+        return baseDir.equals(path);
     }
 
     public void wipe() throws IOException {
@@ -82,17 +68,10 @@ public final class HomeEnvironment {
     }
 
     private void prepare() throws IOException {
-        ensureExists(baseDir);
-        for (final Path dir : defaultDirectories.values()) {
-            ensureExists(dir);
-        }
-    }
-
-    private void ensureExists(Path dir) throws IOException {
-        if (!Files.exists(dir)) {
-            Files.createDirectory(dir);
-        } else if (!Files.isDirectory(dir)) {
-            throw new IOException(dir + " is not a directory");
+        if (!Files.exists(baseDir)) {
+            Files.createDirectory(baseDir);
+        } else if (!Files.isDirectory(baseDir)) {
+            throw new IOException(baseDir + " is not a directory");
         }
     }
 }

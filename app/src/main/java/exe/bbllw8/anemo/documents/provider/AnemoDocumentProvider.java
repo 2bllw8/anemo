@@ -248,7 +248,7 @@ public final class AnemoDocumentProvider extends FileSystemProvider {
 
     @Override
     protected boolean isNotEssential(Path path) {
-        return !homeEnvironment.isDefaultDirectory(path);
+        return !homeEnvironment.isRoot(path);
     }
 
     @Override
