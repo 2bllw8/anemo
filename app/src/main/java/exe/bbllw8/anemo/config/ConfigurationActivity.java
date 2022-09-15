@@ -16,7 +16,6 @@ import java.util.function.Consumer;
 
 import exe.bbllw8.anemo.R;
 import exe.bbllw8.anemo.config.password.ChangePasswordDialog;
-import exe.bbllw8.anemo.config.password.ResetPasswordDialog;
 import exe.bbllw8.anemo.config.password.SetPasswordDialog;
 import exe.bbllw8.anemo.lock.LockStore;
 import exe.bbllw8.anemo.lock.UnlockActivity;
@@ -25,7 +24,6 @@ import exe.bbllw8.anemo.shell.AnemoShell;
 public final class ConfigurationActivity extends Activity {
 
     private TextView passwordSetView;
-    private TextView passwordResetView;
     private TextView changeLockView;
 
     private LockStore lockStore;
@@ -40,7 +38,6 @@ public final class ConfigurationActivity extends Activity {
         setContentView(R.layout.configuration);
 
         passwordSetView = findViewById(R.id.configuration_password_set);
-        passwordResetView = findViewById(R.id.configuration_password_reset);
 
         final Switch shortcutSwitch = findViewById(R.id.configuration_show_shortcut);
         shortcutSwitch.setChecked(AnemoShell.isEnabled(getApplication()));
@@ -79,16 +76,12 @@ public final class ConfigurationActivity extends Activity {
             passwordSetView.setOnClickListener(
                     $ -> new ChangePasswordDialog(this, lockStore, this::setupPasswordViews)
                             .show());
-            passwordResetView.setEnabled(true);
         } else {
             passwordSetView.setText(R.string.configuration_password_set);
             passwordSetView.setOnClickListener(
                     $ -> new SetPasswordDialog(this, lockStore, this::setupPasswordViews).show());
-            passwordResetView.setEnabled(false);
         }
         passwordSetView.setEnabled(!lockStore.isLocked());
-        passwordResetView.setOnClickListener(
-                $ -> new ResetPasswordDialog(this, lockStore, this::setupPasswordViews).show());
     }
 
     private final Consumer<Boolean> onLockChanged = isLocked -> {

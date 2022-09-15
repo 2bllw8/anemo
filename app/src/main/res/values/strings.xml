@@ -30,11 +30,6 @@
     <string name="password_change_action">Change</string>
     <string name="password_change_remove">Remove</string>
 
-    <string name="password_reset_title">Reset password</string>
-    <string name="password_reset_message">Warning! In order to reset your password all the files inside the Anemo Storage will be deleted.\nThis action can\'t be undone, proceed carefully.\nType \'%1$s\' below to confirm</string>
-    <string name="password_reset_code">reset and erase</string>
-    <string name="password_reset_action">Reset &amp; erase</string>
-
     <string name="receiver_label">Import into Anemo</string>
 
     <string name="receiver_importing_message">Importing the file…</string>
@@ -62,7 +57,6 @@
     <string name="configuration_protection">Protection</string>
     <string name="configuration_password_set">Set password</string>
     <string name="configuration_password_change">Change password</string>
-    <string name="configuration_password_reset">Reset password</string>
     <string name="configuration_storage_lock">Lock storage access</string>
     <string name="configuration_storage_unlock">Unlock storage access</string>
     <string name="configuration_storage_lock_auto">Automatically lock access after 15 minutes</string>

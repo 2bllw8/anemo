@@ -7,11 +7,8 @@ package exe.bbllw8.anemo.documents.home;
 import android.content.Context;
 
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 
 public final class HomeEnvironment {
     public static final String AUTHORITY = "exe.bbllw8.anemo.documents";
@@ -36,8 +33,11 @@ public final class HomeEnvironment {
 
     private HomeEnvironment(Context context) throws IOException {
         baseDir = context.getFilesDir().toPath().resolve(ROOT);
-
-        prepare();
+        if (!Files.exists(baseDir)) {
+            Files.createDirectory(baseDir);
+        } else if (!Files.isDirectory(baseDir)) {
+            throw new IOException(baseDir + " is not a directory");
+        }
     }
 
     public Path getBaseDir() {
@@ -46,32 +46,5 @@ public final class HomeEnvironment {
 
     public boolean isRoot(Path path) {
         return baseDir.equals(path);
-    }
-
-    public void wipe() throws IOException {
-        Files.walkFileTree(baseDir, new SimpleFileVisitor<>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                    throws IOException {
-                Files.delete(file);
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc)
-                    throws IOException {
-                Files.delete(dir);
-                return FileVisitResult.CONTINUE;
-            }
-        });
-        prepare();
-    }
-
-    private void prepare() throws IOException {
-        if (!Files.exists(baseDir)) {
-            Files.createDirectory(baseDir);
-        } else if (!Files.isDirectory(baseDir)) {
-            throw new IOException(baseDir + " is not a directory");
-        }
     }
 }
