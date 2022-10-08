@@ -36,6 +36,8 @@
     <string name="receiver_importing_done_ok">Importato in Anemo</string>
     <string name="receiver_importing_done_fail">Impossibile importare file. Riprova</string>
 
+    <string name="receiver_default_file_name">File condiviso</string>
+
     <string name="tile_title">Archiviazione di Anemo</string>
 
     <string name="tile_lock">Blocca Anemo</string>

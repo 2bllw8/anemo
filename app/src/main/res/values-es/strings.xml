@@ -30,11 +30,6 @@
     <string name="password_change_action">Cambiar</string>
     <string name="password_change_remove">Eliminar</string>
 
-    <string name="password_reset_title">Restablecer contraseña</string>
-    <string name="password_reset_message">¡Advertencia! Para restablecer su contraseña, se eliminarán todos los archivos dentro de Anemo Storage.\nEsta acción no se puede deshacer, proceda con cuidado.\nEscribe \'%1$s\' abajo para confirmar</string>
-    <string name="password_reset_code">Restablecer y borrar</string>
-    <string name="password_reset_action">Restablecer &amp; borrar</string>
-
     <string name="receiver_label">Importar a Anemo</string>
 
     <string name="receiver_importing_message">Importando el archivo…</string>
@@ -62,7 +57,6 @@
     <string name="configuration_protection">Proteccion</string>
     <string name="configuration_password_set">Configurar contraseña</string>
     <string name="configuration_password_change">Cambiar contraseña</string>
-    <string name="configuration_password_reset">Restablecer contraseña</string>
     <string name="configuration_storage_lock">Bloquear el acceso al almacenamiento</string>
     <string name="configuration_storage_unlock">Desbloquear el acceso al almacenamiento</string>
     <string name="configuration_storage_lock_auto">Bloquear automáticamente el acceso después de 15 minutos</string>
