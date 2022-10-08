@@ -24,7 +24,7 @@ android_app {
 
 java_import {
     name: "anemo-lib-either",
-    jars: ["libs/either-3.3.0.jar"],
+    jars: ["libs/either-3.4.0.jar"],
     sdk_version: "current",
 }
 

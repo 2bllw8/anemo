@@ -63,7 +63,7 @@ android {
 
 dependencies {
     def androidxAnnotation = 'androidx.annotation:annotation:1.2.0'
-    def eitherLib = 'io.github.2bllw8:either:3.3.0'
+    def eitherLib = 'io.github.2bllw8:either:3.4.0'
 
     implementation androidxAnnotation
     implementation eitherLib
