@@ -14,6 +14,9 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 import exe.bbllw8.anemo.R;
 import exe.bbllw8.anemo.documents.home.HomeEnvironment;
 import exe.bbllw8.anemo.lock.LockStore;
@@ -42,16 +45,12 @@ public class LauncherActivity extends Activity {
                     .putExtra(UnlockActivity.OPEN_AFTER_UNLOCK, true));
         } else {
             final PackageManager pm = getPackageManager();
-            int i = 0;
-            while (i < LAUNCHER_INTENTS.length) {
-                final Intent intent = LAUNCHER_INTENTS[i];
-                if (canHandle(pm, intent)) {
-                    startActivity(intent);
-                    break;
-                }
-                i++;
-            }
-            if (i == LAUNCHER_INTENTS.length) {
+            final Optional<Intent> fileIntent = Arrays.stream(LAUNCHER_INTENTS)
+                    .filter(intent -> canHandle(pm, intent))
+                    .findAny();
+            if (fileIntent.isPresent()) {
+                startActivity(fileIntent.get());
+            } else {
                 Toast.makeText(this, R.string.launcher_no_activity, Toast.LENGTH_LONG).show();
             }
         }
