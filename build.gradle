@@ -8,7 +8,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.0'
+        classpath 'com.android.tools.build:gradle:7.3.1'
     }
 }
 
@@ -30,7 +30,7 @@ if (file('local.properties').exists()) {
 
 ext {
     minSdkVersion = 26
-    targetSdkVersion = 32
+    targetSdkVersion = 33
 
     sourceCompatibilityVersion = JavaVersion.VERSION_11
     targetCompatibilityVersion = JavaVersion.VERSION_11
