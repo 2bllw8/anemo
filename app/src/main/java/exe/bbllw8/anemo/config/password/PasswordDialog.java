@@ -7,6 +7,7 @@ package exe.bbllw8.anemo.config.password;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.StringRes;
@@ -43,6 +44,12 @@ public abstract class PasswordDialog {
     public final void show() {
         dialog.show();
         build();
+    }
+
+    protected Drawable getErrorIcon() {
+        final Drawable drawable = dialog.getContext().getDrawable(R.drawable.ic_error);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        return drawable;
     }
 
     protected abstract void build();

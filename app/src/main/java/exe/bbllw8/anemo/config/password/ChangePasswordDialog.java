@@ -46,7 +46,7 @@ public final class ChangePasswordDialog extends PasswordDialog {
                     onSuccess.run();
                 }
             } else {
-                currentField.setError(res.getString(R.string.password_error_wrong));
+                currentField.setError(res.getString(R.string.password_error_wrong), getErrorIcon());
             }
         });
 
@@ -68,12 +68,14 @@ public final class ChangePasswordDialog extends PasswordDialog {
             if (passwordValue.length() < MIN_PASSWORD_LENGTH) {
                 positiveBtn.setEnabled(false);
                 passwordField.setError(
-                        res.getString(R.string.password_error_length, MIN_PASSWORD_LENGTH));
+                        res.getString(R.string.password_error_length, MIN_PASSWORD_LENGTH),
+                        getErrorIcon());
                 repeatField.setError(null);
             } else if (!passwordValue.equals(repeatValue)) {
                 positiveBtn.setEnabled(false);
                 passwordField.setError(null);
-                repeatField.setError(res.getString(R.string.password_error_mismatch));
+                repeatField.setError(res.getString(R.string.password_error_mismatch),
+                        getErrorIcon());
             } else {
                 positiveBtn.setEnabled(true);
                 passwordField.setError(null);
