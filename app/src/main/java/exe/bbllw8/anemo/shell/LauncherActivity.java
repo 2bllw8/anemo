@@ -27,14 +27,25 @@ public class LauncherActivity extends Activity {
     private static final String DOCUMENTS_UI_PACKAGE = "com.android.documentsui";
     private static final String DOCUMENTS_UI_ACTIVITY = DOCUMENTS_UI_PACKAGE
             + ".files.FilesActivity";
+    private static final String DOCUMENTS_UI_ALIAS_ACTIVITY = DOCUMENTS_UI_PACKAGE
+            + ".FilesActivity";
     private static final String GOOGLE_DOCUMENTS_UI_PACKAGE = "com.google.android.documentsui";
+    private static final String TYPE_DOCS_DIRECTORY = "vnd.android.document/directory";
     private static final Uri ANEMO_URI = DocumentsContract.buildRootsUri(HomeEnvironment.AUTHORITY);
 
     private final Intent[] LAUNCHER_INTENTS = {
-            new Intent(Intent.ACTION_VIEW).setData(ANEMO_URI)
-                    .setClassName(DOCUMENTS_UI_PACKAGE, DOCUMENTS_UI_ACTIVITY),
-            new Intent(Intent.ACTION_VIEW).setData(ANEMO_URI)
-                    .setClassName(GOOGLE_DOCUMENTS_UI_PACKAGE, DOCUMENTS_UI_ACTIVITY),};
+            // AOSP, up to Android 11
+            new Intent(Intent.ACTION_VIEW, ANEMO_URI).setClassName(DOCUMENTS_UI_PACKAGE,
+                    DOCUMENTS_UI_ACTIVITY),
+            new Intent(Intent.ACTION_VIEW, ANEMO_URI).setClassName(DOCUMENTS_UI_PACKAGE,
+                    DOCUMENTS_UI_ALIAS_ACTIVITY),
+            // Pixels, Android 12+
+            new Intent(Intent.ACTION_VIEW, ANEMO_URI).setClassName(GOOGLE_DOCUMENTS_UI_PACKAGE,
+                    DOCUMENTS_UI_ACTIVITY),
+            // Android 13+
+            new Intent(Intent.ACTION_VIEW, ANEMO_URI).setType(TYPE_DOCS_DIRECTORY)
+                    .setFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT
+                            | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP),};
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,6 +61,7 @@ public class LauncherActivity extends Activity {
                     .findAny();
             if (fileIntent.isPresent()) {
                 startActivity(fileIntent.get());
+                overridePendingTransition(0, 0);
             } else {
                 Toast.makeText(this, R.string.launcher_no_activity, Toast.LENGTH_LONG).show();
             }
