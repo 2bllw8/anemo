@@ -6,12 +6,17 @@ package exe.bbllw8.anemo.lock;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.hardware.biometrics.BiometricPrompt;
 import android.os.Bundle;
+import android.os.CancellationSignal;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+
+import java.util.concurrent.Executor;
 
 import exe.bbllw8.anemo.R;
 import exe.bbllw8.anemo.config.ConfigurationActivity;
@@ -32,7 +37,11 @@ public final class UnlockActivity extends Activity {
         lockStore = LockStore.getInstance(this);
         onUnlocked = getOnUnlocked(getIntent());
         if (lockStore.hasPassword()) {
-            setupUI();
+            if (lockStore.isBiometricUnlockEnabled()) {
+                unlockViaBiometricAuthentication();
+            } else {
+                setupUI();
+            }
         } else {
             doUnlock();
         }
@@ -52,6 +61,7 @@ public final class UnlockActivity extends Activity {
 
         configBtn.setOnClickListener(v -> {
             startActivity(new Intent(this, ConfigurationActivity.class));
+            setResult(Activity.RESULT_CANCELED);
             finish();
         });
 
@@ -74,6 +84,34 @@ public final class UnlockActivity extends Activity {
     private void doUnlock() {
         lockStore.unlock();
         onUnlocked.run();
+    }
+
+    @RequiresApi(29)
+    private void unlockViaBiometricAuthentication() {
+        final Executor executor = getMainExecutor();
+        final CancellationSignal cancellationSignal = new CancellationSignal();
+        cancellationSignal.setOnCancelListener(this::finish);
+
+        final BiometricPrompt prompt = new BiometricPrompt.Builder(this)
+                .setTitle(getString(R.string.tile_unlock))
+                .setDescription(getString(R.string.password_input_biometric_message))
+                .setNegativeButton(getString(R.string.password_input_biometric_fallback), executor,
+                        (dialog, which) -> setupUI())
+                .build();
+        prompt.authenticate(cancellationSignal, executor,
+                new BiometricPrompt.AuthenticationCallback() {
+                    @Override
+                    public void onAuthenticationSucceeded(
+                            BiometricPrompt.AuthenticationResult result) {
+                        doUnlock();
+                    }
+
+                    @Override
+                    public void onAuthenticationFailed() {
+                        setResult(Activity.RESULT_CANCELED);
+                        finish();
+                    }
+                });
     }
 
     private Runnable getOnUnlocked(Intent intent) {

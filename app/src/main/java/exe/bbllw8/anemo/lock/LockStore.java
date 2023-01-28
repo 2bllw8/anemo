@@ -9,6 +9,8 @@ import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.hardware.biometrics.BiometricManager;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -28,6 +30,7 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
     private static final String KEY_LOCK = "is_locked";
     private static final String KEY_PASSWORD = "password_hash";
     private static final String KEY_AUTO_LOCK = "auto_lock";
+    private static final String KEY_BIOMETRIC_UNLOCK = "biometric_unlock";
     private static final boolean DEFAULT_LOCK_VALUE = false;
     private static final boolean DEFAULT_AUTO_LOCK_VALUE = false;
 
@@ -39,6 +42,7 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
 
     private final SharedPreferences preferences;
     private final List<Consumer<Boolean>> listeners = new ArrayList<>();
+    private final BiometricManager biometricManager;
 
     private final JobScheduler jobScheduler;
     private final ComponentName autoLockComponent;
@@ -61,6 +65,9 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
         preferences.registerOnSharedPreferenceChangeListener(this);
 
         jobScheduler = context.getSystemService(JobScheduler.class);
+        biometricManager = Build.VERSION.SDK_INT >= 29
+                ? context.getSystemService(BiometricManager.class)
+                : null;
         autoLockComponent = new ComponentName(context, AutoLockJobService.class);
     }
 
@@ -132,6 +139,19 @@ public final class LockStore implements SharedPreferences.OnSharedPreferenceChan
                 cancelAutoLock();
             }
         }
+    }
+
+    public boolean canAuthenticateBiometric() {
+        return Build.VERSION.SDK_INT >= 29 && biometricManager != null
+                && biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS;
+    }
+
+    public synchronized boolean isBiometricUnlockEnabled() {
+        return canAuthenticateBiometric() && preferences.getBoolean(KEY_BIOMETRIC_UNLOCK, false);
+    }
+
+    public synchronized void setBiometricUnlockEnabled(boolean enabled) {
+        preferences.edit().putBoolean(KEY_BIOMETRIC_UNLOCK, enabled).apply();
     }
 
     public void addListener(Consumer<Boolean> listener) {

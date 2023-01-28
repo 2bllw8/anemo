@@ -64,5 +64,15 @@
             android:paddingHorizontal="16dp"
             android:text="@string/configuration_storage_lock_auto"
             android:textSize="16sp" />
+
+        <Switch
+            android:id="@+id/configuration_biometric_unlock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:minHeight="56dp"
+            android:paddingHorizontal="16dp"
+            android:text="@string/configuration_storage_unlock_biometric"
+            android:textSize="16sp" />
     </LinearLayout>
 </ScrollView>

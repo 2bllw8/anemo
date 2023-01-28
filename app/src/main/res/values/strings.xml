@@ -20,6 +20,8 @@
 
     <string name="password_input_message">Type your Anemo password to unlock the Anemo Storage</string>
     <string name="password_input_action">Unlock</string>
+    <string name="password_input_biometric_message">Authenticate to unlock the Anemo Storage</string>
+    <string name="password_input_biometric_fallback">Use password</string>
 
     <string name="password_set_title">Add password protection</string>
     <string name="password_set_message">Set a password to lock the access to the Anemo Storage</string>
@@ -59,5 +61,6 @@
     <string name="configuration_password_change">Change password</string>
     <string name="configuration_storage_lock">Lock storage access</string>
     <string name="configuration_storage_unlock">Unlock storage access</string>
+    <string name="configuration_storage_unlock_biometric">Allow storage unlock with biometric access</string>
     <string name="configuration_storage_lock_auto">Automatically lock access after 15 minutes</string>
 </resources>

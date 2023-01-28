@@ -7,6 +7,7 @@ package exe.bbllw8.anemo.config;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -25,6 +26,7 @@ public final class ConfigurationActivity extends Activity {
 
     private TextView passwordSetView;
     private TextView changeLockView;
+    private Switch biometricSwitch;
 
     private LockStore lockStore;
 
@@ -44,8 +46,6 @@ public final class ConfigurationActivity extends Activity {
         shortcutSwitch.setOnCheckedChangeListener(
                 (v, isChecked) -> AnemoShell.setEnabled(getApplication(), isChecked));
 
-        setupPasswordViews();
-
         changeLockView = findViewById(R.id.configuration_lock);
         changeLockView.setText(lockStore.isLocked()
                 ? R.string.configuration_storage_unlock
@@ -62,6 +62,15 @@ public final class ConfigurationActivity extends Activity {
         autoLockSwitch.setChecked(lockStore.isAutoLockEnabled());
         autoLockSwitch.setOnCheckedChangeListener(
                 (v, isChecked) -> lockStore.setAutoLockEnabled(isChecked));
+
+        biometricSwitch = findViewById(R.id.configuration_biometric_unlock);
+        biometricSwitch
+                .setVisibility(lockStore.canAuthenticateBiometric() ? View.VISIBLE : View.GONE);
+        biometricSwitch.setChecked(lockStore.isBiometricUnlockEnabled());
+        biometricSwitch.setOnCheckedChangeListener(
+                (v, isChecked) -> lockStore.setBiometricUnlockEnabled(isChecked));
+
+        setupPasswordViews();
     }
 
     @Override
@@ -81,11 +90,14 @@ public final class ConfigurationActivity extends Activity {
             passwordSetView.setOnClickListener(
                     $ -> new SetPasswordDialog(this, lockStore, this::setupPasswordViews).show());
         }
-        passwordSetView.setEnabled(!lockStore.isLocked());
+        final boolean enableViews = !lockStore.isLocked();
+        passwordSetView.setEnabled(enableViews);
+        biometricSwitch.setEnabled(enableViews);
     }
 
     private final Consumer<Boolean> onLockChanged = isLocked -> {
         passwordSetView.setEnabled(!isLocked);
+        biometricSwitch.setEnabled(!isLocked);
         changeLockView.setText(isLocked
                 ? R.string.configuration_storage_unlock
                 : R.string.configuration_storage_lock);

@@ -6,6 +6,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="exe.bbllw8.anemo">
 
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+
     <application
         android:allowBackup="true"
         android:allowClearUserData="false"
