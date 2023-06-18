@@ -32,7 +32,7 @@ public final class HomeEnvironment {
     }
 
     private HomeEnvironment(Context context) throws IOException {
-        baseDir = context.getFilesDir().toPath().resolve(ROOT);
+        baseDir = context.getExternalFilesDirs(null)[1].toPath().resolve(ROOT);
         if (!Files.exists(baseDir)) {
             Files.createDirectory(baseDir);
         } else if (!Files.isDirectory(baseDir)) {
