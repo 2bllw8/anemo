@@ -2,7 +2,7 @@
  * Copyright (c) 2021 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package exe.bbllw8.anemo.documents.provider;
+package exe.bbllw8.aeolus.documents.provider;
 
 import android.app.AuthenticationRequiredException;
 import android.app.PendingIntent;
@@ -28,10 +28,10 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.function.Consumer;
 
-import exe.bbllw8.anemo.R;
-import exe.bbllw8.anemo.documents.home.HomeEnvironment;
-import exe.bbllw8.anemo.lock.LockStore;
-import exe.bbllw8.anemo.lock.UnlockActivity;
+import exe.bbllw8.aeolus.R;
+import exe.bbllw8.aeolus.documents.home.HomeEnvironment;
+import exe.bbllw8.aeolus.lock.LockStore;
+import exe.bbllw8.aeolus.lock.UnlockActivity;
 import exe.bbllw8.either.Failure;
 import exe.bbllw8.either.Success;
 import exe.bbllw8.either.Try;

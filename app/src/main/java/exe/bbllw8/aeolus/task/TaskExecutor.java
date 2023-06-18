@@ -2,7 +2,7 @@
  * Copyright (c) 2021 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package exe.bbllw8.anemo.task;
+package exe.bbllw8.aeolus.task;
 
 import android.os.Handler;
 import android.os.Looper;

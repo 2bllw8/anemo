@@ -2,7 +2,7 @@
  * Copyright (c) 2022 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package exe.bbllw8.anemo.documents.provider;
+package exe.bbllw8.aeolus.documents.provider;
 
 import android.database.AbstractCursor;
 

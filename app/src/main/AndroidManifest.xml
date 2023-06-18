@@ -4,7 +4,7 @@
   -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="exe.bbllw8.anemo">
+    package="exe.bbllw8.aeolus">
 
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 
@@ -84,7 +84,7 @@
 
         <provider
             android:name=".documents.provider.AnemoDocumentProvider"
-            android:authorities="exe.bbllw8.anemo.documents"
+            android:authorities="exe.bbllw8.aeolus.documents"
             android:enabled="true"
             android:exported="true"
             android:grantUriPermissions="true"

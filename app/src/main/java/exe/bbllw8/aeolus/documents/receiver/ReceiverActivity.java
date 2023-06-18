@@ -2,7 +2,7 @@
  * Copyright (c) 2022 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package exe.bbllw8.anemo.documents.receiver;
+package exe.bbllw8.aeolus.documents.receiver;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,9 +23,9 @@ import java.io.OutputStream;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-import exe.bbllw8.anemo.R;
-import exe.bbllw8.anemo.documents.home.HomeEnvironment;
-import exe.bbllw8.anemo.task.TaskExecutor;
+import exe.bbllw8.aeolus.R;
+import exe.bbllw8.aeolus.documents.home.HomeEnvironment;
+import exe.bbllw8.aeolus.task.TaskExecutor;
 import exe.bbllw8.either.Try;
 
 public class ReceiverActivity extends Activity {

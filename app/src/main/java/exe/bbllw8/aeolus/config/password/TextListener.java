@@ -2,7 +2,7 @@
  * Copyright (c) 2022 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package exe.bbllw8.anemo.config.password;
+package exe.bbllw8.aeolus.config.password;
 
 import android.text.Editable;
 import android.text.TextWatcher;

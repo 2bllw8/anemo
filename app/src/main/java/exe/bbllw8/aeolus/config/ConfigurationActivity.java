@@ -2,7 +2,7 @@
  * Copyright (c) 2022 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package exe.bbllw8.anemo.config;
+package exe.bbllw8.aeolus.config;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,12 +15,12 @@ import androidx.annotation.Nullable;
 
 import java.util.function.Consumer;
 
-import exe.bbllw8.anemo.R;
-import exe.bbllw8.anemo.config.password.ChangePasswordDialog;
-import exe.bbllw8.anemo.config.password.SetPasswordDialog;
-import exe.bbllw8.anemo.lock.LockStore;
-import exe.bbllw8.anemo.lock.UnlockActivity;
-import exe.bbllw8.anemo.shell.AnemoShell;
+import exe.bbllw8.aeolus.R;
+import exe.bbllw8.aeolus.config.password.ChangePasswordDialog;
+import exe.bbllw8.aeolus.config.password.SetPasswordDialog;
+import exe.bbllw8.aeolus.lock.LockStore;
+import exe.bbllw8.aeolus.lock.UnlockActivity;
+import exe.bbllw8.aeolus.shell.AnemoShell;
 
 public final class ConfigurationActivity extends Activity {
 

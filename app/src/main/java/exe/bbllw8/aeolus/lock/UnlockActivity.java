@@ -2,7 +2,7 @@
  * Copyright (c) 2022 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package exe.bbllw8.anemo.lock;
+package exe.bbllw8.aeolus.lock;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -18,10 +18,10 @@ import androidx.annotation.RequiresApi;
 
 import java.util.concurrent.Executor;
 
-import exe.bbllw8.anemo.R;
-import exe.bbllw8.anemo.config.ConfigurationActivity;
-import exe.bbllw8.anemo.config.password.TextListener;
-import exe.bbllw8.anemo.shell.LauncherActivity;
+import exe.bbllw8.aeolus.R;
+import exe.bbllw8.aeolus.config.ConfigurationActivity;
+import exe.bbllw8.aeolus.config.password.TextListener;
+import exe.bbllw8.aeolus.shell.LauncherActivity;
 
 public final class UnlockActivity extends Activity {
     public static final String OPEN_AFTER_UNLOCK = "open_after_unlock";

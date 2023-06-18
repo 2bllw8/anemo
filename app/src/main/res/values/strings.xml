@@ -3,12 +3,12 @@
   ~ SPDX-License-Identifier: GPL-3.0-only
   -->
 <resources>
-    <string name="app_name">Anemo</string>
+    <string name="app_name">Aeolus</string>
 
     <string name="anemo_description">Local private storage</string>
     <string name="anemo_info">Files stored in the Anemo storage are private and other apps can\'t access them without the user\'s consent.</string>
 
-    <string name="password_label">Anemo password</string>
+    <string name="password_label">Aeolus password</string>
 
     <string name="password_hint_field">Password</string>
     <string name="password_hint_repeat">Type again to confirm</string>
@@ -32,22 +32,22 @@
     <string name="password_change_action">Change</string>
     <string name="password_change_remove">Remove</string>
 
-    <string name="receiver_label">Import into Anemo</string>
+    <string name="receiver_label">Import into Aeolus</string>
 
     <string name="receiver_importing_message">Importing the file…</string>
-    <string name="receiver_importing_done_ok">Imported to Anemo</string>
+    <string name="receiver_importing_done_ok">Imported to Aeolus</string>
     <string name="receiver_importing_done_fail">Could not import the file. Try again</string>
 
     <string name="receiver_default_file_name">Shared file</string>
 
-    <string name="tile_title">Anemo storage</string>
+    <string name="tile_title">Aeolus storage</string>
 
-    <string name="tile_lock">Lock Anemo</string>
-    <string name="tile_unlock">Unlock Anemo</string>
+    <string name="tile_lock">Lock Aeolus</string>
+    <string name="tile_unlock">Unlock Aeolus</string>
     <string name="tile_status_locked">Now locked</string>
     <string name="tile_status_unlocked">Now unlocked</string>
 
-    <string name="tile_auto_lock">Anemo storage was automatically locked</string>
+    <string name="tile_auto_lock">Aeolus storage was automatically locked</string>
 
     <string name="launcher_no_activity">Can\'t find system Files app</string>
     <string name="shortcut_config_long">Configuration</string>

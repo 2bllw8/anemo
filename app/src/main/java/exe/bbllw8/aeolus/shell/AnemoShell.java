@@ -2,7 +2,7 @@
  * Copyright (c) 2022 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package exe.bbllw8.anemo.shell;
+package exe.bbllw8.aeolus.shell;
 
 import android.content.ComponentName;
 import android.content.Context;
