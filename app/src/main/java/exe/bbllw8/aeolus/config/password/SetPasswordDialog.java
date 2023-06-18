@@ -2,7 +2,7 @@
  * Copyright (c) 2021 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package exe.bbllw8.anemo.config.password;
+package exe.bbllw8.aeolus.config.password;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -10,56 +10,40 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import exe.bbllw8.anemo.R;
-import exe.bbllw8.anemo.lock.LockStore;
+import exe.bbllw8.aeolus.R;
+import exe.bbllw8.aeolus.lock.LockStore;
 
-public final class ChangePasswordDialog extends PasswordDialog {
+public final class SetPasswordDialog extends PasswordDialog {
 
-    public ChangePasswordDialog(Activity activity, LockStore lockStore, Runnable onSuccess) {
-        super(activity, lockStore, onSuccess, R.string.password_change_title,
-                R.layout.password_change);
+    public SetPasswordDialog(Activity activity, LockStore lockStore, Runnable onSuccess) {
+        super(activity, lockStore, onSuccess, R.string.password_set_title,
+                R.layout.password_first_set);
     }
 
     @Override
     protected void build() {
-        final EditText currentField = dialog.findViewById(R.id.currentFieldView);
         final EditText passwordField = dialog.findViewById(R.id.passwordFieldView);
         final EditText repeatField = dialog.findViewById(R.id.repeatFieldView);
         final Button positiveBtn = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        final Button neutralBtn = dialog.getButton(DialogInterface.BUTTON_NEUTRAL);
 
-        final TextListener validator = buildTextListener(passwordField, repeatField, positiveBtn);
+        final TextListener validator = buildValidator(passwordField, repeatField, positiveBtn);
         passwordField.addTextChangedListener(validator);
         repeatField.addTextChangedListener(validator);
 
         positiveBtn.setVisibility(View.VISIBLE);
-        positiveBtn.setText(R.string.password_change_action);
+        positiveBtn.setText(R.string.password_set_action);
         positiveBtn.setEnabled(false);
         positiveBtn.setOnClickListener(v -> {
-            final String currentPassword = currentField.getText().toString();
-            final String newPassword = passwordField.getText().toString();
-
-            if (lockStore.passwordMatch(currentPassword)) {
-                if (lockStore.setPassword(newPassword)) {
-                    dismiss();
-                    lockStore.unlock();
-                    onSuccess.run();
-                }
-            } else {
-                currentField.setError(res.getString(R.string.password_error_wrong), getErrorIcon());
+            final String passwordValue = passwordField.getText().toString();
+            if (lockStore.setPassword(passwordValue)) {
+                dismiss();
+                lockStore.unlock();
+                onSuccess.run();
             }
-        });
-
-        neutralBtn.setVisibility(View.VISIBLE);
-        neutralBtn.setText(R.string.password_change_remove);
-        neutralBtn.setOnClickListener(v -> {
-            lockStore.removePassword();
-            onSuccess.run();
-            dismiss();
         });
     }
 
-    private TextListener buildTextListener(EditText passwordField, EditText repeatField,
+    private TextListener buildValidator(EditText passwordField, EditText repeatField,
             Button positiveBtn) {
         return text -> {
             final String passwordValue = passwordField.getText().toString();

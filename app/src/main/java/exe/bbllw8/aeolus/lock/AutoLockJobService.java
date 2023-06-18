@@ -2,7 +2,7 @@
  * Copyright (c) 2021 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package exe.bbllw8.anemo.lock;
+package exe.bbllw8.aeolus.lock;
 
 import android.app.job.JobParameters;
 import android.app.job.JobService;
@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import exe.bbllw8.anemo.R;
+import exe.bbllw8.aeolus.R;
 
 public final class AutoLockJobService extends JobService {
 

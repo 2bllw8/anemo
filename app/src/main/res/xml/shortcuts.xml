@@ -13,7 +13,7 @@
 
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetClass="exe.bbllw8.anemo.config.ConfigurationActivity"
-            android:targetPackage="exe.bbllw8.anemo" />
+            android:targetClass="exe.bbllw8.aeolus.config.ConfigurationActivity"
+            android:targetPackage="exe.bbllw8.aeolus" />
     </shortcut>
 </shortcuts>

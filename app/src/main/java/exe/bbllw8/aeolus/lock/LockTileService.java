@@ -2,7 +2,7 @@
  * Copyright (c) 2021 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package exe.bbllw8.anemo.lock;
+package exe.bbllw8.aeolus.lock;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -15,7 +15,7 @@ import android.service.quicksettings.TileService;
 
 import java.util.function.Consumer;
 
-import exe.bbllw8.anemo.R;
+import exe.bbllw8.aeolus.R;
 
 public final class LockTileService extends TileService {
     private boolean hasUnlockActivity;
