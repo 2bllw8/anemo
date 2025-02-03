@@ -8,13 +8,14 @@ plugins {
 }
 
 android {
-    compileSdkVersion rootProject.ext.targetSdkVersion
+    namespace = rootProject.ext.namespace
+    compileSdk = rootProject.ext.targetSdkVersion
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 16
-        versionName '2.6.0'
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
     }
 
     buildFeatures {
@@ -62,7 +63,7 @@ android {
 }
 
 dependencies {
-    def androidxAnnotation = 'androidx.annotation:annotation:1.2.0'
+    def androidxAnnotation = 'androidx.annotation:annotation:1.3.0'
     def eitherLib = 'io.github.2bllw8:either:3.4.0'
 
     implementation androidxAnnotation
