@@ -20,6 +20,8 @@
 
     <string name="password_input_message">Taper votre mot de passe pour déverrouiller le stockage Anemo</string>
     <string name="password_input_action">Déverrouiller</string>
+    <string name="password_input_biometric_message">S\'authentifier pour déverrouiller le stockage Anemo</string>
+    <string name="password_input_biometric_fallback">Utiliser le mot de passe</string>
 
     <string name="password_set_title">Ajouter un mot de passe par sécurité</string>
     <string name="password_set_message">Définissez un mot de passe pour verrouiller l\'accès au stockage Anemo.</string>
@@ -59,5 +61,6 @@
     <string name="configuration_password_change">Modifier le mot de passe</string>
     <string name="configuration_storage_lock">Verrouiller l\'accès au stockage</string>
     <string name="configuration_storage_unlock">Déverrouiller l\'accès au stockage</string>
+    <string name="configuration_storage_unlock_biometric">Permettre le déverrouillage du stockage par accès biométrique</string>
     <string name="configuration_storage_lock_auto">Verrouiller automatiquement l\'accès après 15 minutes</string>
 </resources>

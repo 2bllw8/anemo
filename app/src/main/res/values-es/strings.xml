@@ -20,6 +20,8 @@
 
     <string name="password_input_message">Escriba su contraseña de Anemo para desbloquear el almacenamiento de Anemo</string>
     <string name="password_input_action">Desbloquear</string>
+    <string name="password_input_biometric_message">Autentificarse para desbloquear el almacenamiento de Anemo</string>
+    <string name="password_input_biometric_fallback">Usar contraseña</string>
 
     <string name="password_set_title">Agregar protección con contraseña</string>
     <string name="password_set_message">Establezca una contraseña para bloquear el acceso a Anemo Storage</string>
@@ -59,5 +61,6 @@
     <string name="configuration_password_change">Cambiar contraseña</string>
     <string name="configuration_storage_lock">Bloquear el acceso al almacenamiento</string>
     <string name="configuration_storage_unlock">Desbloquear el acceso al almacenamiento</string>
+    <string name="configuration_storage_unlock_biometric">Permitir el desbloqueo del almacenamiento con acceso biométrico</string>
     <string name="configuration_storage_lock_auto">Bloquear automáticamente el acceso después de 15 minutos</string>
 </resources>

@@ -20,6 +20,8 @@
 
     <string name="password_input_message">Digita la tua password di Anemo per sbloccare l\'archiviazione</string>
     <string name="password_input_action">Sblocca</string>
+    <string name="password_input_biometric_message">Autenticazione per sbloccare l\'archiviazione Anemo</string>
+    <string name="password_input_biometric_fallback">Utilizzare la password</string>
 
     <string name="password_set_title">Aggiungi la protezione con password</string>
     <string name="password_set_message">Imposta una password per bloccare l\'accesso all\'archiviazione di Anemo</string>
@@ -59,5 +61,6 @@
     <string name="configuration_password_change">Modifica password</string>
     <string name="configuration_storage_lock">Blocca l\'accesso allo spazio di archiviazione</string>
     <string name="configuration_storage_unlock">Sblocca l\'accesso allo spazio di archiviazione</string>
+    <string name="configuration_storage_unlock_biometric">Consentire lo sblocco della memoria con accesso biometrico</string>
     <string name="configuration_storage_lock_auto">Blocca automaticamente l\'accesso dopo 15 minuti</string>
 </resources>
