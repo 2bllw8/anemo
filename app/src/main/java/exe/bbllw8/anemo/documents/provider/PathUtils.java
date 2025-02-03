@@ -187,21 +187,19 @@ public final class PathUtils {
         if (0x00 <= c && c <= 0x1f) {
             return false;
         }
-        switch (c) {
-            case '"' :
-            case '*' :
-            case '/' :
-            case ':' :
-            case '<' :
-            case '>' :
-            case '?' :
-            case '\\' :
-            case '|' :
-            case 0x7F :
-                return false;
-            default :
-                return true;
-        }
+        return switch (c) {
+            case '"',
+                 '*',
+                 '/',
+                 ':',
+                 '<',
+                 '>',
+                 '?',
+                 '\\',
+                 '|',
+                 0x7F -> false;
+            default -> true;
+        };
     }
 
     private static Path buildUniquePathWithExtension(Path parent, String name, String ext)

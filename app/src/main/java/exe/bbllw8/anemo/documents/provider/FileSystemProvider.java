@@ -48,6 +48,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import exe.bbllw8.either.Try;
 
@@ -73,8 +74,8 @@ public abstract class FileSystemProvider extends DocumentsProvider {
 
     @Override
     public boolean onCreate() {
-        handler = new Handler(Looper.myLooper());
-        cr = getContext().getContentResolver();
+        handler = new Handler(Objects.requireNonNull(Looper.myLooper()));
+        cr = Objects.requireNonNull(getContext()).getContentResolver();
         return true;
     }
 
@@ -295,7 +296,9 @@ public abstract class FileSystemProvider extends DocumentsProvider {
                 parentDocumentId, parent);
         if (Files.isDirectory(parent)) {
             Try.from(() -> {
-                Files.list(parent).forEach(file -> includePath(result, file));
+                try (final Stream<Path> children = Files.list(parent)) {
+                    children.forEach(child -> includePath(result, child));
+                }
                 return null;
             });
         } else {
@@ -371,7 +374,9 @@ public abstract class FileSystemProvider extends DocumentsProvider {
 
     @Override
     @SuppressLint("NewApi")
-    public Cursor querySearchDocuments(String rootId, String[] projection, Bundle queryArgs)
+    public Cursor querySearchDocuments(@NonNull String rootId,
+                                       String[] projection,
+                                       @NonNull Bundle queryArgs)
             throws FileNotFoundException {
         final Try<Cursor> result = getPathForId(rootId).filter($ -> Build.VERSION.SDK_INT > 29)
                 .map(path -> querySearchDocuments(path, projection, queryArgs));

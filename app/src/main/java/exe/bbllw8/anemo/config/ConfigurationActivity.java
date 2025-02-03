@@ -6,8 +6,12 @@ package exe.bbllw8.anemo.config;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Insets;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowInsets;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -24,6 +28,7 @@ import exe.bbllw8.anemo.shell.AnemoShell;
 
 public final class ConfigurationActivity extends Activity {
 
+    private ViewGroup rootView;
     private TextView passwordSetView;
     private TextView changeLockView;
     private Switch biometricSwitch;
@@ -38,6 +43,9 @@ public final class ConfigurationActivity extends Activity {
         lockStore.addListener(onLockChanged);
 
         setContentView(R.layout.configuration);
+
+        rootView = findViewById(R.id.root_view);
+        enableEdgeToEdge();
 
         passwordSetView = findViewById(R.id.configuration_password_set);
 
@@ -64,8 +72,9 @@ public final class ConfigurationActivity extends Activity {
                 (v, isChecked) -> lockStore.setAutoLockEnabled(isChecked));
 
         biometricSwitch = findViewById(R.id.configuration_biometric_unlock);
-        biometricSwitch
-                .setVisibility(lockStore.canAuthenticateBiometric() ? View.VISIBLE : View.GONE);
+        biometricSwitch.setVisibility(lockStore.canAuthenticateBiometric()
+                ? View.VISIBLE
+                : View.GONE);
         biometricSwitch.setChecked(lockStore.isBiometricUnlockEnabled());
         biometricSwitch.setOnCheckedChangeListener(
                 (v, isChecked) -> lockStore.setBiometricUnlockEnabled(isChecked));
@@ -102,4 +111,22 @@ public final class ConfigurationActivity extends Activity {
                 ? R.string.configuration_storage_unlock
                 : R.string.configuration_storage_lock);
     };
+
+    private void enableEdgeToEdge() {
+        if (Build.VERSION.SDK_INT < 35) {
+            return;
+        }
+
+        rootView.setOnApplyWindowInsetsListener((v, windowInsets) -> {
+            final Insets insets = windowInsets.getInsets(WindowInsets.Type.systemBars());
+            final ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams)
+                    v.getLayoutParams();
+            mlp.topMargin = insets.top;
+            mlp.rightMargin = insets.right;
+            mlp.bottomMargin = insets.bottom;
+            mlp.leftMargin = insets.left;
+            v.setLayoutParams(mlp);
+            return WindowInsets.CONSUMED;
+        });
+    }
 }

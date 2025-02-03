@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -62,7 +63,7 @@ public class ReceiverActivity extends Activity {
         }
 
         final Uri source = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-        importRef.set(Optional.of(source));
+        importRef.set(Optional.ofNullable(source));
 
         final Intent pickerIntent = new Intent(Intent.ACTION_CREATE_DOCUMENT).setType(type)
                 .putExtra(Intent.EXTRA_TITLE,
@@ -96,9 +97,7 @@ public class ReceiverActivity extends Activity {
 
     private void doImport(Uri destination) {
         final Optional<Uri> sourceOpt = importRef.get();
-        // No Optional#isEmpty() in android
-        // noinspection SimplifyOptionalCallChains
-        if (!sourceOpt.isPresent()) {
+        if (sourceOpt.isEmpty()) {
             Log.e(TAG, "Nothing to import");
             return;
         }
@@ -139,8 +138,10 @@ public class ReceiverActivity extends Activity {
 
     private Try<Void> copyUriToUri(Uri source, Uri destination) {
         return Try.from(() -> {
-            try (InputStream iStream = contentResolver.openInputStream(source)) {
-                try (OutputStream oStream = contentResolver.openOutputStream(destination)) {
+            try (final InputStream iStream = Objects.requireNonNull(
+                    contentResolver.openInputStream(source))) {
+                try (final OutputStream oStream = Objects.requireNonNull(
+                        contentResolver.openOutputStream(destination))) {
                     final byte[] buffer = new byte[4096];
                     int read = iStream.read(buffer);
                     while (read > 0) {

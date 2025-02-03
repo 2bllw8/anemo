@@ -21,6 +21,8 @@ import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Root;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -93,16 +95,18 @@ public final class AnemoDocumentProvider extends FileSystemProvider {
         row.add(Root.COLUMN_ROOT_ID, HomeEnvironment.ROOT)
                 .add(DocumentsContract.Root.COLUMN_DOCUMENT_ID, HomeEnvironment.ROOT_DOC_ID)
                 .add(Root.COLUMN_FLAGS, flags)
-                .add(DocumentsContract.Root.COLUMN_ICON, R.drawable.ic_storage)
-                .add(DocumentsContract.Root.COLUMN_TITLE, context.getString(R.string.app_name))
-                .add(DocumentsContract.Root.COLUMN_SUMMARY,
-                        context.getString(R.string.anemo_description));
+                .add(DocumentsContract.Root.COLUMN_ICON, R.drawable.ic_storage);
+        if (context != null) {
+            row.add(DocumentsContract.Root.COLUMN_TITLE, context.getString(R.string.app_name))
+                    .add(DocumentsContract.Root.COLUMN_SUMMARY,
+                            context.getString(R.string.anemo_description));
+        }
         return result;
     }
 
     @Override
     public Cursor queryChildDocuments(String parentDocumentId, String[] projection,
-            String sortOrder) throws FileNotFoundException {
+                                      String sortOrder) throws FileNotFoundException {
         if (lockStore.isLocked()) {
             return new EmptyCursor();
         }
@@ -113,8 +117,11 @@ public final class AnemoDocumentProvider extends FileSystemProvider {
             showInfo = false;
             // Show info in root dir
             final Bundle extras = new Bundle();
-            extras.putCharSequence(DocumentsContract.EXTRA_INFO,
-                    getContext().getText(R.string.anemo_info));
+            final Context context = getContext();
+            if (context != null) {
+                extras.putCharSequence(DocumentsContract.EXTRA_INFO,
+                        context.getText(R.string.anemo_info));
+            }
             c.setExtras(extras);
         }
         return c;
@@ -123,43 +130,39 @@ public final class AnemoDocumentProvider extends FileSystemProvider {
     @Override
     public Cursor queryDocument(String documentId, String[] projection)
             throws FileNotFoundException {
-        if (lockStore.isLocked()) {
-            return new EmptyCursor();
-        } else {
-            return super.queryDocument(documentId, projection);
-        }
+        return lockStore.isLocked()
+                ? new EmptyCursor()
+                : super.queryDocument(documentId, projection);
     }
 
     @Override
-    public Cursor querySearchDocuments(String rootId, String[] projection, Bundle queryArgs)
+    public Cursor querySearchDocuments(@NonNull String rootId,
+                                       String[] projection,
+                                       @NonNull Bundle queryArgs)
             throws FileNotFoundException {
-        if (lockStore.isLocked()) {
-            return new EmptyCursor();
-        } else {
-            return super.querySearchDocuments(rootId, projection, queryArgs);
-        }
+        return lockStore.isLocked()
+                ? new EmptyCursor()
+                : super.querySearchDocuments(rootId, projection, queryArgs);
     }
 
     @Override
     public DocumentsContract.Path findDocumentPath(String parentDocumentId,
-            String childDocumentId) {
-        if (lockStore.isLocked()) {
-            return new DocumentsContract.Path(null, Collections.emptyList());
-        } else {
-            return super.findDocumentPath(parentDocumentId, childDocumentId);
-        }
+                                                   String childDocumentId) {
+        return lockStore.isLocked()
+                ? new DocumentsContract.Path(null, Collections.emptyList())
+                : super.findDocumentPath(parentDocumentId, childDocumentId);
     }
 
     @Override
     public ParcelFileDescriptor openDocument(String documentId, String mode,
-            CancellationSignal signal) throws FileNotFoundException {
+                                             CancellationSignal signal) throws FileNotFoundException {
         assertUnlocked();
         return super.openDocument(documentId, mode, signal);
     }
 
     @Override
     public AssetFileDescriptor openDocumentThumbnail(String docId, Point sizeHint,
-            CancellationSignal signal) throws FileNotFoundException {
+                                                     CancellationSignal signal) throws FileNotFoundException {
         assertUnlocked();
         return super.openDocumentThumbnail(docId, sizeHint, signal);
     }
@@ -190,7 +193,7 @@ public final class AnemoDocumentProvider extends FileSystemProvider {
 
     @Override
     public String moveDocument(String sourceDocumentId, String sourceParentDocumentId,
-            String targetParentDocumentId) {
+                               String targetParentDocumentId) {
         assertUnlocked();
         return super.moveDocument(sourceDocumentId, sourceParentDocumentId, targetParentDocumentId);
     }
@@ -262,8 +265,7 @@ public final class AnemoDocumentProvider extends FileSystemProvider {
     }
 
     /**
-     * @throws AuthenticationRequiredException
-     *             if {@link LockStore#isLocked()} is true.
+     * @throws AuthenticationRequiredException if {@link LockStore#isLocked()} is true.
      */
     private void assertUnlocked() {
         if (lockStore.isLocked()) {

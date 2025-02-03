@@ -10,6 +10,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 
 import androidx.annotation.LayoutRes;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
 import exe.bbllw8.anemo.R;
@@ -24,7 +25,7 @@ public abstract class PasswordDialog {
     protected final AlertDialog dialog;
 
     public PasswordDialog(Activity activity, LockStore lockStore, Runnable onSuccess,
-            @StringRes int title, @LayoutRes int layout) {
+                          @StringRes int title, @LayoutRes int layout) {
         this.res = activity.getResources();
         this.lockStore = lockStore;
         this.onSuccess = onSuccess;
@@ -46,9 +47,13 @@ public abstract class PasswordDialog {
         build();
     }
 
+    @Nullable
     protected Drawable getErrorIcon() {
         final Drawable drawable = dialog.getContext().getDrawable(R.drawable.ic_error);
-        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        if (drawable != null) {
+            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(),
+                    drawable.getIntrinsicHeight());
+        }
         return drawable;
     }
 

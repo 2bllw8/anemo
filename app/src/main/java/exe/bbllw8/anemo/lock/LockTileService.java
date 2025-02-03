@@ -4,6 +4,8 @@
  */
 package exe.bbllw8.anemo.lock;
 
+import android.annotation.SuppressLint;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -53,9 +55,7 @@ public final class LockTileService extends TileService {
 
         if (lockStore.isLocked()) {
             if (hasUnlockActivity) {
-                final Intent intent = new Intent(this, UnlockActivity.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivityAndCollapse(intent);
+                openUnlockActivity();
             } else {
                 lockStore.unlock();
             }
@@ -67,6 +67,19 @@ public final class LockTileService extends TileService {
     private void initializeTile() {
         final Tile tile = getQsTile();
         tile.setIcon(Icon.createWithResource(this, R.drawable.ic_key_tile));
+    }
+
+    @SuppressLint("StartActivityAndCollapseDeprecated")
+    private void openUnlockActivity() {
+        final Intent intent = new Intent(this, UnlockActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (Build.VERSION.SDK_INT > 33) {
+            final PendingIntent pendingIntent = PendingIntent.getActivity(this, 1,
+                    intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
+            startActivityAndCollapse(pendingIntent);
+        } else {
+            startActivityAndCollapse(intent);
+        }
     }
 
     private final Consumer<Boolean> updateTile = isLocked -> {
