@@ -7,8 +7,11 @@ package exe.bbllw8.anemo.lock;
 import android.app.Activity;
 import android.content.Intent;
 import android.hardware.biometrics.BiometricPrompt;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CancellationSignal;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -89,8 +92,6 @@ public final class UnlockActivity extends Activity {
     @RequiresApi(29)
     private void unlockViaBiometricAuthentication() {
         final Executor executor = getMainExecutor();
-        final CancellationSignal cancellationSignal = new CancellationSignal();
-        cancellationSignal.setOnCancelListener(this::finish);
 
         final BiometricPrompt prompt = new BiometricPrompt.Builder(this)
                 .setTitle(getString(R.string.tile_unlock))
@@ -98,6 +99,21 @@ public final class UnlockActivity extends Activity {
                 .setNegativeButton(getString(R.string.password_input_biometric_fallback), executor,
                         (dialog, which) -> setupUI())
                 .build();
+
+        if (Build.VERSION.SDK_INT > 33) {
+            // Delay by 50ms otherwise the service gives an error
+            new Handler(Looper.getMainLooper()).postDelayed(() ->
+                    promptBiometricAuthentication(prompt, executor), 50);
+        } else {
+            promptBiometricAuthentication(prompt, executor);
+        }
+    }
+
+    @RequiresApi(29)
+    public void promptBiometricAuthentication(BiometricPrompt prompt,
+                                              Executor executor) {
+        final CancellationSignal cancellationSignal = new CancellationSignal();
+        cancellationSignal.setOnCancelListener(this::finish);
         prompt.authenticate(cancellationSignal, executor,
                 new BiometricPrompt.AuthenticationCallback() {
                     @Override
@@ -108,6 +124,12 @@ public final class UnlockActivity extends Activity {
 
                     @Override
                     public void onAuthenticationFailed() {
+                        setResult(Activity.RESULT_CANCELED);
+                        finish();
+                    }
+
+                    @Override
+                    public void onAuthenticationError(int errorCode, CharSequence errString) {
                         setResult(Activity.RESULT_CANCELED);
                         finish();
                     }
