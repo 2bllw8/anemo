@@ -140,9 +140,12 @@ public final class AnemoDocumentProvider extends FileSystemProvider {
                                        String[] projection,
                                        @NonNull Bundle queryArgs)
             throws FileNotFoundException {
+        final String properRootId = rootId.equals(HomeEnvironment.ROOT)
+                ? HomeEnvironment.ROOT_DOC_ID
+                : rootId;
         return lockStore.isLocked()
                 ? new EmptyCursor()
-                : super.querySearchDocuments(rootId, projection, queryArgs);
+                : super.querySearchDocuments(properRootId, projection, queryArgs);
     }
 
     @Override

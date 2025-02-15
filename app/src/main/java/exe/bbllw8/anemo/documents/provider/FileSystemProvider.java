@@ -374,11 +374,12 @@ public abstract class FileSystemProvider extends DocumentsProvider {
 
     @Override
     @SuppressLint("NewApi")
-    public Cursor querySearchDocuments(@NonNull String rootId,
+    public Cursor querySearchDocuments(@NonNull String docId,
                                        String[] projection,
                                        @NonNull Bundle queryArgs)
             throws FileNotFoundException {
-        final Try<Cursor> result = getPathForId(rootId).filter($ -> Build.VERSION.SDK_INT > 29)
+        final Try<Cursor> result = getPathForId(docId)
+                .filter($ -> Build.VERSION.SDK_INT > 29)
                 .map(path -> querySearchDocuments(path, projection, queryArgs));
         if (result.isFailure()) {
             throw new FileNotFoundException();
