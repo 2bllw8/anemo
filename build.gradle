@@ -8,7 +8,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.8.1'
+        classpath("com.android.tools.build:gradle:8.11.0")
     }
 }
 
@@ -19,13 +19,13 @@ allprojects {
     }
 }
 
-tasks.register('clean', Delete) {
-    delete rootProject.layout.buildDirectory
+tasks.register("clean", Delete) {
+    delete(rootProject.layout.buildDirectory)
 }
 
 final Properties localProps = new Properties()
-if (file('local.properties').exists()) {
-    localProps.load(file('local.properties').newDataInputStream())
+if (file("local.properties").exists()) {
+    localProps.load(file("local.properties").newDataInputStream())
 }
 
 ext {
@@ -33,18 +33,18 @@ ext {
     targetSdkVersion = 35
 
     versionCode = 17
-    versionName = '2.7.0'
+    versionName = "2.7.0"
 
     namespace = "exe.bbllw8.anemo"
 
     sourceCompatibilityVersion = JavaVersion.VERSION_17
     targetCompatibilityVersion = JavaVersion.VERSION_17
 
-    keyStoreFile = localProps.getProperty('androidStoreFile')
-    if (keyStoreFile != null && keyStoreFile != '') {
+    keyStoreFile = localProps.getProperty("androidStoreFile")
+    if (keyStoreFile != null && keyStoreFile != "") {
         keyStoreFile = file(keyStoreFile)
     }
-    keyStorePassword = localProps.getProperty('androidStorePassword')
-    keyAlias = localProps.getProperty('androidKeyAlias')
-    keyPassword = localProps.getProperty('androidKeyPassword')
+    keyStorePassword = localProps.getProperty("androidStorePassword")
+    keyAlias = localProps.getProperty("androidKeyAlias")
+    keyPassword = localProps.getProperty("androidKeyPassword")
 }
