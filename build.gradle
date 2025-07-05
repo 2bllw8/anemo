@@ -30,7 +30,7 @@ if (file("local.properties").exists()) {
 
 ext {
     minSdkVersion = 26
-    targetSdkVersion = 35
+    targetSdkVersion = 36
 
     versionCode = 17
     versionName = "2.7.0"
