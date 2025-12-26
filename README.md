@@ -46,7 +46,13 @@ Open an discussion [on github](https://github.com/2bllw8/anemo/discussions/new?c
 
 **Every contributions, including ideas, feature requests, bug reports and Pull Requests are welcome!**
 
-- **Solve bug(s)**, add **feature(s)** or **translate** Anemo to your native language by making a **[pull request](https://help.github.com/articles/about-pull-requests/)**
+**Translate** Anemo to your native language using the [Weblate](https://toolate.othing.xyz/projects/anemo).
+
+<a href="https://toolate.othing.xyz/projects/anemo">
+<img src="https://toolate.othing.xyz/widget/anemo/multi-auto.svg" alt="Translation status" />
+</a>
+
+- **Solve bug(s)**, add **feature(s)** by making a **[pull request](https://help.github.com/articles/about-pull-requests/)**
 - You have an idea for improvement or a new feature? Open a **[feature request](https://github.com/2bllw8/anemo/issues/new?assignees=&labels=enhancement&template=feature_request.yml&title=[Feature+request]+)**
 - You faced a bug, let us know by opening a **[bug report](https://github.com/2bllw8/anemo/issues/new?assignees=&labels=bug&template=bug_report.yml&title=%5BBug%5D+)**
 
