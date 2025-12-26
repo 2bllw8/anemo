@@ -16,11 +16,11 @@
     <string name="password_input_biometric_fallback">Использовать пароль</string>
     <string name="password_set_title">Добавить защиту паролем</string>
     <string name="password_set_message">Установить пароль для блокировки доступа к хранилищу Anemo</string>
-    <string name="password_set_action">Установить пароль</string>
+    <string name="password_set_action">Задать пароль</string>
     <string name="password_change_title">Сменить пароль</string>
     <string name="password_change_message">Изменить пароль для разблокировки хранилища Anemo</string>
     <string name="password_change_action">Сменить</string>
-    <string name="password_change_remove">Удалить</string>
+    <string name="password_change_remove">Убрать</string>
     <string name="receiver_label">Импорт в Anemo</string>
     <string name="receiver_importing_message">Импорт файла…</string>
     <string name="receiver_importing_done_ok">Импортировано в Anemo</string>
@@ -39,7 +39,7 @@
     <string name="configuration_label">Конфигурация</string>
     <string name="configuration_shortcut">Показать ярлык в списке приложений</string>
     <string name="configuration_protection">Защита</string>
-    <string name="configuration_password_set">Установить пароль</string>
+    <string name="configuration_password_set">Задать пароль</string>
     <string name="configuration_password_change">Сменить пароль</string>
     <string name="configuration_storage_lock">Заблокировать доступ к хранилищу</string>
     <string name="configuration_storage_unlock">Разблокировать доступ к хранилищу</string>
