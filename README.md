@@ -40,11 +40,11 @@ With AOSP / LineageOS:
 
 ## Get help
 
-Open an discussion [on github](https://github.com/2bllw8/anemo/discussions/new?category=Q-A)
+Open a discussion [on github](https://github.com/2bllw8/anemo/discussions/new?category=Q-A)
 
 ## Contributions
 
-**Every contributions, including ideas, feature requests, bug reports and Pull Requests are welcome!**
+**Every contributions, including translations, feature requests, bug reports and pull requests are welcome!**
 
 - **Solve bug(s)**, add **feature(s)** or **translate** Anemo to your native language by making a **[pull request](https://help.github.com/articles/about-pull-requests/)**
 - You have an idea for improvement or a new feature? Open a **[feature request](https://github.com/2bllw8/anemo/issues/new?assignees=&labels=enhancement&template=feature_request.yml&title=[Feature+request]+)**
