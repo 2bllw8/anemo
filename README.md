@@ -20,6 +20,22 @@ Moreover it provides ways for the user to export contents from other apps and sa
   - Password for locking access to the files
 - Import content using the share Android functionality
 
+## Threat model
+
+Anemo stores files in its private data directory (`/data/data/exe.bbllw8.anemo`) and can be
+configured to require a password before you can view these files. It does not encrypt the files,
+instead relying on your device's [native storage encryption](https://source.android.com/docs/security/features/encryption/file-based)
+to keep files safe from someone who can access your internal storage chip. You can check whether
+your device is encrypted under Settings &rarr; Security &rarr; More/Other. This encryption is
+only effective if you have an authentication method on your lock screen such as a PIN, password,
+fingerprint, etc.
+
+Besides hardware attacks, only a few system processes can access the private data directory
+unless you granted something like root access to an app or process. In that case, anyone
+who can get root in some way (such as with `adb shell su`) can also access the files.
+
+The password that you configure is hashed using SHA-256 (in [LockStore.java](https://github.com/2bllw8/anemo/blob/main/app/src/main/java/exe/bbllw8/anemo/lock/LockStore.java#L184)).
+
 ## Download
 
 Get the apk from [latest](https://github.com/2bllw8/anemo/releases/latest) release tag or
