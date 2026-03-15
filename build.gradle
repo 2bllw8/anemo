@@ -32,8 +32,8 @@ ext {
     minSdkVersion = 26
     targetSdkVersion = 36
 
-    versionCode = 17
-    versionName = "2.7.0"
+    versionCode = 18
+    versionName = "2.7.1"
 
     namespace = "exe.bbllw8.anemo"
 
