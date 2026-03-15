@@ -11,6 +11,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
@@ -62,7 +63,7 @@ public class ReceiverActivity extends Activity {
             return;
         }
 
-        final Uri source = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        final Uri source = getUriFromIntent(intent);
         importRef.set(Optional.ofNullable(source));
 
         final Intent pickerIntent = new Intent(Intent.ACTION_CREATE_DOCUMENT).setType(type)
@@ -93,6 +94,17 @@ public class ReceiverActivity extends Activity {
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    @Nullable
+    @SuppressWarnings({
+            "RedundantSuppression",
+            "deprecation",
+    })
+    private Uri getUriFromIntent(Intent intent) {
+        return Build.VERSION.SDK_INT >= 33
+                ? intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri.class)
+                : intent.getParcelableExtra(Intent.EXTRA_STREAM);
     }
 
     private void doImport(Uri destination) {

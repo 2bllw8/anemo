@@ -128,8 +128,9 @@ public abstract class FileSystemProvider extends DocumentsProvider {
         if (result.isSuccess()) {
             return result.get();
         } else {
-            Log.e(TAG, "Failed to create document", result.failed().get());
-            throw new IllegalStateException();
+            final Throwable err = result.failed().get();
+            Log.e(TAG, "Failed to create document", err);
+            throw new IllegalStateException(err);
         }
     }
 
@@ -146,7 +147,7 @@ public abstract class FileSystemProvider extends DocumentsProvider {
                         Files.walkFileTree(source, new SimpleFileVisitor<>() {
                             @Override
                             public FileVisitResult preVisitDirectory(Path dir,
-                                    BasicFileAttributes attrs) throws IOException {
+                                                                     BasicFileAttributes attrs) throws IOException {
                                 Files.createDirectories(target.resolve(dir.relativize(source)));
                                 return FileVisitResult.CONTINUE;
                             }
@@ -170,12 +171,12 @@ public abstract class FileSystemProvider extends DocumentsProvider {
                     onDocIdChanged(targetId);
                     return targetId;
                 }));
-        if (result.isSuccess()) {
-            return result.get();
-        } else {
-            Log.e(TAG, "Failed to copy document", result.failed().get());
-            throw new IllegalStateException();
+        if (result.isFailure()) {
+            final Throwable err = result.failed().get();
+            Log.e(TAG, "Failed to copy document", err);
+            throw new IllegalStateException(err);
         }
+        return result.get();
     }
 
     @Override
@@ -202,17 +203,16 @@ public abstract class FileSystemProvider extends DocumentsProvider {
                 return afterId;
             }
         });
-        if (result.isSuccess()) {
-            return result.get();
-        } else {
+        if (result.isFailure()) {
             Log.e(TAG, "Failed to rename document", result.failed().get());
             throw new IllegalStateException();
         }
+        return result.get();
     }
 
     @Override
     public String moveDocument(String sourceDocumentId, String sourceParentDocumentId,
-            String targetParentDocumentId) {
+                               String targetParentDocumentId) {
         final Try<String> result = getPathForId(sourceDocumentId)
                 .flatMap(before -> getPathForId(targetParentDocumentId).map(parent -> {
                     final String documentName = before.getFileName().toString();
@@ -230,12 +230,11 @@ public abstract class FileSystemProvider extends DocumentsProvider {
                     onDocIdChanged(afterId);
                     return afterId;
                 }));
-        if (result.isSuccess()) {
-            return result.get();
-        } else {
+        if (result.isFailure()) {
             Log.e(TAG, "Failed to move document", result.failed().get());
             throw new IllegalStateException();
         }
+        return result.get();
     }
 
     @Override
@@ -256,7 +255,7 @@ public abstract class FileSystemProvider extends DocumentsProvider {
 
     @Override
     public ParcelFileDescriptor openDocument(String documentId, String mode,
-            CancellationSignal signal) throws FileNotFoundException {
+                                             CancellationSignal signal) throws FileNotFoundException {
         final Try<ParcelFileDescriptor> result = getPathForId(documentId).map(path -> {
             final int pfdMode = ParcelFileDescriptor.parseMode(mode);
             if (pfdMode == ParcelFileDescriptor.MODE_READ_ONLY) {
@@ -286,7 +285,7 @@ public abstract class FileSystemProvider extends DocumentsProvider {
 
     @Override
     public Cursor queryChildDocuments(String parentDocumentId, String[] projection,
-            String sortOrder) throws FileNotFoundException {
+                                      String sortOrder) throws FileNotFoundException {
         final Try<Path> parentTry = getPathForId(parentDocumentId);
         if (parentTry.isFailure()) {
             throw new FileNotFoundException("Couldn't find " + parentDocumentId);
@@ -309,14 +308,10 @@ public abstract class FileSystemProvider extends DocumentsProvider {
 
     @Override
     public DocumentsContract.Path findDocumentPath(String parentDocumentId,
-            String childDocumentId) {
-        final String pathStr;
-        if (parentDocumentId == null) {
-            pathStr = childDocumentId;
-        } else {
-            pathStr = childDocumentId.substring(parentDocumentId.length());
-        }
-
+                                                   String childDocumentId) {
+        final String pathStr = parentDocumentId == null
+                ? childDocumentId
+                : childDocumentId.substring(parentDocumentId.length());
         final List<String> segments = Arrays.asList(pathStr.split("/"));
         return new DocumentsContract.Path(parentDocumentId, segments);
     }
@@ -332,7 +327,7 @@ public abstract class FileSystemProvider extends DocumentsProvider {
 
     @Override
     public AssetFileDescriptor openDocumentThumbnail(String docId, Point sizeHint,
-            CancellationSignal signal) throws FileNotFoundException {
+                                                     CancellationSignal signal) throws FileNotFoundException {
         final Try<AssetFileDescriptor> pathTry = getPathForId(docId)
                 .filter(path -> PathUtils.getDocumentType(docId, path).startsWith("image/"))
                 .map(path -> {
@@ -345,26 +340,25 @@ public abstract class FileSystemProvider extends DocumentsProvider {
                         // Do full file decoding, we don't need to handle the orientation
                         return new AssetFileDescriptor(pfd, 0, AssetFileDescriptor.UNKNOWN_LENGTH,
                                 null);
-                    } else {
-                        // If we use thumb to decode, we need to handle the rotation by ourselves.
-                        Bundle extras = null;
-                        switch (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1)) {
-                            case ExifInterface.ORIENTATION_ROTATE_90 :
-                                extras = new Bundle(1);
-                                extras.putInt(DocumentsContract.EXTRA_ORIENTATION, 90);
-                                break;
-                            case ExifInterface.ORIENTATION_ROTATE_180 :
-                                extras = new Bundle(1);
-                                extras.putInt(DocumentsContract.EXTRA_ORIENTATION, 180);
-                                break;
-                            case ExifInterface.ORIENTATION_ROTATE_270 :
-                                extras = new Bundle(1);
-                                extras.putInt(DocumentsContract.EXTRA_ORIENTATION, 270);
-                                break;
-                        }
-
-                        return new AssetFileDescriptor(pfd, thumb[0], thumb[1], extras);
                     }
+                    // If we use thumb to decode, we need to handle the rotation by ourselves.
+                    Bundle extras = null;
+                    switch (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1)) {
+                        case ExifInterface.ORIENTATION_ROTATE_90:
+                            extras = new Bundle(1);
+                            extras.putInt(DocumentsContract.EXTRA_ORIENTATION, 90);
+                            break;
+                        case ExifInterface.ORIENTATION_ROTATE_180:
+                            extras = new Bundle(1);
+                            extras.putInt(DocumentsContract.EXTRA_ORIENTATION, 180);
+                            break;
+                        case ExifInterface.ORIENTATION_ROTATE_270:
+                            extras = new Bundle(1);
+                            extras.putInt(DocumentsContract.EXTRA_ORIENTATION, 270);
+                            break;
+                    }
+
+                    return new AssetFileDescriptor(pfd, thumb[0], thumb[1], extras);
                 });
         if (pathTry.isFailure()) {
             throw new FileNotFoundException("Couldn't open " + docId);
@@ -376,20 +370,19 @@ public abstract class FileSystemProvider extends DocumentsProvider {
     @SuppressLint("NewApi")
     public Cursor querySearchDocuments(@NonNull String docId,
                                        String[] projection,
-                                       @NonNull Bundle queryArgs)
-            throws FileNotFoundException {
+                                       @NonNull Bundle queryArgs) throws FileNotFoundException {
         final Try<Cursor> result = getPathForId(docId)
                 .filter($ -> Build.VERSION.SDK_INT > 29)
                 .map(path -> querySearchDocuments(path, projection, queryArgs));
         if (result.isFailure()) {
-            throw new FileNotFoundException();
+            throw new FileNotFoundException("Couldn't find " + docId);
         }
         return result.get();
     }
 
     @RequiresApi(29)
     protected final Cursor querySearchDocuments(Path parent, String[] projection,
-            Bundle queryArgs) {
+                                                Bundle queryArgs) {
         final MatrixCursor result = new MatrixCursor(resolveProjection(projection));
         final AtomicInteger count = new AtomicInteger(MAX_QUERY_RESULTS);
         Try.from(() -> Files.walkFileTree(parent, new SimpleFileVisitor<>() {
@@ -553,10 +546,8 @@ public abstract class FileSystemProvider extends DocumentsProvider {
     /**
      * Test if the file matches the query arguments.
      *
-     * @param path
-     *            the file to test
-     * @param queryArgs
-     *            the query arguments
+     * @param path      the file to test
+     * @param queryArgs the query arguments
      */
     @RequiresApi(29)
     private boolean matchSearchQueryArguments(Path path, Bundle queryArgs) throws IOException {
@@ -610,7 +601,10 @@ public abstract class FileSystemProvider extends DocumentsProvider {
         return true;
     }
 
-    @SuppressWarnings({"deprecation", "RedundantSuppression"})
+    @SuppressWarnings({
+            "RedundantSuppression",
+            "deprecation",
+    })
     private static void updateMediaStore(Context context, Path path) {
         final Intent intent;
         if (!Files.isDirectory(path) && path.getFileName().toString().endsWith("nomedia")) {
@@ -690,7 +684,10 @@ public abstract class FileSystemProvider extends DocumentsProvider {
         private final Uri notifyUri;
         private final CopyOnWriteArrayList<DirectoryCursor> cursors;
 
-        @SuppressWarnings({"deprecation", "RedundantSuppression"})
+        @SuppressWarnings({
+                "RedundantSuppression",
+                "deprecation",
+        })
         public DirectoryObserver(String absolutePath, ContentResolver resolver, Uri notifyUri) {
             super(absolutePath, NOTIFY_EVENTS);
             this.resolver = resolver;
