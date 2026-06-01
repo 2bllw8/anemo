@@ -1,0 +1,66 @@
+<!--
+  ~ Copyright (c) 2021 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<resources>
+    <string name="app_name">Anemo</string>
+
+    <string name="anemo_description">本地特权存储</string>
+    <string name="anemo_info">保存在 Anemo 存储中的应用是私密的，没有用户同意其他应用无法访问它们。</string>
+
+    <string name="password_label">Anemo 密码</string>
+
+    <string name="password_hint_field">密码</string>
+    <string name="password_hint_repeat">再次输入以确认</string>
+    <string name="password_hint_current">当前密码</string>
+
+    <string name="password_error_length">密码长度至少应为 %1$d 位</string>
+    <string name="password_error_mismatch">两次输入的密码不匹配</string>
+    <string name="password_error_wrong">密码错误</string>
+
+    <string name="password_input_message">输入 Anemo 密码解锁 Anemo 存储</string>
+    <string name="password_input_action">解锁</string>
+    <string name="password_input_biometric_message">进行身份认证来解锁 Anemo 存储</string>
+    <string name="password_input_biometric_fallback">使用密码</string>
+
+    <string name="password_set_title">添加密码保护</string>
+    <string name="password_set_message">设置密码来锁定对 Anemo 存储的访问</string>
+    <string name="password_set_action">设置密码</string>
+
+    <string name="password_change_title">更改密码</string>
+    <string name="password_change_message">更改密码来解锁 Anemo 存储</string>
+    <string name="password_change_action">更改</string>
+    <string name="password_change_remove">删除</string>
+
+    <string name="receiver_label">导入到 Anemo</string>
+
+    <string name="receiver_importing_message">正在导入文件…</string>
+    <string name="receiver_importing_done_ok">已导入 Anemo</string>
+    <string name="receiver_importing_done_fail">无法导入文件。请重试</string>
+
+    <string name="receiver_default_file_name">分享的文件</string>
+
+    <string name="tile_title">Anemo 存储</string>
+
+    <string name="tile_lock">锁定 Anemo</string>
+    <string name="tile_unlock">解锁 Anemo</string>
+    <string name="tile_status_locked">已锁定</string>
+    <string name="tile_status_unlocked">已解锁</string>
+
+    <string name="tile_auto_lock">Anemo 存储被自动锁定</string>
+
+    <string name="launcher_no_activity">无法找到系统的文件应用</string>
+    <string name="shortcut_config_long">配置</string>
+    <string name="shortcut_config_short">配置</string>
+    <string name="shortcut_config_disabled">配置 （已禁用）</string>
+
+    <string name="configuration_label">配置</string>
+    <string name="configuration_shortcut">在应用列表中显示快捷方式</string>
+    <string name="configuration_protection">保护</string>
+    <string name="configuration_password_set">设置密码</string>
+    <string name="configuration_password_change">更改密码</string>
+    <string name="configuration_storage_lock">锁定存储访问</string>
+    <string name="configuration_storage_unlock">解锁存储访问</string>
+    <string name="configuration_storage_unlock_biometric">允许用生物特征权限解锁访问</string>
+    <string name="configuration_storage_lock_auto">15 分钟后自动锁定访问</string>
+</resources>
